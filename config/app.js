@@ -7,7 +7,8 @@ export default {
     slowRequestMs: 1500
   },
   database: {
-    client: "postgres",
+    client: "sqlite",
+    path: "storage/database/app.sqlite",
     url: "",
     sslEnabled: false,
     sslRejectUnauthorized: true

@@ -109,6 +109,21 @@ export class RulesService {
     return this.rules.clients?.[client]?.displayName ?? title(client);
   }
 
+  getClientGuidance(client) {
+    const guidance = this.rules.clients?.[client]?.guidance;
+    if (!guidance || typeof guidance !== "object") {
+      return { summary: "", fields: {} };
+    }
+    return {
+      summary: String(guidance.summary ?? "").trim(),
+      fields: Object.fromEntries(Object.entries(guidance.fields ?? {}).map(([field, details]) => [field, {
+        label: String(details?.label ?? "").trim(),
+        help: String(details?.help ?? "").trim(),
+        placeholder: String(details?.placeholder ?? "").trim()
+      }]))
+    };
+  }
+
   getChannelDisplayName(channel) {
     return this.rules.channels?.[channel]?.displayName
       ?? this.sourceChannels[channel]?.displayName

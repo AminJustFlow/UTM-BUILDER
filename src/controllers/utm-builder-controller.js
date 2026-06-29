@@ -21,11 +21,21 @@ export class UtmBuilderController {
   }
 
   async handleHtml(request = {}) {
+    const duplicateRequestId = positiveInteger(request?.query?.duplicate_request_id, null);
+    const duplicateItem = duplicateRequestId
+      ? await this.utmLibraryService?.getByRequestIdAsync?.(duplicateRequestId)
+      : null;
+    if (duplicateRequestId && !duplicateItem) {
+      return NodeResponse.text("The link selected for duplication was not found.", 404, {
+        "Content-Type": "text/plain; charset=utf-8"
+      });
+    }
     const view = {
       clients: this.rulesService.clients()
         .map((clientKey) => ({
           key: clientKey,
-          displayName: this.rulesService.getClientDisplayName(clientKey)
+          displayName: this.rulesService.getClientDisplayName(clientKey),
+          guidance: this.rulesService.getClientGuidance(clientKey)
         }))
         .sort((left, right) => left.displayName.localeCompare(right.displayName)),
       channels: this.rulesService.createChannelCatalog()
@@ -37,9 +47,9 @@ export class UtmBuilderController {
           hint: buildChannelHint(channel)
         }))
         .sort((left, right) => left.displayName.localeCompare(right.displayName)),
-      mode: "create",
+      mode: duplicateItem ? "duplicate" : "create",
       standalone: this.standalone,
-      formDefaults: buildFormDefaults(null)
+      formDefaults: buildFormDefaults(duplicateItem, { duplicate: Boolean(duplicateItem) })
     };
 
     return NodeResponse.text(renderUtmBuilderHtml(view), 200, {
@@ -61,7 +71,8 @@ export class UtmBuilderController {
           code: result.code,
           message: result.message,
           warnings: result.warnings ?? [],
-          missing_fields: result.missingFields ?? []
+          missing_fields: result.missingFields ?? [],
+          existing: result.existing ?? null
         }
       }, result.statusCode ?? 500);
     }
@@ -73,7 +84,7 @@ export class UtmBuilderController {
       library_url: `/utms?${buildQueryString({
         highlight_request_id: result.requestId,
         toast: shortLinkUnavailable
-          ? "Tracked link saved. Bitly quota blocked the short link, so the full UTM link is available."
+          ? `Tracked link saved. ${result.degradedMessage}`
           : result.result.reusedExisting
           ? "Tracked link saved. A matching short link already existed, so it was reused."
           : "Tracked link saved.",
@@ -229,15 +240,18 @@ function serializeResult(result) {
     utm_term: normalized.utmTerm,
     utm_content: normalized.utmContent,
     warnings: normalized.warnings,
+    short_link_warning: result.degradedMessage ?? null,
+    degradation_reason: result.degradedReason ?? null,
     reused_existing: result.result.reusedExisting,
     library_url: `/utms?${buildQueryString({ highlight_request_id: result.requestId })}`
   };
 }
 
-function buildFormDefaults(item) {
+function buildFormDefaults(item, { duplicate = false } = {}) {
   if (!item) {
     return {
       original_request_id: "",
+      duplicated_from_request_id: "",
       client: "",
       destination_url: "",
       needs_qr: false,
@@ -251,7 +265,8 @@ function buildFormDefaults(item) {
   }
 
   return {
-    original_request_id: String(item.requestId),
+    original_request_id: duplicate ? "" : String(item.requestId),
+    duplicated_from_request_id: duplicate ? String(item.requestId) : "",
     client: item.client ?? "",
     destination_url: item.destinationUrl ?? "",
     needs_qr: Boolean(item.hasQr),

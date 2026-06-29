@@ -1,10 +1,11 @@
 export class BitlyError extends Error {
-  constructor(message, { statusCode = null, code = null, responseBody = null } = {}) {
+  constructor(message, { statusCode = null, code = null, responseBody = null, cause = null } = {}) {
     super(message);
     this.name = "BitlyError";
     this.statusCode = statusCode;
     this.code = code;
     this.responseBody = responseBody;
+    this.cause = cause;
   }
 }
 
@@ -16,7 +17,9 @@ export class BitlyService {
 
   async shorten(longUrl) {
     if (!this.config.accessToken) {
-      throw new Error("BITLY_ACCESS_TOKEN is not configured.");
+      throw new BitlyError("BITLY_ACCESS_TOKEN is not configured.", {
+        code: "BITLY_NOT_CONFIGURED"
+      });
     }
 
     const payload = {
@@ -29,18 +32,26 @@ export class BitlyService {
       payload.group_guid = this.config.groupGuid;
     }
 
-    const response = await this.httpClient.request("POST", `${this.config.apiBase.replace(/\/$/u, "")}/shorten`, {
-      headers: {
-        Authorization: `Bearer ${this.config.accessToken}`
-      },
-      json: payload,
-      timeoutMs: this.config.timeoutMs,
-      retries: 2
-    });
+    let response;
+    try {
+      response = await this.httpClient.request("POST", `${this.config.apiBase.replace(/\/$/u, "")}/shorten`, {
+        headers: {
+          Authorization: `Bearer ${this.config.accessToken}`
+        },
+        json: payload,
+        timeoutMs: this.config.timeoutMs,
+        retries: 2
+      });
+    } catch (error) {
+      throw new BitlyError("Bitly request failed before a response was received.", {
+        code: error?.name === "AbortError" ? "BITLY_TIMEOUT" : "BITLY_NETWORK_ERROR",
+        cause: error
+      });
+    }
 
     if (response.statusCode >= 400) {
       const body = response.json();
-      throw new BitlyError(`Bitly shorten failed with status ${response.statusCode}: ${response.body}`, {
+      throw new BitlyError(`Bitly shorten failed with status ${response.statusCode}.`, {
         statusCode: response.statusCode,
         code: body.message ?? null,
         responseBody: body
@@ -48,6 +59,13 @@ export class BitlyService {
     }
 
     const body = response.json();
+    if (!body.link) {
+      throw new BitlyError("Bitly returned a response without a short link.", {
+        statusCode: response.statusCode,
+        code: "BITLY_INVALID_RESPONSE",
+        responseBody: body
+      });
+    }
     return {
       link: body.link ?? "",
       id: body.id ?? null,

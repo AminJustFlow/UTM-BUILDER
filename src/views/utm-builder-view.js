@@ -11,6 +11,7 @@ const FIELD_GUIDANCE = [
 
 export function renderUtmBuilderHtml(view) {
   const mode = view.mode === "edit" ? "edit" : "create";
+  const isDuplicate = view.mode === "duplicate";
   const defaults = view.formDefaults ?? {};
   const clientOptions = view.clients
     .map((client) => `<option value="${escapeAttribute(client.key)}"${client.key === defaults.client ? " selected" : ""}>${escapeHtml(client.displayName)}</option>`)
@@ -21,7 +22,7 @@ export function renderUtmBuilderHtml(view) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${mode === "edit" ? "Edit Link" : "Create Link"}</title>
+  <title>${isDuplicate ? "Duplicate Link" : mode === "edit" ? "Edit Link" : "Create Link"}</title>
   <style>${renderStyles()}</style>
 </head>
 <body>
@@ -29,14 +30,16 @@ export function renderUtmBuilderHtml(view) {
   <div class="app">
     ${renderJustFlowSidebar("builder", { standaloneUtm: view.standalone })}
     <main class="main">
-      ${renderJustFlowTopbar({ section: "UTM Builder", title: mode === "edit" ? "Edit Link" : "New Link", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
+      ${renderJustFlowTopbar({ section: "UTM Builder", title: isDuplicate ? "Duplicate Link" : mode === "edit" ? "Edit Link" : "New Link", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
       <div class="page">
         <div class="builder-flow">
           <div class="page-header">
             <div class="page-title-block">
-              <div class="eyebrow">${mode === "edit" ? "Edit mode" : "Simple builder, upgraded"}</div>
-              <h1>${mode === "edit" ? "Edit a tracked link" : "Create a tracked link"}</h1>
-              <p class="subtitle">${mode === "edit"
+              <div class="eyebrow">${isDuplicate ? "Duplicate mode" : mode === "edit" ? "Edit mode" : "Simple builder, upgraded"}</div>
+              <h1>${isDuplicate ? "Duplicate a tracked link" : mode === "edit" ? "Edit a tracked link" : "Create a tracked link"}</h1>
+              <p class="subtitle">${isDuplicate
+                ? "This is a new link prefilled from the selected library entry. Change the platform or any other needed field before creating it."
+                : mode === "edit"
                 ? "Update this saved link in the same guided builder while keeping campaign, source, and medium aligned with historical UTM usage."
                 : "Use the existing tracked-link workflow, but choose campaign, source, and medium against historical UTM usage so reporting stays consistent."}</p>
             </div>
@@ -45,6 +48,8 @@ export function renderUtmBuilderHtml(view) {
               <a class="btn btn-primary" href="#builder-form">${renderIcon("sparkle")} Start builder</a>
             </div>
           </div>
+
+          ${isDuplicate ? '<div class="summary-banner"><div class="summary-text"><b>Creating a new copy.</b> The original link will not be changed. At least the destination or one UTM value must differ.</div></div>' : ""}
 
           <section class="card">
             <div class="card-header">
@@ -90,6 +95,7 @@ export function renderUtmBuilderHtml(view) {
                   </div>
                   <input type="hidden" name="campaign_label" id="campaign_label" value="${escapeAttribute(defaults.campaign_label ?? "")}">
                   <input type="hidden" name="original_request_id" id="original_request_id" value="${escapeAttribute(defaults.original_request_id ?? "")}">
+                  <input type="hidden" name="duplicated_from_request_id" id="duplicated_from_request_id" value="${escapeAttribute(defaults.duplicated_from_request_id ?? "")}">
 
                   <div class="inline-divider">
                     <div>
@@ -100,6 +106,8 @@ export function renderUtmBuilderHtml(view) {
                     <div class="pill" id="advanced-summary">No manual tracking changes are active.</div>
                   </div>
 
+                  <div class="summary-banner" id="client-guidance" style="display:none"><div class="summary-text" id="client-guidance-copy"></div></div>
+
                   <div class="advanced-grid">
                     ${renderCombobox("campaign", "Campaign", "Strategic bucket", "collateral", defaults.utm_campaign)}
                     ${renderCombobox("source", "Source", "Specific asset", "cic_rack_card", defaults.utm_source)}
@@ -109,7 +117,7 @@ export function renderUtmBuilderHtml(view) {
                   </div>
 
                   <div class="actions">
-                    <button class="btn btn-primary" type="submit" data-submit>${mode === "edit" ? "Save Changes" : "Create Link"}</button>
+                    <button class="btn btn-primary" type="submit" data-submit>${isDuplicate ? "Create Duplicate" : mode === "edit" ? "Save Changes" : "Create Link"}</button>
                     <button class="btn" type="reset">${mode === "edit" ? "Reset Changes" : "Clear"}</button>
                     ${mode === "edit" ? '<a class="btn btn-ghost" href="/utms">Back to library</a>' : ""}
                     <div class="status" id="form-status" aria-live="polite"></div>
@@ -195,7 +203,7 @@ export function renderUtmBuilderHtml(view) {
       </div>
     </main>
   </div>
-  <script>${renderClientScript()}</script>
+  <script>${renderClientScript(view.clients)}</script>
 </body>
 </html>`;
 }
@@ -208,8 +216,8 @@ function renderCombobox(field, label, description, example, value = "", full = f
   return `<div class="combo-card${full ? " full" : ""}">
     <div class="combo-head">
       <div>
-        <strong>${escapeHtml(label)}</strong>
-        <div class="combo-subtitle">${escapeHtml(description)}. Example: <code>${escapeHtml(example)}</code></div>
+        <strong id="${escapeAttribute(field)}-label">${escapeHtml(label)}</strong>
+        <div class="combo-subtitle" id="${escapeAttribute(field)}-guidance">${escapeHtml(description)}. Example: <code>${escapeHtml(example)}</code></div>
       </div>
       <span class="known-state" id="${escapeAttribute(field)}-known-state">No override entered.</span>
     </div>
@@ -226,9 +234,11 @@ function renderStyles() {
   `;
 }
 
-function renderClientScript() {
+function renderClientScript(clients = []) {
   return `(function(){
     const UTM_FIELDS=${JSON.stringify(UTM_FIELDS)};
+    const DEFAULT_FIELD_GUIDANCE=${serializeJson(Object.fromEntries(FIELD_GUIDANCE.map((field)=>[field.key,{label:field.label,help:field.meaning,placeholder:field.example}])))};
+    const CLIENT_GUIDANCE=${serializeJson(Object.fromEntries(clients.map((client)=>[client.key,client.guidance||{}])))};
     const form=document.getElementById("builder-form");
     const resultShell=document.getElementById("result-shell");
     const status=document.getElementById("form-status");
@@ -236,9 +246,12 @@ function renderClientScript() {
     const destinationInput=document.getElementById("destination_url");
     const qrInput=document.getElementById("needs_qr");
     const originalRequestInput=document.getElementById("original_request_id");
+    const duplicatedFromInput=document.getElementById("duplicated_from_request_id");
     const campaignLabelInput=document.getElementById("campaign_label");
     const channelSummary=document.getElementById("channel-summary");
     const advancedSummary=document.getElementById("advanced-summary");
+    const clientGuidance=document.getElementById("client-guidance");
+    const clientGuidanceCopy=document.getElementById("client-guidance-copy");
     const knownStateNodes=Object.fromEntries(UTM_FIELDS.map((field)=>[field,document.getElementById(field+"-known-state")]));
     const inputNodes=Object.fromEntries(UTM_FIELDS.map((field)=>[field,document.getElementById("utm_"+field)]));
     const listNodes=Object.fromEntries(UTM_FIELDS.map((field)=>[field,document.getElementById(field+"-suggestions")]));
@@ -246,14 +259,16 @@ function renderClientScript() {
     const state={requestNonce:0};
 
     function queryString(values){const params=new URLSearchParams();Object.entries(values||{}).forEach(([key,value])=>{if(value===null||value===undefined||value===""){return}params.set(key,String(value))});return params.toString()}
-    async function fetchJson(url,options){const response=await fetch(url,options);const body=await response.json();if(!response.ok||body.status!=="ok"){throw new Error(body&&body.error&&body.error.message?body.error.message:"Request failed.")}return body}
+    async function fetchJson(url,options){const response=await fetch(url,options);const body=await response.json();if(!response.ok||body.status!=="ok"){const error=new Error(body&&body.error&&body.error.message?body.error.message:"Request failed.");error.code=body&&body.error?body.error.code:null;error.existing=body&&body.error?body.error.existing:null;throw error}return body}
     function showStatus(message,level){status.textContent=message||"";status.className="status"+(level?" "+level:"")}
+    function showSubmitError(error,fallback){if(error&&error.code==="duplicate_utm"&&error.existing){status.className="status error";status.innerHTML=escapeHtml(error.message)+' <a class="link" href="'+escapeAttribute(error.existing.library_url||"/utms")+'">Open existing link</a>';return}showStatus(error&&error.message?error.message:fallback,"error")}
     function clearStatus(){showStatus("","")}
     function currentSelection(){return{client:clientSelect.value||"",campaign:inputNodes.campaign.value.trim(),source:inputNodes.source.value.trim(),medium:inputNodes.medium.value.trim(),term:inputNodes.term.value.trim(),content:inputNodes.content.value.trim()}}
     function payloadForPreview(){const payload={client:clientSelect.value,destination_url:destinationInput.value.trim(),needs_qr:qrInput.checked};UTM_FIELDS.forEach((field)=>{const value=inputNodes[field].value.trim();if(value){payload["utm_"+field]=value}});return payload}
-    function payloadForSubmit(){const payload=payloadForPreview();if(originalRequestInput&&originalRequestInput.value.trim()){payload.original_request_id=originalRequestInput.value.trim()}if(campaignLabelInput&&campaignLabelInput.value.trim()){payload.campaign_label=campaignLabelInput.value.trim()}return payload}
+    function payloadForSubmit(){const payload=payloadForPreview();if(originalRequestInput&&originalRequestInput.value.trim()){payload.original_request_id=originalRequestInput.value.trim()}if(duplicatedFromInput&&duplicatedFromInput.value.trim()){payload.duplicated_from_request_id=duplicatedFromInput.value.trim()}if(campaignLabelInput&&campaignLabelInput.value.trim()){payload.campaign_label=campaignLabelInput.value.trim()}return payload}
     function updateChannelSummary(){const medium=inputNodes.medium.value.trim().toLowerCase();const source=inputNodes.source.value.trim().toLowerCase();if(medium==="qr_code"||medium==="offline"){channelSummary.textContent="Channel will resolve as QR from the selected medium.";return}if(medium==="website"||medium==="domain"||medium==="email"||medium==="pr"){channelSummary.textContent="Channel will resolve from the selected medium.";return}if(source==="facebook"||source==="instagram"||source==="linked_in"||source==="linkedin"){channelSummary.textContent="Channel will resolve from the selected source.";return}channelSummary.textContent="Channel will resolve from your UTM values."}
     function updateAdvancedSummary(){const activeFields=UTM_FIELDS.filter((field)=>inputNodes[field].value.trim());advancedSummary.textContent=activeFields.length?"Manual values active for: "+activeFields.join(", "):"No manual tracking changes are active."}
+    function updateClientGuidance(){const guidance=CLIENT_GUIDANCE[clientSelect.value]||{};const fields=guidance.fields||{};UTM_FIELDS.forEach((field)=>{const defaults=DEFAULT_FIELD_GUIDANCE[field];const details=fields[field]||{};document.getElementById(field+"-label").textContent=details.label||defaults.label;document.getElementById(field+"-guidance").innerHTML=escapeHtml(details.help||defaults.help)+'. Example: <code>'+escapeHtml(details.placeholder||defaults.placeholder)+'</code>';inputNodes[field].placeholder=details.placeholder||defaults.placeholder});clientGuidanceCopy.textContent=guidance.summary||"";clientGuidance.style.display=guidance.summary?"":"none"}
     function renderKnownState(field){const value=inputNodes[field].value.trim().toLowerCase();const suggestions=suggestionState[field]||[];const exact=suggestions.find((item)=>item.value===value);const node=knownStateNodes[field];if(!value){node.textContent="No override entered.";node.className="known-state";return}if(exact&&exact.known){node.textContent="Known standardized value.";node.className="known-state known";return}node.textContent="Free-text new value.";node.className="known-state new"}
     function closeSuggestions(field){listNodes[field].classList.remove("visible")}
     function closeAllSuggestions(){UTM_FIELDS.forEach(closeSuggestions)}
@@ -263,24 +278,26 @@ function renderClientScript() {
     function renderCounts(context){const list=document.getElementById("count-list");const empty=document.getElementById("count-empty");const fields=context&&context.counts&&context.counts.fields?context.counts.fields:{};const rows=Object.entries(fields).map(([field,details])=>'<div class="count-row"><strong>'+escapeHtml(field)+'</strong><span>'+escapeHtml(String(details.count||0))+' scoped / '+escapeHtml(String(details.global_count||0))+' overall</span></div>');list.innerHTML=rows.join("");empty.style.display=rows.length?"none":"";const comboCopy=document.getElementById("combo-copy");if(context&&context.combination){const summary=context.combination.campaign_summary;comboCopy.textContent=summary?'Exact matches: '+String(context.combination.exact_match_count||0)+'. Campaign "'+summary.campaign+'" has '+String(summary.total_rows||0)+' rows across '+String(summary.unique_sources||0)+' sources and '+String(summary.unique_mediums||0)+' mediums.':'Exact matches: '+String(context.combination.exact_match_count||0)+'.'}}
     function renderHistoryList(targetId,emptyId,items){const list=document.getElementById(targetId);const empty=document.getElementById(emptyId);const rows=(items||[]).map((item)=>{const meta=[item.client?("Client: "+item.client):"",item.term?("Term: "+item.term):"",item.content?("Content: "+item.content):"",item.bitly?("Short link: "+item.bitly):""].filter(Boolean).join(" • ");return '<div class="history-item"><div><strong>'+escapeHtml(item.campaign+" / "+item.source+" / "+item.medium)+'</strong>'+(meta?'<div class="suggestion-help">'+escapeHtml(meta)+'</div>':"")+'<div class="suggestion-help">'+escapeHtml(item.destination_url||"")+'</div></div><span class="pill">'+escapeHtml(item.creation_date||"undated")+'</span></div>'});list.innerHTML=rows.join("");empty.style.display=rows.length?"none":""}
     function renderRecommendations(context){const list=document.getElementById("recommend-list");const empty=document.getElementById("recommend-empty");const recommendations=context&&context.recommendations?context.recommendations:{};const rows=Object.entries(recommendations).filter(([,item])=>item&&item.value).map(([field,item])=>'<span class="pill success">'+escapeHtml(field+": "+item.value+" ("+String(item.count||0)+")")+'</span>');list.innerHTML=rows.join("");empty.style.display=rows.length?"none":""}
+    function renderLoadedSuggestions(){const list=document.getElementById("recommend-list");const empty=document.getElementById("recommend-empty");const rows=[];UTM_FIELDS.forEach((field)=>{(suggestionState[field]||[]).slice(0,3).forEach((item)=>rows.push('<button type="button" class="pill success" data-field="'+escapeAttribute(field)+'" data-value="'+escapeAttribute(item.value)+'">'+escapeHtml(field+": "+item.value+" ("+String(item.count||0)+")")+'</button>'))});list.innerHTML=rows.join("");empty.textContent=clientSelect.value?"No historical standards were found for this client.":"Recommendations appear as you make selections.";empty.style.display=rows.length?"none":""}
+    async function loadClientHistory(){if(!clientSelect.value){renderHistoryList("history-list","history-empty",[]);return}const body=await fetchJson("/new/utm-intelligence/history.json?"+queryString({client:clientSelect.value,limit:6}));renderHistoryList("history-list","history-empty",body.items||[])}
     function renderRelated(context){const list=document.getElementById("related-list");const empty=document.getElementById("related-empty");const termItems=context&&context.related_examples&&context.related_examples.term?context.related_examples.term:[];const contentItems=context&&context.related_examples&&context.related_examples.content?context.related_examples.content:[];const rows=[].concat(termItems.map((item)=>'<span class="pill">term: '+escapeHtml(item.value)+' ('+escapeHtml(String(item.count||0))+')</span>')).concat(contentItems.map((item)=>'<span class="pill">content: '+escapeHtml(item.value)+' ('+escapeHtml(String(item.count||0))+')</span>'));list.innerHTML=rows.join("");empty.style.display=rows.length?"none":""}
     function renderWarnings(preview,context){const list=document.getElementById("warning-list");const empty=document.getElementById("warning-empty");const warnings=[].concat((preview&&preview.resolved&&preview.resolved.warnings)||[]).concat(((context&&context.duplicate_warnings)||[]).map((item)=>item.message)).concat(((context&&context.policy_warnings)||[]).map((item)=>item.message));const unique=Array.from(new Set(warnings.filter(Boolean)));list.innerHTML=unique.map((warning)=>'<span class="pill warning">'+escapeHtml(warning)+'</span>').join("");empty.style.display=unique.length?"none":""}
-    async function refreshContextAndPreview(){const payload=payloadForPreview();if(!(payload.client&&payload.destination_url)){renderPreview(null);renderCounts(null);renderRecommendations(null);renderHistoryList("history-list","history-empty",[]);renderHistoryList("last-year-list","last-year-empty",[]);renderRelated(null);renderWarnings(null,null);clearStatus();return}const nonce=++state.requestNonce;try{const [previewBody,contextBody]=await Promise.all([fetchJson("/new/preview.json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}),fetchJson("/new/utm-intelligence/context.json?"+queryString(payload))]);if(nonce!==state.requestNonce){return}renderPreview(previewBody.preview);renderCounts(contextBody);renderRecommendations(contextBody);renderHistoryList("history-list","history-empty",contextBody.similar_history?contextBody.similar_history.items:[]);renderHistoryList("last-year-list","last-year-empty",contextBody.last_year?contextBody.last_year.items:[]);renderRelated(contextBody);renderWarnings(previewBody.preview,contextBody);updateChannelSummary();clearStatus()}catch(error){if(nonce!==state.requestNonce){return}renderPreview(null);clearStatus()}}
+    async function refreshContextAndPreview(){const payload=payloadForPreview();if(!payload.client){renderPreview(null);renderCounts(null);renderRecommendations(null);renderHistoryList("history-list","history-empty",[]);renderHistoryList("last-year-list","last-year-empty",[]);renderRelated(null);renderWarnings(null,null);clearStatus();return}if(!payload.destination_url){renderPreview(null);renderCounts(null);renderLoadedSuggestions();renderHistoryList("last-year-list","last-year-empty",[]);renderRelated(null);renderWarnings(null,null);clearStatus();return}const nonce=++state.requestNonce;try{const [previewBody,contextBody]=await Promise.all([fetchJson("/new/preview.json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}),fetchJson("/new/utm-intelligence/context.json?"+queryString(payload))]);if(nonce!==state.requestNonce){return}renderPreview(previewBody.preview);renderCounts(contextBody);renderRecommendations(contextBody);renderHistoryList("history-list","history-empty",contextBody.similar_history?contextBody.similar_history.items:[]);renderHistoryList("last-year-list","last-year-empty",contextBody.last_year?contextBody.last_year.items:[]);renderRelated(contextBody);renderWarnings(previewBody.preview,contextBody);updateChannelSummary();clearStatus()}catch(error){if(nonce!==state.requestNonce){return}renderPreview(null);clearStatus()}}
     const debouncedRefresh=debounce(refreshContextAndPreview,220);
 
     document.addEventListener("click",async(event)=>{const suggestion=event.target.closest("[data-field][data-value]");if(suggestion){event.preventDefault();const field=suggestion.getAttribute("data-field");inputNodes[field].value=suggestion.getAttribute("data-value")||"";closeSuggestions(field);updateAdvancedSummary();await loadSuggestions(field,inputNodes[field].value.trim(),false);if(field==="campaign"){await Promise.all([loadSuggestions("source",inputNodes.source.value.trim(),false),loadSuggestions("medium",inputNodes.medium.value.trim(),false),loadSuggestions("term",inputNodes.term.value.trim(),false),loadSuggestions("content",inputNodes.content.value.trim(),false)])}debouncedRefresh();return}const copyButton=event.target.closest("[data-copy]");if(copyButton){event.preventDefault();try{await navigator.clipboard.writeText(copyButton.getAttribute("data-copy")||"");showStatus("Copied to clipboard.","success")}catch{showStatus("Copy failed.","error")}return}if(!event.target.closest(".combo-card")){closeAllSuggestions()}});
-    clientSelect.addEventListener("change",()=>{updateChannelSummary();Promise.all(UTM_FIELDS.map((field)=>loadSuggestions(field,inputNodes[field].value.trim(),false))).then(()=>debouncedRefresh())});
+    clientSelect.addEventListener("change",()=>{updateChannelSummary();updateClientGuidance();Promise.all(UTM_FIELDS.map((field)=>loadSuggestions(field,inputNodes[field].value.trim(),false))).then(()=>{renderLoadedSuggestions();return loadClientHistory()}).then(()=>{if(clientSelect.value){inputNodes.campaign.focus();return loadSuggestions("campaign",inputNodes.campaign.value.trim(),true)}}).then(()=>debouncedRefresh()).catch((error)=>showStatus(error.message,"error"))});
     destinationInput.addEventListener("input",debouncedRefresh);
     qrInput.addEventListener("change",debouncedRefresh);
     UTM_FIELDS.forEach((field)=>{inputNodes[field].addEventListener("focus",()=>{loadSuggestions(field,inputNodes[field].value.trim(),true).catch(()=>{})});inputNodes[field].addEventListener("input",async()=>{updateAdvancedSummary();updateChannelSummary();await loadSuggestions(field,inputNodes[field].value.trim(),true);if(field==="campaign"){await Promise.all([loadSuggestions("source",inputNodes.source.value.trim(),false),loadSuggestions("medium",inputNodes.medium.value.trim(),false),loadSuggestions("term",inputNodes.term.value.trim(),false),loadSuggestions("content",inputNodes.content.value.trim(),false)])}debouncedRefresh()})});
-    form.addEventListener("reset",()=>{window.setTimeout(()=>{closeAllSuggestions();showStatus("","");resultShell.classList.remove("visible");updateChannelSummary();updateAdvancedSummary();UTM_FIELDS.forEach((field)=>renderSuggestions(field,[],""));refreshContextAndPreview().catch(()=>{})},0)});
-    form.addEventListener("submit",async(event)=>{event.preventDefault();if(!form.reportValidity()){return}const submitButton=form.querySelector("[data-submit]");const payload=payloadForSubmit();const editing=Boolean(payload.original_request_id);showStatus(editing?"Saving changes...":"Creating link...","");submitButton.disabled=true;try{const body=await fetchJson("/new",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});renderResult(body.result);showStatus(body.result.status==="completed_without_short_link"?(editing?"Updated link saved. The short link could not be created because the Bitly quota was reached.":"Tracked link created. The short link could not be created because the Bitly quota was reached."):(editing?"Changes saved.":"Link created."),"success")}catch(error){showStatus(error.message||(editing?"Unable to save changes right now.":"Unable to create the link right now."),"error")}finally{submitButton.disabled=false}});
+    form.addEventListener("reset",()=>{window.setTimeout(()=>{closeAllSuggestions();showStatus("","");resultShell.classList.remove("visible");updateChannelSummary();updateAdvancedSummary();updateClientGuidance();UTM_FIELDS.forEach((field)=>renderSuggestions(field,[],""));refreshContextAndPreview().catch(()=>{})},0)});
+    form.addEventListener("submit",async(event)=>{event.preventDefault();if(!form.reportValidity()){return}const submitButton=form.querySelector("[data-submit]");const payload=payloadForSubmit();const editing=Boolean(payload.original_request_id);showStatus(editing?"Saving changes...":"Creating link...","");submitButton.disabled=true;try{const body=await fetchJson("/new",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});renderResult(body.result);showStatus(body.result.status==="completed_without_short_link"?(body.result.short_link_warning||"Tracked link saved without a short link."):(editing?"Changes saved.":"Link created."),body.result.status==="completed_without_short_link"?"warning":"success")}catch(error){showSubmitError(error,editing?"Unable to save changes right now.":"Unable to create the link right now.")}finally{submitButton.disabled=false}});
     function renderResult(payload){document.getElementById("result-title").textContent=payload.message;document.getElementById("result-subtitle").textContent=payload.client_display_name+" | "+payload.channel_display_name;document.getElementById("result-links").innerHTML=[renderLinkItem("Tracked link",payload.tracked_url,"Tracked link not available."),renderLinkItem("Short link",payload.short_url,"Short link not available for this link."),renderLinkItem("QR code",payload.qr_url,"QR code not requested for this link.")].join("");document.getElementById("result-utm-grid").innerHTML=[["Source",payload.utm_source],["Medium",payload.utm_medium],["Campaign",payload.utm_campaign],["Term",payload.utm_term===""?"(empty)":payload.utm_term],["Content",payload.utm_content===""?"(empty)":payload.utm_content]].map((entry)=>'<div class="utm-item"><strong>'+escapeHtml(entry[0])+'</strong><div class="utm-value">'+escapeHtml(entry[1]||"--")+'</div></div>').join("");document.getElementById("result-actions").innerHTML=[payload.tracked_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.tracked_url)+'">Copy tracked link</button>':"",payload.short_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.short_url)+'">Copy short link</button>':"",payload.qr_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.qr_url)+'">Copy QR link</button>':"",payload.library_url?'<a class="ghost-button" href="'+escapeAttribute(payload.library_url)+'">Open in library</a>':""].join("");document.getElementById("result-warnings").innerHTML=(payload.warnings||[]).map((warning)=>'<span class="pill warning">'+escapeHtml(warning)+'</span>').join("");resultShell.classList.add("visible");resultShell.scrollIntoView({behavior:"smooth",block:"start"})}
     function renderLinkItem(label,value,emptyMessage){if(!value){return '<div class="link-item"><div class="link-label">'+escapeHtml(label)+'</div><div class="empty">'+escapeHtml(emptyMessage)+'</div></div>'}return '<div class="link-item"><div class="link-label">'+escapeHtml(label)+'</div><a class="link-value" href="'+escapeAttribute(value)+'" target="_blank" rel="noreferrer">'+escapeHtml(value)+'</a></div>'}
     function debounce(fn,waitMs){let timer=null;return function(){clearTimeout(timer);timer=window.setTimeout(()=>fn.apply(null,arguments),waitMs)}}
     function escapeHtml(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
     function escapeAttribute(value){return escapeHtml(value)}
-    updateChannelSummary();updateAdvancedSummary();UTM_FIELDS.forEach((field)=>renderSuggestions(field,[],""));refreshContextAndPreview().catch(()=>{})
+    updateChannelSummary();updateAdvancedSummary();updateClientGuidance();UTM_FIELDS.forEach((field)=>renderSuggestions(field,[],""));refreshContextAndPreview().catch(()=>{})
   })();`;
 }
 

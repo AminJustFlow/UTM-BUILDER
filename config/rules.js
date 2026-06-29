@@ -32,7 +32,22 @@ const manualClients = {
     displayName: "Castle In The Clouds",
     aliases: ["castle", "castle in the clouds", "castleintheclouds", "cic"],
     domains: ["castleintheclouds.org"],
-    taxonomyKey: "cic"
+    taxonomyKey: "cic",
+    guidance: {
+      summary: "Castle uses Term and Content to keep publication advertising consistent across placements and issues.",
+      fields: {
+        term: {
+          label: "Campaign Term — Publication Name",
+          help: "Enter the publication carrying the advertisement.",
+          placeholder: "new_hampshire_magazine"
+        },
+        content: {
+          label: "Campaign Content — Issue Name",
+          help: "Enter the publication issue or edition.",
+          placeholder: "spring_2026"
+        }
+      }
+    }
   },
   "900": {
     displayName: "900",

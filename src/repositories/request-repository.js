@@ -61,6 +61,44 @@ export class RequestRepository {
     `, { fingerprint }) ?? null;
   }
 
+  async findExactUtmDuplicateAsync(normalized) {
+    const destinationExpr = jsonFieldExpression("normalized_payload", "normalized_destination_url", this.database.client);
+    const sourceExpr = jsonFieldExpression("normalized_payload", "utm_source", this.database.client);
+    const mediumExpr = jsonFieldExpression("normalized_payload", "utm_medium", this.database.client);
+    const campaignExpr = jsonFieldExpression("normalized_payload", "utm_campaign", this.database.client);
+    const termExpr = jsonFieldExpression("normalized_payload", "utm_term", this.database.client);
+    const contentExpr = jsonFieldExpression("normalized_payload", "utm_content", this.database.client);
+    return await this.database.getAsync(`
+      SELECT *
+      FROM requests
+      WHERE status IN ('normalized', 'completed', 'completed_without_short_link')
+        AND COALESCE(${destinationExpr}, '') = :destination
+        AND COALESCE(${sourceExpr}, '') = :source
+        AND COALESCE(${mediumExpr}, '') = :medium
+        AND COALESCE(${campaignExpr}, '') = :campaign
+        AND COALESCE(${termExpr}, '') = :term
+        AND COALESCE(${contentExpr}, '') = :content
+      ORDER BY created_at DESC, id DESC
+      LIMIT 1
+    `, {
+      destination: normalized.normalizedDestinationUrl,
+      source: normalized.utmSource ?? "",
+      medium: normalized.utmMedium ?? "",
+      campaign: normalized.utmCampaign ?? normalized.canonicalCampaign ?? "",
+      term: normalized.utmTerm ?? "",
+      content: normalized.utmContent ?? ""
+    }) ?? null;
+  }
+
+  async deleteByIdAsync(id) {
+    if (typeof this.database.runAsync !== "function") {
+      const result = syncRun(this.database, "DELETE FROM requests WHERE id = :id", { id });
+      return Number(result.changes ?? 0);
+    }
+    const result = await this.database.runAsync("DELETE FROM requests WHERE id = :id", { id });
+    return Number(result.changes ?? 0);
+  }
+
   findLatestByShortUrl(shortUrl) {
     const normalized = normalizeShortUrl(shortUrl);
     if (!normalized) {

@@ -7,12 +7,14 @@ export class LinkGenerationService {
     generatedLinkRepository,
     bitlyService,
     qrCodeService,
-    urlService = new UrlService()
+    urlService = new UrlService(),
+    logger = null
   }) {
     this.generatedLinkRepository = generatedLinkRepository;
     this.bitlyService = bitlyService;
     this.qrCodeService = qrCodeService;
     this.urlService = urlService;
+    this.logger = logger;
   }
 
   async generate(normalized, fingerprint) {
@@ -121,9 +123,20 @@ export class LinkGenerationService {
         degraded: false
       };
     } catch (error) {
-      if (!this.shouldDegradeBitlyFailure(error)) {
+      const degradation = this.classifyBitlyFailure(error);
+      if (!degradation) {
         throw error;
       }
+
+      this.logger?.warning?.("Bitly short-link creation degraded to the tracked URL.", {
+        reason: degradation.reason,
+        error_name: error?.name ?? "Error",
+        error_code: error?.code ?? null,
+        status_code: error?.statusCode ?? null,
+        error_message: error?.message ?? "Unknown Bitly failure",
+        cause_name: error?.cause?.name ?? null,
+        cause_message: error?.cause?.message ?? null
+      });
 
       const qrUrl = normalized.needsQr ? this.qrCodeService.generateUrl(trackedLongUrl) : null;
       return {
@@ -140,16 +153,46 @@ export class LinkGenerationService {
         bitlyId: null,
         bitlyPayload: error.responseBody ?? {},
         degraded: true,
-        degradedReason: "bitly_quota_reached",
-        degradedMessage: error.message
+        degradedReason: degradation.reason,
+        degradedMessage: degradation.message
       };
     }
   }
 
-  shouldDegradeBitlyFailure(error) {
-    return error instanceof BitlyError
-      && error.statusCode === 429
-      && error.code === "MONTHLY_ENCODE_LIMIT_REACHED";
+  classifyBitlyFailure(error) {
+    if (!(error instanceof BitlyError)) {
+      return null;
+    }
+    if (error.code === "BITLY_NOT_CONFIGURED") {
+      return {
+        reason: "bitly_not_configured",
+        message: "Bitly is not configured, so no short link was created."
+      };
+    }
+    if (error.statusCode === 401 || error.statusCode === 403) {
+      return {
+        reason: "bitly_authentication_failed",
+        message: "Bitly authentication failed, so no short link was created."
+      };
+    }
+    if (error.statusCode === 429) {
+      return {
+        reason: "bitly_quota_reached",
+        message: "Bitly quota was reached, so no short link was created."
+      };
+    }
+    if (
+      error.code === "BITLY_TIMEOUT"
+      || error.code === "BITLY_NETWORK_ERROR"
+      || error.code === "BITLY_INVALID_RESPONSE"
+      || Number(error.statusCode) >= 500
+    ) {
+      return {
+        reason: "bitly_unavailable",
+        message: "Bitly is temporarily unavailable, so no short link was created."
+      };
+    }
+    return null;
   }
 
   async ensureQr(existing, normalized) {

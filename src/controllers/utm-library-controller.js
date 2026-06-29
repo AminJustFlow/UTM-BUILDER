@@ -176,6 +176,7 @@ function renderHtml(view) {
             <div class="page-actions">
               <span class="badge"><strong class="num">${activeFilterCount}</strong> active filter${activeFilterCount === 1 ? "" : "s"}</span>
               <a class="btn" href="/new">${renderIcon("link")} New Link</a>
+              <a class="btn" href="/imports">${renderIcon("download")} Import CSV</a>
               <a class="btn" href="${csvHref}">${renderIcon("download")} Download CSV</a>
               <a class="btn" href="${jsonHref}">${renderIcon("download")} Download JSON</a>
             </div>
@@ -566,6 +567,7 @@ function renderResultCard(item, { highlightRequestId }) {
         <div class="card-sub">${escapeHtml(subtitleParts.join(" - "))}</div>
       </div>
       <div class="chips">
+        <a class="mini-button" href="/new?duplicate_request_id=${escapeAttribute(item.requestId)}">Duplicate</a>
         <button type="button" class="danger-button mini" data-delete-request-id="${escapeAttribute(item.requestId)}">Delete Link</button>
         ${renderChip(item.assetType)}
         ${renderStatusChip(item.status)}

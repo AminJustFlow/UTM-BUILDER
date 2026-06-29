@@ -13,6 +13,7 @@ import { MigrationRunner } from "./migration-runner.js";
 import { AppLoginController } from "../controllers/app-login-controller.js";
 import { UtmBuilderController } from "../controllers/utm-builder-controller.js";
 import { UtmLibraryController } from "../controllers/utm-library-controller.js";
+import { UtmImportController } from "../controllers/utm-import-controller.js";
 import { GeneratedLinkRepository } from "../repositories/generated-link-repository.js";
 import { RequestRepository } from "../repositories/request-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
@@ -26,6 +27,7 @@ import { UrlService } from "../services/url-service.js";
 import { UtmIntelligenceService } from "../services/utm-intelligence-service.js";
 import { UtmLibraryEditorService } from "../services/utm-library-editor-service.js";
 import { UtmLibraryService } from "../services/utm-library-service.js";
+import { UtmCsvImportService } from "../services/utm-csv-import-service.js";
 
 export async function createUtmBuilderApplication(projectRoot) {
   loadEnvFile(path.join(projectRoot, ".env"));
@@ -48,20 +50,23 @@ export async function createUtmBuilderApplication(projectRoot) {
   const requestRepository = new RequestRepository(database);
   const generatedLinkRepository = new GeneratedLinkRepository(database);
   const rulesService = new RulesService(rules);
+  const urlService = new UrlService();
+  const fingerprintService = new FingerprintService();
   const requestNormalizer = new RequestNormalizer(
     rulesService,
-    new UrlService(),
+    urlService,
     config.app.confidenceThreshold
   );
   const linkGenerationService = new LinkGenerationService({
     generatedLinkRepository,
     bitlyService: new BitlyService(new HttpClient(), config.bitly),
-    qrCodeService: new QrCodeService(config.qr)
+    qrCodeService: new QrCodeService(config.qr),
+    logger
   });
   const utmLibraryEditorService = new UtmLibraryEditorService({
     requestRepository,
     requestNormalizer,
-    fingerprintService: new FingerprintService(),
+    fingerprintService,
     linkGenerationService,
     generatedLinkRepository
   });
@@ -71,6 +76,12 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository
   });
   const utmLibraryService = new UtmLibraryService(requestRepository, { logger });
+  const utmCsvImportService = new UtmCsvImportService({
+    requestRepository,
+    generatedLinkRepository,
+    fingerprintService,
+    urlService
+  });
   const utmBuilderController = new UtmBuilderController({
     utmLibraryEditorService,
     utmLibraryService,
@@ -86,6 +97,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     utmIntelligenceService,
     standalone: true
   });
+  const utmImportController = new UtmImportController({ utmCsvImportService });
   const auth = new AppSessionAuthService({
     enabled: config.libraryAuth.enabled,
     username: config.libraryAuth.username,
@@ -123,6 +135,8 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("POST", "/utms/delete", protect((request) => utmLibraryController.handleDelete(request)));
+  router.add("GET", "/imports", protect(() => utmImportController.handleHtml()));
+  router.add("POST", "/imports", protect((request) => utmImportController.handleImport(request)));
 
   return new Application(router, migrationRunner, config, {
     start: async () => {},

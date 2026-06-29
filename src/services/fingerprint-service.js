@@ -14,4 +14,15 @@ export class FingerprintService {
       utm_content: normalizedRequest.utmContent
     })).digest("hex");
   }
+
+  generateUtmIdentity(normalizedRequest) {
+    return crypto.createHash("sha256").update(JSON.stringify({
+      normalized_destination_url: normalizedRequest.normalizedDestinationUrl,
+      utm_source: normalizedRequest.utmSource ?? "",
+      utm_medium: normalizedRequest.utmMedium ?? "",
+      utm_campaign: normalizedRequest.utmCampaign ?? normalizedRequest.canonicalCampaign ?? "",
+      utm_term: normalizedRequest.utmTerm ?? "",
+      utm_content: normalizedRequest.utmContent ?? ""
+    })).digest("hex");
+  }
 }

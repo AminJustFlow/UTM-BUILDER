@@ -109,12 +109,13 @@ export class UtmIntelligenceService {
     const filters = this.normalizeSelection(input);
     const scopedRows = this.scopeRows(filters);
     const limit = clampNumber(input.limit, DEFAULT_HISTORY_LIMIT, 1, 20);
+    const hasTrackingSelection = UTM_FIELDS.some((field) => Boolean(filters[field]));
     const examples = scopedRows
       .map((row) => ({
         row,
         score: similarityScore(row, filters)
       }))
-      .filter((entry) => entry.score > 0)
+      .filter((entry) => !hasTrackingSelection || entry.score > 0)
       .sort((left, right) => right.score - left.score || compareDatesDesc(left.row.creationDate, right.row.creationDate))
       .slice(0, limit)
       .map((entry) => this.serializeHistoryRow(entry.row, entry.score));

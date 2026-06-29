@@ -113,6 +113,11 @@ export class UtmLibraryEditorService {
 
     const normalized = decision.normalizedRequest;
     const fingerprint = this.fingerprintService.generate(normalized);
+    const utmIdentityKey = this.fingerprintService.generateUtmIdentity(normalized);
+    const existingDuplicate = await this.requestRepository.findExactUtmDuplicateAsync(normalized);
+    if (existingDuplicate) {
+      return duplicateFailure(existingDuplicate);
+    }
     const timestamp = new Date().toISOString();
     const requestId = await (this.requestRepository.createIncomingAsync?.({
       requestUuid: crypto.randomUUID(),
@@ -122,6 +127,7 @@ export class UtmLibraryEditorService {
       rawPayload: {
         source: context.requestSource,
         original_request_id: input.original_request_id ?? null,
+        duplicated_from_request_id: input.duplicated_from_request_id ?? null,
         submitted_values: {
           client: input.client ?? null,
           channel: input.channel ?? null,
@@ -147,6 +153,7 @@ export class UtmLibraryEditorService {
       rawPayload: {
         source: context.requestSource,
         original_request_id: input.original_request_id ?? null,
+        duplicated_from_request_id: input.duplicated_from_request_id ?? null,
         submitted_values: {
           client: input.client ?? null,
           channel: input.channel ?? null,
@@ -178,17 +185,28 @@ export class UtmLibraryEditorService {
       missing_fields: parsed.missingFields
     }));
 
-    await (this.requestRepository.updateAsync?.(requestId, {
-      status: "normalized",
-      normalized_payload: normalized.toJSON(),
-      fingerprint,
-      final_long_url: normalized.finalLongUrl
-    }) ?? this.requestRepository.update(requestId, {
-      status: "normalized",
-      normalized_payload: normalized.toJSON(),
-      fingerprint,
-      final_long_url: normalized.finalLongUrl
-    }));
+    try {
+      await (this.requestRepository.updateAsync?.(requestId, {
+        status: "normalized",
+        normalized_payload: normalized.toJSON(),
+        fingerprint,
+        utm_identity_key: utmIdentityKey,
+        final_long_url: normalized.finalLongUrl
+      }) ?? this.requestRepository.update(requestId, {
+        status: "normalized",
+        normalized_payload: normalized.toJSON(),
+        fingerprint,
+        utm_identity_key: utmIdentityKey,
+        final_long_url: normalized.finalLongUrl
+      }));
+    } catch (error) {
+      const raceDuplicate = await this.requestRepository.findExactUtmDuplicateAsync(normalized);
+      if (!raceDuplicate || Number(raceDuplicate.id) === Number(requestId)) {
+        throw error;
+      }
+      await this.requestRepository.deleteByIdAsync(requestId);
+      return duplicateFailure(raceDuplicate);
+    }
 
     try {
       const generation = await this.linkGenerationService.generate(normalized, fingerprint);
@@ -197,7 +215,7 @@ export class UtmLibraryEditorService {
         const warnings = [
           ...new Set([
             ...normalized.warnings,
-            "Bitly monthly quota was reached, so no short link was created."
+            generation.degradedMessage
           ])
         ];
         normalized.warnings = warnings;
@@ -225,7 +243,9 @@ export class UtmLibraryEditorService {
           requestId,
           status: "completed_without_short_link",
           normalized,
-          result: generation.result
+          result: generation.result,
+          degradedReason: generation.degradedReason,
+          degradedMessage: generation.degradedMessage
         };
       }
 
@@ -303,4 +323,29 @@ function normalizeNullable(value) {
 function positiveInteger(value, fallback) {
   const parsed = Number.parseInt(String(value ?? ""), 10);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function duplicateFailure(existing) {
+  const normalized = safeJsonObject(existing.normalized_payload);
+  return {
+    ok: false,
+    statusCode: 409,
+    code: "duplicate_utm",
+    message: "This destination URL already has a link with the same five UTM values.",
+    existing: {
+      request_id: Number(existing.id),
+      tracked_url: existing.final_long_url ?? normalized.final_long_url ?? "",
+      short_url: existing.short_url ?? "",
+      library_url: `/utms?highlight_request_id=${encodeURIComponent(String(existing.id))}`
+    }
+  };
+}
+
+function safeJsonObject(value) {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
 }
