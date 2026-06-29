@@ -27,10 +27,11 @@ export default {
     baseUrl: "https://api.qrserver.com/v1/create-qr-code/",
     size: "300x300"
   },
-  libraryAuth: {
-    enabled: false,
+  auth: {
+    sessionTtlSeconds: 60 * 60 * 12
+  },
+  setup: {
     username: "",
-    password: "",
-    realm: "Just Flow Marketing Hub"
+    password: ""
   }
 };

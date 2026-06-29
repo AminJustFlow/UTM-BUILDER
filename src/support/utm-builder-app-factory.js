@@ -11,12 +11,19 @@ import { loadEnvFile } from "./env-loader.js";
 import { Logger } from "./logger.js";
 import { MigrationRunner } from "./migration-runner.js";
 import { AppLoginController } from "../controllers/app-login-controller.js";
+import { AccountController } from "../controllers/account-controller.js";
+import { SetupConsoleController } from "../controllers/setup-console-controller.js";
+import { UserAdminController } from "../controllers/user-admin-controller.js";
 import { UtmBuilderController } from "../controllers/utm-builder-controller.js";
 import { UtmLibraryController } from "../controllers/utm-library-controller.js";
 import { UtmImportController } from "../controllers/utm-import-controller.js";
 import { GeneratedLinkRepository } from "../repositories/generated-link-repository.js";
 import { RequestRepository } from "../repositories/request-repository.js";
+import { LinkAuditRepository } from "../repositories/link-audit-repository.js";
+import { UserRepository } from "../repositories/user-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
+import { SetupConsoleAuthService } from "../services/setup-console-auth-service.js";
+import { UserAccountService } from "../services/user-account-service.js";
 import { BitlyService } from "../services/bitly-service.js";
 import { FingerprintService } from "../services/fingerprint-service.js";
 import { LinkGenerationService } from "../services/link-generation-service.js";
@@ -49,6 +56,9 @@ export async function createUtmBuilderApplication(projectRoot) {
 
   const requestRepository = new RequestRepository(database);
   const generatedLinkRepository = new GeneratedLinkRepository(database);
+  const linkAuditRepository = new LinkAuditRepository(database);
+  const userRepository = new UserRepository(database);
+  const userAccountService = new UserAccountService({ userRepository });
   const rulesService = new RulesService(rules);
   const urlService = new UrlService();
   const fingerprintService = new FingerprintService();
@@ -68,7 +78,8 @@ export async function createUtmBuilderApplication(projectRoot) {
     requestNormalizer,
     fingerprintService,
     linkGenerationService,
-    generatedLinkRepository
+    generatedLinkRepository,
+    linkAuditRepository
   });
   const utmIntelligenceService = new UtmIntelligenceService({
     projectRoot,
@@ -80,7 +91,8 @@ export async function createUtmBuilderApplication(projectRoot) {
     requestRepository,
     generatedLinkRepository,
     fingerprintService,
-    urlService
+    urlService,
+    linkAuditRepository
   });
   const utmBuilderController = new UtmBuilderController({
     utmLibraryEditorService,
@@ -95,24 +107,64 @@ export async function createUtmBuilderApplication(projectRoot) {
     utmLibraryEditorService,
     rulesService,
     utmIntelligenceService,
+    linkAuditRepository,
     standalone: true
   });
   const utmImportController = new UtmImportController({ utmCsvImportService });
   const auth = new AppSessionAuthService({
-    enabled: config.libraryAuth.enabled,
-    username: config.libraryAuth.username,
-    password: config.libraryAuth.password,
-    realm: config.libraryAuth.realm,
-    cookieSecret: config.authCookieSecret
+    userRepository,
+    sessionTtlSeconds: config.auth.sessionTtlSeconds,
+    cookieSecret: config.auth.cookieSecret
+  });
+  const setupConsoleAuthService = new SetupConsoleAuthService({
+    username: config.setup.username,
+    password: config.setup.password,
+    cookieSecret: config.auth.cookieSecret
   });
   const login = new AppLoginController({ appSessionAuthService: auth, defaultPath: "/new" });
+  const setupConsoleController = new SetupConsoleController({ setupConsoleAuthService, userAccountService });
+  const userAdminController = new UserAdminController({ userAccountService });
+  const accountController = new AccountController({ userAccountService });
+
+  const totalUsers = await userRepository.countAll();
+  if (totalUsers === 0 && !setupConsoleAuthService.enabled) {
+    logger.warning?.("No user accounts exist and the setup console is disabled. Set SETUP_ADMIN_USERNAME and SETUP_ADMIN_PASSWORD in .env to create the first administrator.");
+  }
+
   const router = new Router();
+  const wantsHtml = (request) => request.method === "GET"
+    && !request.path.endsWith(".json")
+    && !request.path.endsWith(".csv");
   const protect = (handler) => async (request) => {
-    if (!auth.enabled || auth.isAuthenticated(request)) return handler(request);
-    if (request.method === "GET" && !request.path.endsWith(".json") && !request.path.endsWith(".csv")) {
-      return NodeResponse.redirect(`/login?${new URLSearchParams({ return_to: request.path }).toString()}`);
+    const user = await auth.loadUser(request);
+    if (!user) {
+      if (wantsHtml(request)) {
+        return NodeResponse.redirect(`/login?${new URLSearchParams({ return_to: request.path }).toString()}`);
+      }
+      return NodeResponse.json({ status: "error", error: { code: "auth_required", message: "Sign in is required." } }, 401);
     }
-    return NodeResponse.json({ status: "error", error: { code: "auth_required", message: "Sign in is required." } }, 401);
+    request.user = {
+      id: Number(user.id),
+      username: user.username,
+      displayName: user.display_name,
+      role: user.role
+    };
+    return handler(request);
+  };
+  const requireAdmin = (handler) => protect((request) => {
+    if (request.user.role !== "admin") {
+      if (wantsHtml(request)) {
+        return NodeResponse.text("Forbidden: administrator access is required.", 403, { "Content-Type": "text/plain; charset=utf-8" });
+      }
+      return NodeResponse.json({ status: "error", error: { code: "forbidden", message: "Administrator access is required." } }, 403);
+    }
+    return handler(request);
+  });
+  const requireSetup = (handler) => async (request) => {
+    if (!setupConsoleAuthService.isUnlocked(request)) {
+      return NodeResponse.redirect("/setup");
+    }
+    return handler(request);
   };
 
   router.add("GET", "/", () => NodeResponse.redirect("/new"));
@@ -120,6 +172,20 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("GET", "/login", (request) => login.handleHtml(request));
   router.add("POST", "/login", (request) => login.handleLogin(request));
   router.add("POST", "/logout", (request) => login.handleLogout(request));
+  router.add("GET", "/setup", (request) => setupConsoleController.handleHtml(request));
+  router.add("POST", "/setup/login", (request) => setupConsoleController.handleLogin(request));
+  router.add("POST", "/setup/logout", (request) => setupConsoleController.handleLogout(request));
+  router.add("POST", "/setup/admins", requireSetup((request) => setupConsoleController.handleCreateAdmin(request)));
+  router.add("POST", "/setup/admins/update", requireSetup((request) => setupConsoleController.handleUpdateAdmin(request)));
+  router.add("POST", "/setup/admins/reset-password", requireSetup((request) => setupConsoleController.handleResetPassword(request)));
+  router.add("POST", "/setup/admins/delete", requireSetup((request) => setupConsoleController.handleDeleteAdmin(request)));
+  router.add("GET", "/users", requireAdmin((request) => userAdminController.handleHtml(request)));
+  router.add("POST", "/users", requireAdmin((request) => userAdminController.handleCreate(request)));
+  router.add("POST", "/users/update", requireAdmin((request) => userAdminController.handleUpdate(request)));
+  router.add("POST", "/users/reset-password", requireAdmin((request) => userAdminController.handleResetPassword(request)));
+  router.add("POST", "/users/delete", requireAdmin((request) => userAdminController.handleDelete(request)));
+  router.add("GET", "/account", protect((request) => accountController.handleHtml(request)));
+  router.add("POST", "/account/password", protect((request) => accountController.handlePassword(request)));
   router.add("GET", "/new", protect((request) => utmBuilderController.handleHtml(request)));
   router.add("POST", "/new", protect((request) => utmBuilderController.handleCreate(request)));
   router.add("POST", "/new/preview.json", protect((request) => utmBuilderController.handlePreview(request)));
@@ -134,8 +200,9 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("GET", "/utms", protect((request) => utmLibraryController.handleHtml(request)));
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
+  router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));
   router.add("POST", "/utms/delete", protect((request) => utmLibraryController.handleDelete(request)));
-  router.add("GET", "/imports", protect(() => utmImportController.handleHtml()));
+  router.add("GET", "/imports", protect((request) => utmImportController.handleHtml(request)));
   router.add("POST", "/imports", protect((request) => utmImportController.handleImport(request)));
 
   return new Application(router, migrationRunner, config, {
@@ -173,13 +240,14 @@ function resolveConfig(projectRoot) {
       timeoutMs: Number(process.env.BITLY_TIMEOUT_MS ?? baseConfig.bitly.timeoutMs)
     },
     qr: { baseUrl: process.env.QR_BASE_URL ?? baseConfig.qr.baseUrl, size: process.env.QR_SIZE ?? baseConfig.qr.size },
-    libraryAuth: {
-      enabled: parseBoolean(process.env.LIBRARY_AUTH_ENABLED, baseConfig.libraryAuth.enabled),
-      username: process.env.LIBRARY_AUTH_USERNAME ?? "",
-      password: process.env.LIBRARY_AUTH_PASSWORD ?? "",
-      realm: process.env.LIBRARY_AUTH_REALM ?? baseConfig.libraryAuth.realm
+    auth: {
+      cookieSecret: process.env.TRACKING_SECRET_ENCRYPTION_KEY ?? "",
+      sessionTtlSeconds: Number(process.env.SESSION_TTL_SECONDS ?? baseConfig.auth.sessionTtlSeconds)
     },
-    authCookieSecret: process.env.TRACKING_SECRET_ENCRYPTION_KEY ?? ""
+    setup: {
+      username: process.env.SETUP_ADMIN_USERNAME ?? "",
+      password: process.env.SETUP_ADMIN_PASSWORD ?? ""
+    }
   };
 }
 

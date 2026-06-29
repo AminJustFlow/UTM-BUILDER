@@ -491,9 +491,25 @@ export class UtmLibraryService {
       requestCount: Number(overrides.requestCount ?? row.request_count ?? 1),
       firstCreatedAt: overrides.firstCreatedAt ?? row.first_created_at ?? row.created_at,
       lastCreatedAt: overrides.lastCreatedAt ?? row.last_created_at ?? row.created_at,
+      lastEditedByName: friendlyActorName(row.source_user_name),
+      lastEditedAt: overrides.lastCreatedAt ?? row.updated_at ?? row.last_created_at ?? row.created_at,
       reusedExisting: Number(row.reused_existing ?? 0) === 1
     };
   }
+}
+
+export function friendlyActorName(name) {
+  const value = String(name ?? "").trim();
+  if (!value) {
+    return "System";
+  }
+  if (value === "UTM Builder" || value === "UTM Library") {
+    return "System";
+  }
+  if (value === "CSV Import") {
+    return "Imported";
+  }
+  return value;
 }
 
 function safeJsonParse(value) {

@@ -7,19 +7,56 @@ const databasePath = "storage/database/utm-builder-smoke.sqlite";
 process.env.DATABASE_CLIENT = "sqlite";
 process.env.DATABASE_PATH = databasePath;
 process.env.PORT = "3199";
-process.env.LIBRARY_AUTH_ENABLED = "false";
+process.env.SETUP_ADMIN_USERNAME = "setupadmin";
+process.env.SETUP_ADMIN_PASSWORD = "setup-pass-123";
+process.env.TRACKING_SECRET_ENCRYPTION_KEY = "smoke-test-cookie-secret";
 for (const suffix of ["", "-shm", "-wal"]) {
   fs.rmSync(`${databasePath}${suffix}`, { force: true });
 }
 
+const base = "http://127.0.0.1:3199";
+
+function cookieValue(response, name) {
+  const raw = response.headers.get("set-cookie") ?? "";
+  const match = raw.match(new RegExp(`${name}=([^;]*)`, "u"));
+  return match ? `${name}=${match[1]}` : "";
+}
+
 const instance = await startUtmBuilderServer(process.cwd());
+let sessionCookie = "";
+const af = (path, options = {}) => fetch(`${base}${path}`, {
+  ...options,
+  headers: { ...(options.headers ?? {}), Cookie: sessionCookie }
+});
 try {
-  const health = await (await fetch("http://127.0.0.1:3199/health")).json();
-  const builderResponse = await fetch("http://127.0.0.1:3199/new");
+  const setupLogin = await fetch(`${base}/setup/login`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ username: "setupadmin", password: "setup-pass-123" }).toString()
+  });
+  const setupCookie = cookieValue(setupLogin, "jf_setup_session");
+  const createAdmin = await fetch(`${base}/setup/admins`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: setupCookie },
+    body: new URLSearchParams({ display_name: "Smoke Admin", username: "smokeadmin", password: "smoke-pass-123" }).toString()
+  });
+  const adminLogin = await fetch(`${base}/login`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ username: "smokeadmin", password: "smoke-pass-123" }).toString()
+  });
+  sessionCookie = cookieValue(adminLogin, "jf_app_session");
+  const unauthenticated = await fetch(`${base}/utms.json`, { redirect: "manual" });
+
+  const health = await (await fetch(`${base}/health`)).json();
+  const builderResponse = await af("/new");
   const builderHtml = await builderResponse.text();
-  const suggestions = await (await fetch("http://127.0.0.1:3199/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
-  const history = await (await fetch("http://127.0.0.1:3199/new/utm-intelligence/history.json?client=jf")).json();
-  const createResponse = await fetch("http://127.0.0.1:3199/new", {
+  const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
+  const history = await (await af("/new/utm-intelligence/history.json?client=jf")).json();
+  const createResponse = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -34,7 +71,7 @@ try {
     })
   });
   const created = await createResponse.json();
-  const duplicateResponseExact = await fetch("http://127.0.0.1:3199/new", {
+  const duplicateResponseExact = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -49,10 +86,10 @@ try {
     })
   });
   const exactDuplicate = await duplicateResponseExact.json();
-  const duplicatePage = await fetch(`http://127.0.0.1:3199/new?duplicate_request_id=${created.result?.request_id}`);
+  const duplicatePage = await af(`/new?duplicate_request_id=${created.result?.request_id}`);
   const duplicateHtml = await duplicatePage.text();
-  const missingDuplicatePage = await fetch("http://127.0.0.1:3199/new?duplicate_request_id=99999999");
-  const changedCopyResponse = await fetch("http://127.0.0.1:3199/new", {
+  const missingDuplicatePage = await af("/new?duplicate_request_id=99999999");
+  const changedCopyResponse = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -75,28 +112,36 @@ try {
     utm_content: ""
   });
   const concurrentResponses = await Promise.all([
-    fetch("http://127.0.0.1:3199/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?b=2&a=1")) }),
-    fetch("http://127.0.0.1:3199/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?a=1&b=2")) })
+    af("/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?b=2&a=1")) }),
+    af("/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?a=1&b=2")) })
   ]);
   const concurrentStatuses = concurrentResponses.map((response) => response.status).sort((left, right) => left - right);
   const csv = [
     "request_id,status,client,channel,asset_type,campaign_label,canonical_campaign,utm_source,utm_medium,utm_campaign,utm_term,utm_content,destination_url,final_long_url,short_url,qr_url,request_count,first_seen_at,last_seen_at,original_message",
     '"1","completed","JF","Facebook","social","website","website","facebook","social","website","","","https://example.com","https://example.com/?utm_source=facebook&utm_medium=social&utm_campaign=website","https://bit.ly/example","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","Smoke import"'
   ].join("\n");
-  const importResponse = await fetch("http://127.0.0.1:3199/imports", {
+  const importResponse = await af("/imports", {
     method: "POST",
     headers: { "Content-Type": "text/csv" },
     body: csv
   });
   const imported = await importResponse.json();
-  const duplicateResponse = await fetch("http://127.0.0.1:3199/imports", {
+  const duplicateResponse = await af("/imports", {
     method: "POST",
     headers: { "Content-Type": "text/csv" },
     body: csv
   });
   const duplicate = await duplicateResponse.json();
+  const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
+  const historyBody = await historyResponse.json();
   if (
     health.status !== "ok"
+    || setupLogin.status !== 302
+    || !setupCookie
+    || createAdmin.status !== 302
+    || adminLogin.status !== 302
+    || !sessionCookie
+    || unauthenticated.status !== 401
     || builderResponse.status !== 200
     || !builderHtml.includes('id="builder-form"')
     || !suggestions.items?.length
@@ -120,6 +165,8 @@ try {
     || !builderHtml.includes("Campaign Content — Issue Name")
     || imported.summary?.imported !== 1
     || duplicate.summary?.skipped !== 1
+    || historyResponse.status !== 200
+    || !historyBody.events?.some((event) => event.actor === "Smoke Admin")
   ) {
     throw new Error("Standalone UTM Builder smoke test failed.");
   }

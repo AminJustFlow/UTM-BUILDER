@@ -1,47 +1,60 @@
 import crypto from "node:crypto";
+import { verifyPassword } from "../support/password.js";
 
 export class AppSessionAuthService {
   constructor({
-    enabled = false,
-    username = "",
-    password = "",
-    realm = "Just Flow Marketing Hub",
+    userRepository,
     sessionCookieName = "jf_app_session",
     sessionTtlSeconds = 60 * 60 * 12,
     cookieSecret = ""
   } = {}) {
-    this.enabled = Boolean(enabled && username && password);
-    this.username = String(username ?? "");
-    this.password = String(password ?? "");
-    this.realm = String(realm ?? "Just Flow Marketing Hub");
+    this.userRepository = userRepository;
     this.sessionCookieName = String(sessionCookieName ?? "jf_app_session");
     this.sessionTtlSeconds = Math.max(300, Number(sessionTtlSeconds) || (60 * 60 * 12));
-    this.cookieSecret = String(cookieSecret ?? "") || `${this.realm}:${this.username}:${this.password}`;
+    this.cookieSecret = String(cookieSecret ?? "") || "jf-utm-builder-insecure-default-secret";
   }
 
-  isAuthenticated(request) {
-    if (!this.enabled) {
-      return true;
+  async authenticate(username, password) {
+    const normalized = String(username ?? "").trim().toLowerCase();
+    if (!normalized || !password) {
+      return null;
     }
 
+    const user = await this.userRepository.findByUsername(normalized);
+    if (!user || Number(user.is_active) !== 1) {
+      return null;
+    }
+
+    if (!verifyPassword(password, user.password_salt, user.password_hash)) {
+      return null;
+    }
+
+    return user;
+  }
+
+  async loadUser(request) {
     const token = request?.cookie?.(this.sessionCookieName) ?? null;
-    return Boolean(token && this.verifySessionToken(token));
-  }
-
-  authenticateCredentials(username, password) {
-    if (!this.enabled) {
-      return true;
+    const payload = this.verifySessionToken(token);
+    if (!payload) {
+      return null;
     }
 
-    return this.matches(username, this.username) && this.matches(password, this.password);
+    const user = await this.userRepository.findById(Number(payload.sub));
+    if (!user || Number(user.is_active) !== 1) {
+      return null;
+    }
+
+    return user;
   }
 
-  createSessionCookie({ secure = false } = {}) {
+  createSessionCookie(user, { secure = false } = {}) {
     const sameSite = "None";
     const effectiveSecure = secure || sameSite === "None";
     const now = Math.floor(Date.now() / 1000);
     const payload = JSON.stringify({
-      sub: this.username,
+      sub: String(user.id),
+      name: user.display_name,
+      role: user.role,
       iat: now,
       exp: now + this.sessionTtlSeconds
     });
@@ -73,22 +86,24 @@ export class AppSessionAuthService {
     const text = String(token ?? "").trim();
     const separatorIndex = text.lastIndexOf(".");
     if (separatorIndex <= 0) {
-      return false;
+      return null;
     }
 
     const encodedPayload = text.slice(0, separatorIndex);
     const signature = text.slice(separatorIndex + 1);
     if (!this.matches(signature, this.sign(encodedPayload))) {
-      return false;
+      return null;
     }
 
     try {
       const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf8"));
       const now = Math.floor(Date.now() / 1000);
-      return payload?.sub === this.username
-        && Number(payload?.exp ?? 0) >= now;
+      if (!payload?.sub || Number(payload?.exp ?? 0) < now) {
+        return null;
+      }
+      return payload;
     } catch {
-      return false;
+      return null;
     }
   }
 
@@ -109,7 +124,7 @@ export class AppSessionAuthService {
   }
 }
 
-function serializeCookie(name, value, {
+export function serializeCookie(name, value, {
   path = "/",
   httpOnly = true,
   sameSite = "Lax",

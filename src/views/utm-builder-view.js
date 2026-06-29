@@ -28,7 +28,7 @@ export function renderUtmBuilderHtml(view) {
 <body>
   ${renderJustFlowThemeScript()}
   <div class="app">
-    ${renderJustFlowSidebar("builder", { standaloneUtm: view.standalone })}
+    ${renderJustFlowSidebar("builder", { standaloneUtm: view.standalone, user: view.user })}
     <main class="main">
       ${renderJustFlowTopbar({ section: "UTM Builder", title: isDuplicate ? "Duplicate Link" : mode === "edit" ? "Edit Link" : "New Link", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
       <div class="page">

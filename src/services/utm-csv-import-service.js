@@ -6,14 +6,17 @@ const REQUIRED_COLUMNS = [
 ];
 
 export class UtmCsvImportService {
-  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService }) {
+  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService, linkAuditRepository = null }) {
     this.requestRepository = requestRepository;
     this.generatedLinkRepository = generatedLinkRepository;
     this.fingerprintService = fingerprintService;
     this.urlService = urlService;
+    this.linkAuditRepository = linkAuditRepository;
   }
 
-  async import(csvText) {
+  async import(csvText, actor = null) {
+    const sourceUserId = actor?.id ? `user:${actor.id}` : "utm_csv_import";
+    const sourceUserName = actor?.displayName || "CSV Import";
     const parsed = parseCsv(csvText);
     if (!parsed.headers.length || !parsed.rows.length) {
       return failure("empty_csv", "The CSV does not contain any UTM rows.");
@@ -50,9 +53,9 @@ export class UtmCsvImportService {
           deliveryKey: `utm-csv:${crypto.randomUUID()}`,
           status: "received",
           originalMessage: text(row.original_message) || `Imported from CSV | Client: ${values.client} | Campaign: ${values.utmCampaign}`,
-          rawPayload: { source: "utm_csv_import", csv_row: index + 2 },
-          sourceUserId: "utm_csv_import",
-          sourceUserName: "CSV Import",
+          rawPayload: { source: "utm_csv_import", csv_row: index + 2, imported_by: sourceUserId },
+          sourceUserId,
+          sourceUserName,
           createdAt: timestamp,
           updatedAt: timestamp
         });
@@ -101,6 +104,21 @@ export class UtmCsvImportService {
             updatedAt: timestamp,
             bitlyPayload: { source: "utm_csv_import" }
           });
+        }
+        if (this.linkAuditRepository) {
+          try {
+            await this.linkAuditRepository.record({
+              fingerprint,
+              requestId,
+              action: "imported",
+              actorUserId: sourceUserId,
+              actorUserName: sourceUserName,
+              summary: `${values.client} · ${values.utmCampaign || "campaign"} → ${values.destinationUrl}`,
+              createdAt: timestamp
+            });
+          } catch {
+            // Audit logging is best-effort.
+          }
         }
         summary.imported += 1;
       } catch (error) {

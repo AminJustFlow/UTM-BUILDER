@@ -171,14 +171,16 @@ export function renderExportPresetsDropdown(filters = {}, options = {}) {
   return `<details class="jf-export-menu"><summary class="btn jf-export-trigger">${renderIcon("download")} ${label}</summary><div class="jf-export-panel">${items}</div></details>`;
 }
 
-export function renderJustFlowSidebar(activeKey = "dashboard", { standaloneUtm = false } = {}) {
+export function renderJustFlowSidebar(activeKey = "dashboard", { standaloneUtm = false, user = null } = {}) {
+  const isAdmin = user?.role === "admin";
   const sections = standaloneUtm ? [
     {
       label: "UTM Builder",
       items: [
         { key: "builder", href: "/new", label: "New Link", icon: "message" },
         { key: "library", href: "/utms", label: "Link Library", icon: "link" },
-        { key: "imports", href: "/imports", label: "Import CSV", icon: "download" }
+        { key: "imports", href: "/imports", label: "Import CSV", icon: "download" },
+        ...(isAdmin ? [{ key: "users", href: "/users", label: "Users", icon: "users" }] : [])
       ]
     }
   ] : [
@@ -219,7 +221,32 @@ export function renderJustFlowSidebar(activeKey = "dashboard", { standaloneUtm =
     <nav class="nav" aria-label="Primary">
       ${sections.map((section) => `<div class="nav-section"><div class="nav-label">${section.label}</div>${section.items.map((item) => renderJustFlowNavItem(item, activeKey)).join("")}</div>`).join("")}
     </nav>
+    ${renderSidebarUserFooter(user, activeKey)}
   </aside>`;
+}
+
+function renderSidebarUserFooter(user, activeKey) {
+  if (!user) {
+    return "";
+  }
+  const roleLabel = user.role === "admin" ? "Administrator" : "Member";
+  return `<div class="sidebar-footer">
+    <a class="user-card${activeKey === "account" ? " active" : ""}" href="/account" title="My account">
+      <div class="avatar">${escapeGuide(initialsFor(user.displayName))}</div>
+      <div style="min-width:0"><span class="user-name">${escapeGuide(user.displayName)}</span><span class="user-email">${escapeGuide(roleLabel)}</span></div>
+    </a>
+    <form method="post" action="/logout" style="margin-top:8px"><button class="btn" type="submit" style="width:100%">Sign out</button></form>
+  </div>`;
+}
+
+function initialsFor(name) {
+  const parts = String(name ?? "").trim().split(/\s+/u).filter(Boolean);
+  if (!parts.length) {
+    return "?";
+  }
+  const first = parts[0][0] ?? "";
+  const second = parts.length > 1 ? (parts[parts.length - 1][0] ?? "") : "";
+  return `${first}${second}`.toUpperCase();
 }
 
 export function renderJustFlowTopbar({ section = "Workspace", title = "Dashboard", searchPlaceholder = "Search reports, sources, campaigns...", showSearch = true } = {}) {

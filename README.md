@@ -58,3 +58,12 @@ git init
 git add .
 git commit -m "Initial standalone UTM Builder"
 ```
+
+
+
+cd /home/ubuntu/UTM-BUILDER
+git pull --ff-only
+npm ci --omit=dev
+npm run smoke
+sudo systemctl restart utm-builder
+sudo systemctl status utm-builder

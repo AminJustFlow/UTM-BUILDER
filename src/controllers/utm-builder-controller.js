@@ -49,6 +49,7 @@ export class UtmBuilderController {
         .sort((left, right) => left.displayName.localeCompare(right.displayName)),
       mode: duplicateItem ? "duplicate" : "create",
       standalone: this.standalone,
+      user: request?.user ?? null,
       formDefaults: buildFormDefaults(duplicateItem, { duplicate: Boolean(duplicateItem) })
     };
 
@@ -63,7 +64,7 @@ export class UtmBuilderController {
       return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
     }
 
-    const result = await this.utmLibraryEditorService.create(parsedBody.value);
+    const result = await this.utmLibraryEditorService.create(parsedBody.value, request.user);
     if (!result.ok) {
       return NodeResponse.json({
         status: "error",
@@ -223,6 +224,7 @@ function serializeResult(result) {
   const normalized = result.normalized;
   return {
     request_id: result.requestId,
+    fingerprint: result.fingerprint ?? null,
     status: result.status,
     status_label: result.status === "completed_without_short_link" ? "Saved without short link" : "Saved",
     message: "Tracked link ready",

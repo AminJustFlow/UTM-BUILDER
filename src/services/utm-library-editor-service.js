@@ -8,34 +8,38 @@ export class UtmLibraryEditorService {
     requestNormalizer,
     fingerprintService,
     linkGenerationService,
-    generatedLinkRepository
+    generatedLinkRepository,
+    linkAuditRepository = null
   }) {
     this.requestRepository = requestRepository;
     this.requestNormalizer = requestNormalizer;
     this.fingerprintService = fingerprintService;
     this.linkGenerationService = linkGenerationService;
     this.generatedLinkRepository = generatedLinkRepository;
+    this.linkAuditRepository = linkAuditRepository;
   }
 
-  async regenerate(input = {}) {
+  async regenerate(input = {}, actor = null) {
     return this.submit(input, {
       requestSource: "utm_library_editor",
-      sourceUserId: "utm_library",
-      sourceUserName: "UTM Library",
-      messageLabel: "Library editor update"
+      sourceUserId: actorSourceId(actor, "utm_library"),
+      sourceUserName: actorSourceName(actor, "UTM Library"),
+      messageLabel: "Library editor update",
+      actor
     });
   }
 
-  async create(input = {}) {
+  async create(input = {}, actor = null) {
     return this.submit(input, {
       requestSource: "utm_builder",
-      sourceUserId: "utm_builder",
-      sourceUserName: "UTM Builder",
-      messageLabel: "Builder form submission"
+      sourceUserId: actorSourceId(actor, "utm_builder"),
+      sourceUserName: actorSourceName(actor, "UTM Builder"),
+      messageLabel: "Builder form submission",
+      actor
     });
   }
 
-  async deleteEntry(input = {}) {
+  async deleteEntry(input = {}, actor = null) {
     const requestId = positiveInteger(input.request_id ?? input.original_request_id, null);
     if (!requestId) {
       return {
@@ -70,11 +74,56 @@ export class UtmLibraryEditorService {
         ?? this.generatedLinkRepository.deleteByFingerprint(fingerprint));
     }
 
+    await this.recordAudit({
+      fingerprint,
+      requestId,
+      action: "deleted",
+      actor,
+      sourceUserId: actorSourceId(actor, "utm_library"),
+      sourceUserName: actorSourceName(actor, "UTM Library"),
+      summary: `Deleted saved link (${deletedRequests} version${deletedRequests === 1 ? "" : "s"} removed).`
+    });
+
     return {
       ok: true,
       requestId,
       deletedRequests
     };
+  }
+
+  async recordSubmitAudit(context, input, normalized, fingerprint, requestId) {
+    const action = input.duplicated_from_request_id
+      ? "duplicated"
+      : input.original_request_id
+        ? "regenerated"
+        : "created";
+    await this.recordAudit({
+      fingerprint,
+      requestId,
+      action,
+      actor: context.actor,
+      sourceUserId: context.sourceUserId,
+      sourceUserName: context.sourceUserName,
+      summary: `${normalized.clientDisplayName} · ${normalized.utmCampaign || normalized.canonicalCampaign || "campaign"} → ${normalized.destinationUrl}`
+    });
+  }
+
+  async recordAudit({ fingerprint = null, requestId = null, action, actor = null, sourceUserId = null, sourceUserName = null, summary = null }) {
+    if (!this.linkAuditRepository) {
+      return;
+    }
+    try {
+      await this.linkAuditRepository.record({
+        fingerprint,
+        requestId,
+        action,
+        actorUserId: sourceUserId,
+        actorUserName: actor?.displayName ?? sourceUserName,
+        summary
+      });
+    } catch {
+      // Audit logging is best-effort and must never block the main workflow.
+    }
   }
 
   async submit(input = {}, context) {
@@ -238,9 +287,12 @@ export class UtmLibraryEditorService {
           error_message: generation.degradedMessage
         }));
 
+        await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId);
+
         return {
           ok: true,
           requestId,
+          fingerprint,
           status: "completed_without_short_link",
           normalized,
           result: generation.result,
@@ -267,9 +319,12 @@ export class UtmLibraryEditorService {
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }));
 
+      await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId);
+
       return {
         ok: true,
         requestId,
+        fingerprint,
         status: "completed",
         normalized,
         result: generation.result
@@ -293,6 +348,14 @@ export class UtmLibraryEditorService {
       };
     }
   }
+}
+
+function actorSourceId(actor, fallback) {
+  return actor?.id ? `user:${actor.id}` : fallback;
+}
+
+function actorSourceName(actor, fallback) {
+  return actor?.displayName || fallback;
 }
 
 function buildOriginalMessage(normalized, messageLabel, originalRequestId) {
