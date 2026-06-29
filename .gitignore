@@ -1,0 +1,7 @@
+node_modules/
+.env
+.env.*
+!.env.example
+storage/database/*.sqlite
+storage/logs/*.log
+storage/utm-intelligence-runtime-*/

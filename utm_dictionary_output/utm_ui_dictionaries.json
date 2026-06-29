@@ -1,0 +1,8788 @@
+{
+  "value_counts": {
+    "campaign": [
+      {
+        "value": "website",
+        "count": 638,
+        "unique_clients": 23
+      },
+      {
+        "value": "floral",
+        "count": 214,
+        "unique_clients": 1
+      },
+      {
+        "value": "news",
+        "count": 104,
+        "unique_clients": 8
+      },
+      {
+        "value": "houseplants",
+        "count": 76,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_finder",
+        "count": 59,
+        "unique_clients": 1
+      },
+      {
+        "value": "ads",
+        "count": 44,
+        "unique_clients": 2
+      },
+      {
+        "value": "services",
+        "count": 38,
+        "unique_clients": 1
+      },
+      {
+        "value": "development",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "collateral",
+        "count": 18,
+        "unique_clients": 1
+      },
+      {
+        "value": "winter_dining",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "free_breakfast",
+        "count": 14,
+        "unique_clients": 1
+      },
+      {
+        "value": "catc25",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "garden_center",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "raising_dough",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "appreciation_weeks",
+        "count": 11,
+        "unique_clients": 1
+      },
+      {
+        "value": "chico_op",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "bakes_for_breast_cancer",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "gala25",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "catering",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "wedding",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "workforce_grant",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "education",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "events",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "new_year_sale",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 7,
+        "unique_clients": 2
+      },
+      {
+        "value": "chicken_passport",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "landscaping",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "super_bowl_bucket",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "easter",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "merchandise",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "reviews",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "available_units",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercial",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "lna",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "lpn",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "private_events",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "review",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "bobawards",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "boulder_way_rent_special",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "college_night",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "corporate_events",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "courses",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "curb_appeal",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "guide",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_care",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "rewards",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "services_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "top3_reasons",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines_day",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "ad",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "bonfire_fundraiser",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "caretaker_recruit",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cpr",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "ekg",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "explore_tock",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "greater_nashua_voting",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "ivtherapy",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "material_delivery",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mna",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "office_directions",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "open_house",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "phlebotomy",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "residential_services",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "restaurant_week",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "toast_tuesday",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "2024_super_tech_day",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "amarr_promotion",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "best_of_the603",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bestof_greater_nashua",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact_us",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "courvilles",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "custom_curriculum",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dream_sponsor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "edgewood",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "epping_showroom",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "event_sponsor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "fbgroup",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "free_ceus",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gala_26",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gift_cards",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_view",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "hippo_bestof25",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "https_bit_ly_4k_zbnp5",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhbraward",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "palace_theatre",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "recruiting",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "she_wulf_open_house",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "yankee_magazine",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "source": [
+      {
+        "value": "constant_contact",
+        "count": 458,
+        "unique_clients": 8
+      },
+      {
+        "value": "facebook",
+        "count": 327,
+        "unique_clients": 19
+      },
+      {
+        "value": "gmb",
+        "count": 323,
+        "unique_clients": 22
+      },
+      {
+        "value": "linked_in",
+        "count": 108,
+        "unique_clients": 10
+      },
+      {
+        "value": "x",
+        "count": 67,
+        "unique_clients": 5
+      },
+      {
+        "value": "meta_ad",
+        "count": 51,
+        "unique_clients": 9
+      },
+      {
+        "value": "tv_display",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "cicrack_card",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "community_flyer",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit_new_england",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "laconia_daily_sun",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "great_waters",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester_ink_link",
+        "count": 6,
+        "unique_clients": 3
+      },
+      {
+        "value": "napkin_holder",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "program_book",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "review_card",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 5,
+        "unique_clients": 3
+      },
+      {
+        "value": "hampton_chamber_flyer",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhbr",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "programs_brochure",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "appeal",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_dining",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmc",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_region_discovery_map",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "lrta",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "moultonborough_postcard",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "tbilakes_region_business_directory",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "75_canal_flyer",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "coupon",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "invitation",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "laker",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nashua_ink_link",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhmagazine",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "seacoast_online",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "spring_appeal",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "weirs_times",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "yankee_travel",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "603_lakes_region",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "avstheater",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "beacon_display",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "brady_sullivan_flyer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_adventure",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_in_the_clouds",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ccabus_directory",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "comicon",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "community_arts_poster",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord_monitor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "construction_site",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dinah_moe",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "feedback_card",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmsvcc",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gsa",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "hippo_press",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "homeschooler_guides",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "installation_postcard",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_region_bride_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "navigation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhlraad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "outlook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "postcard",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "poster",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "salmon_press",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "socha_flyer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "splash_page",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "table_tent",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit_white_mountains",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "yankee_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "zola",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "medium": [
+      {
+        "value": "social",
+        "count": 878,
+        "unique_clients": 23
+      },
+      {
+        "value": "email",
+        "count": 476,
+        "unique_clients": 9
+      },
+      {
+        "value": "qr_code",
+        "count": 109,
+        "unique_clients": 8
+      },
+      {
+        "value": "profile",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 12,
+        "unique_clients": 4
+      },
+      {
+        "value": "domain",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "print_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sms",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "banner",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "link",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "press_release",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "website",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "term": [
+      {
+        "value": "landing_page",
+        "count": 65,
+        "unique_clients": 14
+      },
+      {
+        "value": "curb_appeal",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "operation_delta_dog",
+        "count": 14,
+        "unique_clients": 1
+      },
+      {
+        "value": "truck_driver",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "seacoast_maine",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "boulder_way",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "cocktails",
+        "count": 6,
+        "unique_clients": 2
+      },
+      {
+        "value": "dinner",
+        "count": 6,
+        "unique_clients": 2
+      },
+      {
+        "value": "saddle_rock",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "1_5_tuesday",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "best_meatloaf",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "capricorn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "sagittarius",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "unwind_wednesday",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "vegan",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "aries",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "book",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "brunch",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "cicsponsor",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "diner_definition_short_sleeve",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "garage_door_openers",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "happy_hour",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "hb73_anniversary",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "kids",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "melissa_bailey",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "serendipity",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "the_diner",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "wine",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "amar",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "bolr",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "crimson_devotion",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "daisy_garden",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "emerald_mist",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardening_tips",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gemini",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "green_carnations",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "leo",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_story",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "music_nights",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "opener",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "secret_garden",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "straw",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "surviving_breast_cancer",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "taurus",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "tuscan_memory",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "50_membership",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "azure_prism",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "best_cafes_nh",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_sky",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "bundle",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "capricorn_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "chi",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cosmic_lilac",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "daydream_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "english_garden",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardening_tipsfor_beginners",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "hat",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "heartsong_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "libra",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lnaprep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "locations",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "londonderry",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lunch",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magic_moment",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magic_moment_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mini_monstera",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mnaprep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nashua",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nurse_aid_prep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_red_roses",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily_plant",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pet_friendly_houseplants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pisces_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_for_pollinators",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "scorpio",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "shine_bright",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "state",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "stress_awareness",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "sugar_blossom",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "sunrise_european_garden",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "the_timbers",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "tulip_jubilee",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "two_dozen_roses",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "virgo",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "watering_plants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "2_fa",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "adam_sandler",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "alfresco",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "always_yours",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "appetizers",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bbq",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "be_mine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bear_hug",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bees_knees",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "birkin_philodendron",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bride",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cancer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "care_free_moment",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "care_scout",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "caregiver",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation_crescendo",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carpe_diem",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cherished_spirit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chinese_money_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact_us",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "copper_twilight",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dappled_glade",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "directions",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "displays",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dutch_spring",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "enews",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_fun_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "feedback_form",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "frosty_woodland",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "garnet_berry_wreath",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_hour",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_sun",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "heart_song",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "heart_strong",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "holly_jolly_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "host_gift",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_to_mountains_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakeside",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lavender_blush",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "local_neighboring_states",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_light",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_light_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_stroy",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucky_in_love",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "martini_monday",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mid_summer_refresh",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "money_maker_crassula",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mounting_obsession",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "much_love",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "my_crush_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "neon_queen_pothos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "new_england",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "news",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "news_insert",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_and_only",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_pink_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "orchid_oasis_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pasta",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pastel_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peach_cloud",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_splash_polka_dot",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pizza",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "plan_your_visit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "poutine_fest2025",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "programs",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "progress",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "red_arrow_diner",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "rn",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "roman_holiday",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "salads",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "scarlet_gems",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "scott_kurzweil",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "six_red_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "snake_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "socha",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "soon_to_be_brides",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "soulmate",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "spider_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "stars_of_the_industry",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "string_of_hearts",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer_fun_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "travel_guide_ne",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wanderlust",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "watercolor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "watermelon_perperomia",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "weirs_summer_fun",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "welcome",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "where_to_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "white_wash_zebra",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "windswept",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wine_list",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "winter_cheer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "winter_lunch",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "you_and_me",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "content": [
+      {
+        "value": "home_page",
+        "count": 88,
+        "unique_clients": 16
+      },
+      {
+        "value": "calendar",
+        "count": 63,
+        "unique_clients": 1
+      },
+      {
+        "value": "menu",
+        "count": 40,
+        "unique_clients": 5
+      },
+      {
+        "value": "zodiac",
+        "count": 37,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact",
+        "count": 29,
+        "unique_clients": 10
+      },
+      {
+        "value": "events",
+        "count": 27,
+        "unique_clients": 3
+      },
+      {
+        "value": "profile",
+        "count": 27,
+        "unique_clients": 13
+      },
+      {
+        "value": "just_because",
+        "count": 26,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines",
+        "count": 26,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 25,
+        "unique_clients": 4
+      },
+      {
+        "value": "products",
+        "count": 23,
+        "unique_clients": 3
+      },
+      {
+        "value": "merchandise",
+        "count": 21,
+        "unique_clients": 2
+      },
+      {
+        "value": "about",
+        "count": 19,
+        "unique_clients": 7
+      },
+      {
+        "value": "careers",
+        "count": 18,
+        "unique_clients": 5
+      },
+      {
+        "value": "feature",
+        "count": 18,
+        "unique_clients": 1
+      },
+      {
+        "value": "gift_cards",
+        "count": 18,
+        "unique_clients": 6
+      },
+      {
+        "value": "hiring",
+        "count": 16,
+        "unique_clients": 5
+      },
+      {
+        "value": "seasons",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "faqs",
+        "count": 15,
+        "unique_clients": 4
+      },
+      {
+        "value": "news",
+        "count": 15,
+        "unique_clients": 3
+      },
+      {
+        "value": "catering",
+        "count": 13,
+        "unique_clients": 2
+      },
+      {
+        "value": "enews",
+        "count": 13,
+        "unique_clients": 4
+      },
+      {
+        "value": "menus",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "units",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitation",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "all",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "services",
+        "count": 12,
+        "unique_clients": 3
+      },
+      {
+        "value": "carousel",
+        "count": 11,
+        "unique_clients": 7
+      },
+      {
+        "value": "static",
+        "count": 11,
+        "unique_clients": 7
+      },
+      {
+        "value": "summer",
+        "count": 11,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 11,
+        "unique_clients": 7
+      },
+      {
+        "value": "dessert",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "locations",
+        "count": 10,
+        "unique_clients": 2
+      },
+      {
+        "value": "weddings",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "subscription",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "communities",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "apply",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "birthday",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "dining",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "donation",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "groundbreaking",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "membership",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_finder",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "prom",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "ad_campaign",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "desserts",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "emergency",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "famous_guests",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "green",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "houseplants",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_romance",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "pets",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "private_events",
+        "count": 5,
+        "unique_clients": 2
+      },
+      {
+        "value": "takeout",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "together_manchester",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "tours",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "brand_development",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "consultation",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "jfnews",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "marketing",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "parts_store",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_gifts",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "preventive_maintenance",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "promo_apparel",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "public_relations",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "reservations",
+        "count": 4,
+        "unique_clients": 4
+      },
+      {
+        "value": "residential",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "review",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "rewards",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "roses",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "service_areas",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "specialty_print",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "strategic_marketing",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "thanksgiving",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "website_design",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "about_us",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "anthurium_flamingo_flower",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "artifact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "auburn_baseball",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "blog",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "blooming",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "boulder_way_groundbreaking",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "bouquets",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercial_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "community",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "easter",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "electric_motor_repair",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "electric_motor_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "get_inspired",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "higher_ed_funding",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrial_commmercial_pump_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrial_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "jobs",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "monstera",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "residential_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "right_to_work",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "scholarship",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sewage_pump_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sewage_pump_service",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "shop",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "smoking",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sponsorship",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "user_sign_up",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "all_flowers",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "amenities",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "available_units",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_sky_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cag",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas_at_the_castle",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "client_news",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "common_lilac",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cornerstone_awards",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cpr",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "culinary_herb_planter",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cultivating_teacher_care",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "dragon_wing_pink_begonia",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "edible_plants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "event",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_planter",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_sale",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "financial_assistance",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "garden_center_gifts",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "general_education",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "get_well",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "larkspur",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "library",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "license",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lnarefresher",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_romance",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magnus_coneflower",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mothers_day",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "operation_delta_dog",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "osaka_purple_ornamental_cabbage",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "packages",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "perennials",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pet_friendly",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "photos",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_fall_bulbs",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_gift_guide",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pollinator",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "poppy",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pre_registration",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "preservation",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "reinstatement",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "schedules",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "succulent",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines_day",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "wellness",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "12_dish_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "3_plant_dracaena",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "8_dish_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "achilles_international",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "african_violet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant_collection",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_purifying",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "arrival",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "arts_festival",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "automation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "beveridge_ice_fest",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "black_star_sansevieria",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_fortune_anise_hyssop",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "blueberry_bush",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "burgundy_oxalis",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "c_tag",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carousel_v1",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "catc25",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ccsnhbest_college",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cesky_gold_dwarf_birch",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chain_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "charitable_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cherished_spirit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chill_on_the_hill",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas_cactus",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "common_milkweed",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord_blue_streptocarpella_cape_primrose",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "coprosma",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ctag",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "deck",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dogwod",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dogwood",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dolce_fresca_basil",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "domain",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dueling_pianos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "easter_cactus",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "elevated_setting",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "equal_housing",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_guide2024",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "field_trips",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "first_attempt",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "flamingo",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "florist_kalanchoe",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "frank_santorelli",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "french_thyme",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gala",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_shrimp",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "goldsturm_coneflower",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "grape_gumball",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "holidays",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "home",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "hoya",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "https_bit_ly_3_zrvoq_z",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "invincibelle_wee_white_hydrangea",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "just_flow",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_to_mountains_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "links",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucerne_blue_eyed_grass",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucky_lantern_yellow_flowering_maple",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "member_spotlight",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mohican_viburnum",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "month_flower",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "neon_queen_pothos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "north_star_academy_fundraiser",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lilly",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pi_day",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pickles_cucumber",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_beauty_caladium",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_turtlehead",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "polka",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pollinators",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "preview_party",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "primrose",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "project",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "projects",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "promo_pages",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ref",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "request_atour",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sanseviera",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sansevieria",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "signature",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "snowflake",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static_v1",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sungold_tomato",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sunny_susy_gold_black_eyed_susan",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sympathy",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "takeover",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "teacher_care",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "team",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "testimonials",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tree_of_athousand_stars",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "truck_driver",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tulip",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "twilight_tours",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "updates",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "vanilla_spice",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "variegated_lipstick_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video_v1",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wedding",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "white_crown_of_thorns",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  },
+  "campaign_to_sources": {
+    "website": [
+      {
+        "value": "gmb",
+        "count": 171,
+        "unique_clients": 22
+      },
+      {
+        "value": "facebook",
+        "count": 162,
+        "unique_clients": 19
+      },
+      {
+        "value": "constant_contact",
+        "count": 142,
+        "unique_clients": 8
+      },
+      {
+        "value": "linked_in",
+        "count": 76,
+        "unique_clients": 9
+      },
+      {
+        "value": "x",
+        "count": 45,
+        "unique_clients": 5
+      },
+      {
+        "value": "community_flyer",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmc",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 2
+      },
+      {
+        "value": "75_canal_flyer",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester_ink_link",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "program_book",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "avstheater",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "beacon_display",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "brady_sullivan_flyer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_in_the_clouds",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "construction_site",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "feedback_card",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmsvcc",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "great_waters",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "installation_postcard",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "napkin_holder",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "socha_flyer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "splash_page",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "floral": [
+      {
+        "value": "constant_contact",
+        "count": 105,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 57,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 51,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "constant_contact",
+        "count": 64,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 6,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "constant_contact",
+        "count": 38,
+        "unique_clients": 5
+      },
+      {
+        "value": "facebook",
+        "count": 28,
+        "unique_clients": 7
+      },
+      {
+        "value": "gmb",
+        "count": 26,
+        "unique_clients": 7
+      },
+      {
+        "value": "linked_in",
+        "count": 7,
+        "unique_clients": 5
+      },
+      {
+        "value": "x",
+        "count": 3,
+        "unique_clients": 3
+      },
+      {
+        "value": "poster",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "table_tent",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "plant_finder": [
+      {
+        "value": "constant_contact",
+        "count": 38,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "navigation",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "facebook",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "ads": [
+      {
+        "value": "visit_new_england",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "laconia_daily_sun",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_region_discovery_map",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "lrta",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "tbilakes_region_business_directory",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "laker",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhmagazine",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "weirs_times",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "yankee_travel",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "603_lakes_region",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_adventure",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_dining",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "comicon",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "homeschooler_guides",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_region_bride_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhbr",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhlraad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "salmon_press",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit_white_mountains",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "zola",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "collateral": [
+      {
+        "value": "cicrack_card",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "programs_brochure",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "moultonborough_postcard",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring_appeal",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "community_arts_poster",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "events": [
+      {
+        "value": "constant_contact",
+        "count": 7,
+        "unique_clients": 1
+      }
+    ],
+    "winter_dining": [
+      {
+        "value": "meta_ad",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "castle_dining",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "appeal",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord_monitor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "hippo_press",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "seacoast_online",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "development": [
+      {
+        "value": "facebook",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "program_book",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "appeal",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "education": [
+      {
+        "value": "constant_contact",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "super_bowl_bucket": [
+      {
+        "value": "constant_contact",
+        "count": 6,
+        "unique_clients": 1
+      }
+    ],
+    "reviews": [
+      {
+        "value": "review_card",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "appreciation_weeks": [
+      {
+        "value": "meta_ad",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dinah_moe",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "catc25": [
+      {
+        "value": "constant_contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "great_waters",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "free_breakfast": [
+      {
+        "value": "constant_contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "coupon",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "napkin_holder",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "garden_center": [
+      {
+        "value": "constant_contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "constant_contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "raising_dough": [
+      {
+        "value": "constant_contact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "bakes_for_breast_cancer": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "napkin_holder",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "boulder_way_rent_special": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "catering": [
+      {
+        "value": "facebook",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "courses": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "curb_appeal": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "gala25": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "great_waters",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "invitation",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "home_care": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "top3_reasons": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "valentines_day": [
+      {
+        "value": "meta_ad",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "wedding": [
+      {
+        "value": "facebook",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "weddings": [
+      {
+        "value": "facebook",
+        "count": 3,
+        "unique_clients": 2
+      },
+      {
+        "value": "gmb",
+        "count": 3,
+        "unique_clients": 2
+      },
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bobawards": [
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "outlook",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "caretaker_recruit": [
+      {
+        "value": "hampton_chamber_flyer",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "chico_op": [
+      {
+        "value": "manchester_ink_link",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nashua_ink_link",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhbr",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "seacoast_online",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "lna": [
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "lpn": [
+      {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "open_house": [
+      {
+        "value": "manchester_ink_link",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "private_events": [
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "residential_services": [
+      {
+        "value": "meta_ad",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "restaurant_week": [
+      {
+        "value": "constant_contact",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "services_ad": [
+      {
+        "value": "hampton_chamber_flyer",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "ccabus_directory",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ad": [
+      {
+        "value": "gsa",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "union_leader",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "amarr_promotion": [
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "available_units": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "yankee_magazine",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bonfire_fundraiser": [
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "chicken_passport": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "college_night": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "napkin_holder",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "commercial": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "contact": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "contact_us": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "corporate_events": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "cpr": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "custom_curriculum": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "easter": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tv_display",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ekg": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "epping_showroom": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gala_26": [
+      {
+        "value": "invitation",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gift_cards": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "guide": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "https_bit_ly_4k_zbnp5": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ivtherapy": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "material_delivery": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "merchandise": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "mna": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "new_year_sale": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nhbr",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "postcard",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nhbraward": [
+      {
+        "value": "ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "phlebotomy": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "recruiting": [
+      {
+        "value": "meta_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "review": [
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "rewards": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "toast_tuesday": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "napkin_holder",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "union_leader": [
+      {
+        "value": "ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "workforce_grant": [
+      {
+        "value": "constant_contact",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linked_in",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "yankee_magazine": [
+      {
+        "value": "ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  },
+  "campaign_to_mediums": {
+    "website": [
+      {
+        "value": "social",
+        "count": 458,
+        "unique_clients": 23
+      },
+      {
+        "value": "email",
+        "count": 145,
+        "unique_clients": 9
+      },
+      {
+        "value": "qr_code",
+        "count": 28,
+        "unique_clients": 5
+      },
+      {
+        "value": "print_ad",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "banner",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "link",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "floral": [
+      {
+        "value": "social",
+        "count": 109,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 105,
+        "unique_clients": 1
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "email",
+        "count": 64,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "social",
+        "count": 64,
+        "unique_clients": 7
+      },
+      {
+        "value": "email",
+        "count": 38,
+        "unique_clients": 5
+      },
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "plant_finder": [
+      {
+        "value": "email",
+        "count": 38,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "website",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "social",
+        "count": 36,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "ads": [
+      {
+        "value": "qr_code",
+        "count": 24,
+        "unique_clients": 2
+      },
+      {
+        "value": "profile",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "domain",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "collateral": [
+      {
+        "value": "qr_code",
+        "count": 18,
+        "unique_clients": 1
+      }
+    ],
+    "development": [
+      {
+        "value": "social",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "appreciation_weeks": [
+      {
+        "value": "social",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "catc25": [
+      {
+        "value": "email",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "garden_center": [
+      {
+        "value": "social",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "raising_dough": [
+      {
+        "value": "social",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "winter_dining": [
+      {
+        "value": "social",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "domain",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "events": [
+      {
+        "value": "email",
+        "count": 7,
+        "unique_clients": 1
+      }
+    ],
+    "free_breakfast": [
+      {
+        "value": "social",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "wedding": [
+      {
+        "value": "social",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "catering": [
+      {
+        "value": "social",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "education": [
+      {
+        "value": "email",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gala25": [
+      {
+        "value": "social",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "super_bowl_bucket": [
+      {
+        "value": "email",
+        "count": 6,
+        "unique_clients": 1
+      }
+    ],
+    "weddings": [
+      {
+        "value": "social",
+        "count": 6,
+        "unique_clients": 2
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bakes_for_breast_cancer": [
+      {
+        "value": "social",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "chico_op": [
+      {
+        "value": "digital_ad",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "new_year_sale": [
+      {
+        "value": "social",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "reviews": [
+      {
+        "value": "qr_code",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "chicken_passport": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "commercial": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "contact": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "easter": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "lna": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "lpn": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "merchandise": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "workforce_grant": [
+      {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "sms",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bobawards": [
+      {
+        "value": "email",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "boulder_way_rent_special": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "courses": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "curb_appeal": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "guide": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "home_care": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "top3_reasons": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "valentines_day": [
+      {
+        "value": "social",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "ad": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 2
+      }
+    ],
+    "available_units": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "corporate_events": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "cpr": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "ekg": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "ivtherapy": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "material_delivery": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "mna": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "phlebotomy": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "private_events": [
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "residential_services": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "restaurant_week": [
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "review": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "rewards": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "services_ad": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "amarr_promotion": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bonfire_fundraiser": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "caretaker_recruit": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "college_night": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "contact_us": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "custom_curriculum": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "epping_showroom": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gala_26": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gift_cards": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "https_bit_ly_4k_zbnp5": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nhbraward": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "open_house": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "press_release",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "recruiting": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "toast_tuesday": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "union_leader": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "yankee_magazine": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  },
+  "source_to_mediums": {
+    "constant_contact": [
+      {
+        "value": "email",
+        "count": 458,
+        "unique_clients": 8
+      }
+    ],
+    "facebook": [
+      {
+        "value": "social",
+        "count": 327,
+        "unique_clients": 19
+      }
+    ],
+    "gmb": [
+      {
+        "value": "social",
+        "count": 323,
+        "unique_clients": 22
+      }
+    ],
+    "linked_in": [
+      {
+        "value": "social",
+        "count": 108,
+        "unique_clients": 10
+      }
+    ],
+    "x": [
+      {
+        "value": "social",
+        "count": 67,
+        "unique_clients": 5
+      }
+    ],
+    "meta_ad": [
+      {
+        "value": "social",
+        "count": 51,
+        "unique_clients": 9
+      }
+    ],
+    "tv_display": [
+      {
+        "value": "qr_code",
+        "count": 13,
+        "unique_clients": 1
+      }
+    ],
+    "cicrack_card": [
+      {
+        "value": "qr_code",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "community_flyer": [
+      {
+        "value": "qr_code",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "visit_new_england": [
+      {
+        "value": "profile",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "laconia_daily_sun": [
+      {
+        "value": "qr_code",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "great_waters": [
+      {
+        "value": "email",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "napkin_holder": [
+      {
+        "value": "qr_code",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "program_book": [
+      {
+        "value": "qr_code",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "review_card": [
+      {
+        "value": "qr_code",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "programs_brochure": [
+      {
+        "value": "qr_code",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "ad": [
+      {
+        "value": "qr_code",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "appeal": [
+      {
+        "value": "qr_code",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "castle_dining": [
+      {
+        "value": "domain",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "lakes_region_discovery_map": [
+      {
+        "value": "qr_code",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "manchester_ink_link": [
+      {
+        "value": "email",
+        "count": 3,
+        "unique_clients": 2
+      },
+      {
+        "value": "digital_ad",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "press_release",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "moultonborough_postcard": [
+      {
+        "value": "qr_code",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "75_canal_flyer": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "coupon": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "gmc": [
+      {
+        "value": "print_ad",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "hampton_chamber_flyer": [
+      {
+        "value": "email",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "instagram": [
+      {
+        "value": "social",
+        "count": 2,
+        "unique_clients": 2
+      }
+    ],
+    "invitation": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "laker": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "lrta": [
+      {
+        "value": "profile",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nhbr": [
+      {
+        "value": "digital_ad",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nhmagazine": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "spring_appeal": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "tbilakes_region_business_directory": [
+      {
+        "value": "digital_ad",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "union_leader": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 2
+      },
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "print_ad",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "yankee_travel": [
+      {
+        "value": "qr_code",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "603_lakes_region": [
+      {
+        "value": "profile",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "avstheater": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "beacon_display": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "brady_sullivan_flyer": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "castle_adventure": [
+      {
+        "value": "domain",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "castle_in_the_clouds": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ccabus_directory": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "comicon": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "community_arts_poster": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "concord_monitor": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "construction_site": [
+      {
+        "value": "banner",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "dinah_moe": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "feedback_card": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gmsvcc": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gsa": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "hippo_press": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "homeschooler_guides": [
+      {
+        "value": "profile",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "installation_postcard": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "lakes_region_bride_magazine": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nashua_ink_link": [
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "navigation": [
+      {
+        "value": "website",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "nhlraad": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "outlook": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "postcard": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "poster": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "salmon_press": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "seacoast_online": [
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "socha_flyer": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "splash_page": [
+      {
+        "value": "link",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "table_tent": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "visit_white_mountains": [
+      {
+        "value": "profile",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "weirs_times": [
+      {
+        "value": "digital_ad",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "yankee_magazine": [
+      {
+        "value": "qr_code",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "zola": [
+      {
+        "value": "profile",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  },
+  "campaign_to_terms": {
+    "website": [
+      {
+        "value": "landing_page",
+        "count": 57,
+        "unique_clients": 14
+      },
+      {
+        "value": "cocktails",
+        "count": 6,
+        "unique_clients": 2
+      },
+      {
+        "value": "dinner",
+        "count": 6,
+        "unique_clients": 2
+      },
+      {
+        "value": "saddle_rock",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "1_5_tuesday",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "best_meatloaf",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "unwind_wednesday",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "vegan",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "book",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "boulder_way",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "brunch",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "diner_definition_short_sleeve",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "garage_door_openers",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "happy_hour",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "hb73_anniversary",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "kids",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "the_diner",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "wine",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "amar",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "music_nights",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "opener",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "straw",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "50_membership",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "best_cafes_nh",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "bundle",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "hat",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lnaprep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "locations",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lunch",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mnaprep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "nurse_aid_prep",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "the_timbers",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "2_fa",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "adam_sandler",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "appetizers",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bbq",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "capricorn",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "care_scout",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "contact_us",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "displays",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "enews",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "feedback_form",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "local_neighboring_states",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "londonderry",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "martini_monday",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nashua",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "news",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "news_insert",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pasta",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pizza",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "poutine_fest2025",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "rn",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "salads",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "welcome",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wine_list",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "free_breakfast": [
+      {
+        "value": "operation_delta_dog",
+        "count": 14,
+        "unique_clients": 1
+      }
+    ],
+    "appreciation_weeks": [
+      {
+        "value": "truck_driver",
+        "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "chico_op": [
+      {
+        "value": "curb_appeal",
+        "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "winter_dining": [
+      {
+        "value": "seacoast_maine",
+        "count": 9,
+        "unique_clients": 1
+      }
+    ],
+    "floral": [
+      {
+        "value": "sagittarius",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "aries",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "capricorn",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "serendipity",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "daisy_garden",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "emerald_mist",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gemini",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "green_carnations",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "leo",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_story",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "secret_garden",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "taurus",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "tuscan_memory",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "azure_prism",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_sky",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "capricorn_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cosmic_lilac",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "daydream_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "english_garden",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "libra",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magic_moment",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magic_moment_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_red_roses",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily_plant",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pisces_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "scorpio",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "shine_bright",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "sugar_blossom",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "sunrise_european_garden",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "tulip_jubilee",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "two_dozen_roses",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "virgo",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "alfresco",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "always_yours",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "be_mine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bear_hug",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "bees_knees",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cancer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "care_free_moment",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation_crescendo",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "carpe_diem",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cherished_spirit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "copper_twilight",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "crimson_devotion",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dappled_glade",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dutch_spring",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "frosty_woodland",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "garnet_berry_wreath",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_hour",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_sun",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "heart_song",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "heart_strong",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "holly_jolly_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakeside",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lavender_blush",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_light",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_light_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_stroy",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucky_in_love",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "much_love",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "my_crush_bouquet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_and_only",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_pink_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "one_dozen_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "orchid_oasis_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pastel_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peach_cloud",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "roman_holiday",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "scarlet_gems",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "six_red_roses",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "soulmate",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wanderlust",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "watercolor",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "windswept",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "winter_cheer",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "you_and_me",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "new_year_sale": [
+      {
+        "value": "curb_appeal",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "chi",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "cicsponsor",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "melissa_bailey",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardening_tips",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "surviving_breast_cancer",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "crimson_devotion",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardening_tipsfor_beginners",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "heartsong_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pet_friendly_houseplants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_for_pollinators",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "stress_awareness",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "watering_plants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "host_gift",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mid_summer_refresh",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mounting_obsession",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "red_arrow_diner",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "scott_kurzweil",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "socha",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "soon_to_be_brides",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring_garden",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ads": [
+      {
+        "value": "bolr",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "state",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "bride",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_fun_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_to_mountains_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "new_england",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "stars_of_the_industry",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer_fun_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "travel_guide_ne",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "weirs_summer_fun",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "where_to_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "winter_lunch",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "services_ad": [
+      {
+        "value": "contact",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "mini_monstera",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "birkin_philodendron",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chinese_money_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "money_maker_crassula",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "neon_queen_pothos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_splash_polka_dot",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "snake_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "spider_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "string_of_hearts",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "watermelon_perperomia",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "white_wash_zebra",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "open_house": [
+      {
+        "value": "boulder_way",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "amarr_promotion": [
+      {
+        "value": "curb_appeal",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "collateral": [
+      {
+        "value": "directions",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "plan_your_visit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "programs",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "epping_showroom": [
+      {
+        "value": "progress",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "garden_center": [
+      {
+        "value": "landing_page",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "plant_finder": [
+      {
+        "value": "landing_page",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "raising_dough": [
+      {
+        "value": "landing_page",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "recruiting": [
+      {
+        "value": "caregiver",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "super_bowl_bucket": [
+      {
+        "value": "concord",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "londonderry",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "manchester",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "nashua",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  },
+  "campaign_to_contents": {
+    "website": [
+      {
+        "value": "home_page",
+        "count": 76,
+        "unique_clients": 16
+      },
+      {
+        "value": "calendar",
+        "count": 49,
+        "unique_clients": 1
+      },
+      {
+        "value": "menu",
+        "count": 40,
+        "unique_clients": 5
+      },
+      {
+        "value": "contact",
+        "count": 29,
+        "unique_clients": 10
+      },
+      {
+        "value": "profile",
+        "count": 27,
+        "unique_clients": 13
+      },
+      {
+        "value": "events",
+        "count": 23,
+        "unique_clients": 2
+      },
+      {
+        "value": "products",
+        "count": 23,
+        "unique_clients": 3
+      },
+      {
+        "value": "merchandise",
+        "count": 20,
+        "unique_clients": 2
+      },
+      {
+        "value": "about",
+        "count": 19,
+        "unique_clients": 7
+      },
+      {
+        "value": "hiring",
+        "count": 16,
+        "unique_clients": 5
+      },
+      {
+        "value": "careers",
+        "count": 15,
+        "unique_clients": 5
+      },
+      {
+        "value": "faqs",
+        "count": 15,
+        "unique_clients": 4
+      },
+      {
+        "value": "news",
+        "count": 15,
+        "unique_clients": 3
+      },
+      {
+        "value": "catering",
+        "count": 13,
+        "unique_clients": 2
+      },
+      {
+        "value": "enews",
+        "count": 13,
+        "unique_clients": 4
+      },
+      {
+        "value": "gift_cards",
+        "count": 13,
+        "unique_clients": 5
+      },
+      {
+        "value": "menus",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "units",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "services",
+        "count": 12,
+        "unique_clients": 3
+      },
+      {
+        "value": "communities",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "apply",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "dessert",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "desserts",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "emergency",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "pets",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "private_events",
+        "count": 5,
+        "unique_clients": 2
+      },
+      {
+        "value": "takeout",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitation",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "consultation",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 4,
+        "unique_clients": 3
+      },
+      {
+        "value": "locations",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "parts_store",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "preventive_maintenance",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "reservations",
+        "count": 4,
+        "unique_clients": 4
+      },
+      {
+        "value": "residential",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "rewards",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "service_areas",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "about_us",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "blog",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercial_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "electric_motor_repair",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "electric_motor_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "groundbreaking",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrial_commmercial_pump_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrial_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "jobs",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "residential_pump_services",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "scholarship",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sewage_pump_sales",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sewage_pump_service",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "shop",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "smoking",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "tours",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "user_sign_up",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "amenities",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cpr",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "financial_assistance",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "license",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "photos",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pre_registration",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "preservation",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "reinstatement",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "schedules",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "automation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "available_units",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dining",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "equal_housing",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_guide2024",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "famous_guests",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "feature",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "home",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "links",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "month_flower",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "project",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "projects",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "request_atour",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "team",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "testimonials",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "zodiac",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "floral": [
+      {
+        "value": "zodiac",
+        "count": 36,
+        "unique_clients": 1
+      },
+      {
+        "value": "just_because",
+        "count": 26,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines",
+        "count": 26,
+        "unique_clients": 1
+      },
+      {
+        "value": "feature",
+        "count": 13,
+        "unique_clients": 1
+      },
+      {
+        "value": "all",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "subscription",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "birthday",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "prom",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_and_romance",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "roses",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "thanksgiving",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "bouquets",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "easter",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_gifts",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "all_flowers",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_sky_bouquet",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "get_well",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "love_romance",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "mothers_day",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "carnation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cherished_spirit",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_page",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ref",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sympathy",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tulip",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines_day",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "ads": [
+      {
+        "value": "calendar",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_page",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "dining",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitation",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "catc25",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "charitable_guide",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas_at_the_castle",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "domain",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "https_bit_ly_3_zrvoq_z",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lakes_to_mountains_magazine",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "promo_pages",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "chico_op": [
+      {
+        "value": "seasons",
+        "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "summer",
+        "count": 7,
+        "unique_clients": 1
+      },
+      {
+        "value": "green",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "famous_guests",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "feature",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "jfnews",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "auburn_baseball",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "boulder_way_groundbreaking",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "community",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "higher_ed_funding",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "houseplants",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "right_to_work",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "client_news",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "cornerstone_awards",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_sale",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "operation_delta_dog",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pet_friendly",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_fall_bulbs",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_gift_guide",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "pollinator",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "wellness",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plants",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ccsnhbest_college",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "deck",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "holidays",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "just_flow",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "member_spotlight",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pi_day",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pollinators",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "spring",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "valentines_day",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "wedding",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "plant_finder": [
+      {
+        "value": "plant_finder",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "common_lilac",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "dragon_wing_pink_begonia",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "edible_plants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "larkspur",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "magnus_coneflower",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "osaka_purple_ornamental_cabbage",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "perennials",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "poppy",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blue_fortune_anise_hyssop",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "cesky_gold_dwarf_birch",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "common_milkweed",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dogwod",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dogwood",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dolce_fresca_basil",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "french_thyme",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "goldsturm_coneflower",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "grape_gumball",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "invincibelle_wee_white_hydrangea",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucerne_blue_eyed_grass",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "mohican_viburnum",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pickles_cucumber",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_beauty_caladium",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "pink_turtlehead",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "primrose",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sungold_tomato",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sunny_susy_gold_black_eyed_susan",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "vanilla_spice",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "landing_page",
+        "count": 6,
+        "unique_clients": 1
+      },
+      {
+        "value": "brand_development",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "events",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "marketing",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "promo_apparel",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "public_relations",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "specialty_print",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "strategic_marketing",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "website_design",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "development": [
+      {
+        "value": "donation",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "membership",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "artifact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "sponsorship",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "cag",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "library",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "easter": [
+      {
+        "value": "dessert",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "merchandise": [
+      {
+        "value": "gift_cards",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "new_year_sale": [
+      {
+        "value": "seasons",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "takeover",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "raising_dough": [
+      {
+        "value": "together_manchester",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "achilles_international",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "super_bowl_bucket": [
+      {
+        "value": "locations",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "winter_dining": [
+      {
+        "value": "ad_campaign",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "carousel",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "dining",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "collateral": [
+      {
+        "value": "calendar",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitation",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "tours",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "arrival",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "arts_festival",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "donation",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "elevated_setting",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "gala",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "membership",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "updates",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddings",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "contact": [
+      {
+        "value": "review",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "garden_center": [
+      {
+        "value": "landing_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "culinary_herb_planter",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "fall_planter",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "garden_center_gifts",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "blueberry_bush",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "anthurium_flamingo_flower",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "blooming",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "home_page",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "monstera",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "houseplants",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "succulent",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "12_dish_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "3_plant_dracaena",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "8_dish_garden",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "african_violet",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plant_collection",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_plants",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "air_purifying",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "black_star_sansevieria",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "burgundy_oxalis",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chain_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmas_cactus",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "concord_blue_streptocarpella_cape_primrose",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "coprosma",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "easter_cactus",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "flamingo",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "florist_kalanchoe",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "golden_shrimp",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "hoya",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "lucky_lantern_yellow_flowering_maple",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "neon_queen_pothos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lilly",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "peace_lily",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "plant_gifts",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "polka",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sanseviera",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "sansevieria",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "snowflake",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "tree_of_athousand_stars",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "variegated_lipstick_plant",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "white_crown_of_thorns",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "landing_page",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "wedding": [
+      {
+        "value": "get_inspired",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "caretaker_recruit": [
+      {
+        "value": "careers",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "education": [
+      {
+        "value": "cultivating_teacher_care",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "c_tag",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "ctag",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "field_trips",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "teacher_care",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "lna": [
+      {
+        "value": "landing_page",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "lnarefresher",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "lpn": [
+      {
+        "value": "general_education",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "review": [
+      {
+        "value": "groundbreaking",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "weddings": [
+      {
+        "value": "packages",
+        "count": 2,
+        "unique_clients": 1
+      }
+    ],
+    "ad": [
+      {
+        "value": "available_units",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "amarr_promotion": [
+      {
+        "value": "seasons",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "appreciation_weeks": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "truck_driver",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bakes_for_breast_cancer": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "bobawards": [
+      {
+        "value": "signature",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "boulder_way_rent_special": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "catc25": [
+      {
+        "value": "christmas_at_the_castle",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "event",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "preview_party",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "twilight_tours",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "courses": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "curb_appeal": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "epping_showroom": [
+      {
+        "value": "groundbreaking",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "events": [
+      {
+        "value": "beveridge_ice_fest",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "chill_on_the_hill",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "dueling_pianos",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "frank_santorelli",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "landing_page",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "north_star_academy_fundraiser",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "free_breakfast": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "locations",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "gala25": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "event",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "home_care": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "recruiting": [
+      {
+        "value": "careers",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "top3_reasons": [
+      {
+        "value": "carousel_v1",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static_v1",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video_v1",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "valentines_day": [
+      {
+        "value": "carousel",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "static",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "video",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "workforce_grant": [
+      {
+        "value": "first_attempt",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ]
+  }
+}

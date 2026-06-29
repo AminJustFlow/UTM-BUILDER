@@ -1,0 +1,18 @@
+{
+  "name": "jf-utm-builder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone Just Flow UTM Builder and link library.",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node ./bin/server.js",
+    "dev": "node --watch --watch-path=./bin --watch-path=./src --watch-path=./config --watch-path=./.env ./bin/server.js",
+    "smoke": "node ./scripts/smoke.js"
+  },
+  "dependencies": {
+    "pg": "^8.20.0"
+  }
+}
