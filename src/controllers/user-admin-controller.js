@@ -16,7 +16,7 @@ export class UserAdminController {
   }
 
   async handleHtml(request) {
-    const users = await this.userAccountService.list("user");
+    const users = await this.userAccountService.list();
     return NodeResponse.text(renderPage({
       user: request.user,
       standalone: this.standalone,
@@ -89,7 +89,7 @@ function renderPage(view) {
           <div class="page-header">
             <div class="page-title-block">
               <h1>Users</h1>
-              <p class="subtitle">Create and manage member accounts. Administrator accounts are managed in the setup console.</p>
+              <p class="subtitle">View administrators and create or manage member accounts.</p>
             </div>
           </div>
           <section class="card">
@@ -104,12 +104,12 @@ function renderPage(view) {
             </div>
           </section>
           <section class="card">
-            <div class="card-header"><div><h3>Members</h3><div class="meta">${users.length} member account${users.length === 1 ? "" : "s"}</div></div></div>
+            <div class="card-header"><div><h3>All users</h3><div class="meta">${users.length} account${users.length === 1 ? "" : "s"}</div></div></div>
             <div class="card-body">
               ${users.length ? `<table class="data">
-                <thead><tr><th>Name</th><th>Username</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
                 <tbody>${users.map(renderUserRow).join("")}</tbody>
-              </table>` : `<div class="meta">No member accounts yet.</div>`}
+              </table>` : `<div class="meta">No user accounts yet.</div>`}
             </div>
           </section>
         </div>
@@ -132,6 +132,7 @@ function renderUserRow(account) {
   return `<tr>
     <td>${escapeHtml(account.displayName)}</td>
     <td>${escapeHtml(account.username)}</td>
+    <td>${escapeHtml(account.role === "admin" ? "Administrator" : "Member")}</td>
     <td>${account.isActive ? '<span class="pill on">Active</span>' : '<span class="pill off">Disabled</span>'}</td>
     <td>${escapeHtml(formatDate(account.createdAt))}</td>
     <td>

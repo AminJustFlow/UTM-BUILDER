@@ -63,6 +63,8 @@ try {
   const health = await (await fetch(`${base}/health`)).json();
   const builderResponse = await af("/new");
   const builderHtml = await builderResponse.text();
+  const usersPage = await af("/users");
+  const usersHtml = await usersPage.text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=jf")).json();
   const createResponse = await af("/new", {
@@ -195,6 +197,9 @@ try {
     || crossSitePost.status !== 403
     || builderResponse.status !== 200
     || !builderHtml.includes('id="builder-form"')
+    || usersPage.status !== 200
+    || !usersHtml.includes("Smoke Admin")
+    || !usersHtml.includes("Administrator")
     || !suggestions.items?.length
     || !history.items?.length
     || createResponse.status !== 200
