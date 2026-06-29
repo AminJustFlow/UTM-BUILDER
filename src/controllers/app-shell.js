@@ -15,6 +15,7 @@ const NAV_ITEMS = [
 ];
 
 export const GENIE_ENABLED = false;
+export const BRAND_HEAD_HTML = '<link rel="icon" type="image/png" sizes="40x48" href="/assets/jf-drop.png">';
 
 export function renderAdminBaseStyles() {
   return `
@@ -68,10 +69,7 @@ export function renderExplainabilityStyles() {
 export function renderAppShellStyles() {
   return `
     .app-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.9rem 1.1rem;padding:.72rem .85rem;margin-bottom:1.35rem;background:var(--panel);border:1px solid var(--line);border-radius:.8rem;box-shadow:0 1px 2px rgba(15,15,25,.04);position:sticky;top:.75rem;z-index:40}
-    .app-brand{display:grid;grid-template-columns:2rem auto;grid-template-rows:auto auto;gap:.05rem .65rem;align-items:center}
-    .app-brand:before{content:"JF";grid-row:1 / 3;width:2rem;height:2rem;border-radius:.55rem;background:linear-gradient(135deg,var(--accent),var(--accent-2) 130%);display:grid;place-items:center;color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.02em}
-    .app-brand a{color:var(--ink);text-decoration:none;font-size:.96rem;font-weight:700;letter-spacing:-.02em;line-height:1.1}
-    .app-brand span{color:#a1a1aa;font-size:.74rem;line-height:1.25}
+    .app-brand{display:flex;align-items:center}.app-brand img{display:block;width:154px;height:auto;max-height:42px;object-fit:contain}
     .app-nav{display:flex;gap:.25rem;flex-wrap:wrap;align-items:center;justify-content:center}
     .app-nav-link{display:inline-flex;align-items:center;justify-content:center;min-height:2rem;padding:.38rem .68rem;border-radius:.42rem;border:1px solid transparent;background:transparent;color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:500;transition:background 120ms ease,color 120ms ease,border-color 120ms ease}
     .app-nav-link:hover{background:var(--panel-strong);color:var(--ink)}
@@ -85,10 +83,7 @@ export function renderAppShellStyles() {
 
 export function renderAppHeader(activeKey) {
   return `<header class="app-header">
-    <div class="app-brand">
-      <a href="/admin" title="Just Flow Hub">Just Flow Hub</a>
-      <span>Marketing hub and reporting workspace.</span>
-    </div>
+    <a class="app-brand" href="/admin" title="Just Flow Hub"><img src="/assets/just-flow-logo.png" alt="Just Flow Events &amp; Marketing"></a>
     <nav class="app-nav" aria-label="Primary">
       ${NAV_ITEMS.map((item) => renderNavItem(item, activeKey)).join("")}
     </nav>
@@ -105,7 +100,7 @@ export function renderJustFlowShellStyles() {
     [data-density=compact]{--row-h:34px;--pad-y:8px;--pad-x:12px;--font-ui:13px;--font-num:13px}
     *{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:var(--font-ui);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .2s ease,color .2s ease}.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
     .app,.jf-app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}.main,.jf-main{display:flex;flex-direction:column;min-width:0}
-    .sidebar,.jf-sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.brand,.jf-brand{padding:18px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);height:60px}.brand-mark,.jf-brand-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 130%);display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;box-shadow:var(--shadow-sm)}.brand-name,.jf-brand strong{font-weight:600;font-size:15px;letter-spacing:-.01em}.brand-sub,.jf-brand span:last-child{font-size:11px;color:var(--text-3);margin-left:auto;padding:2px 7px;background:var(--surface-2);border-radius:4px;font-weight:500}
+    .sidebar,.jf-sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.brand,.jf-brand{padding:8px 18px;display:flex;align-items:center;border-bottom:1px solid var(--border);height:72px;background:#fff}.brand-logo{display:block;width:100%;max-width:194px;height:auto;max-height:54px;object-fit:contain}
     .nav,.jf-nav{padding:12px 10px;flex:1;overflow-y:auto}.nav-section{margin-bottom:16px}.nav-label,.jf-nav-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px}.nav-item,.jf-nav-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--radius-sm);color:var(--text-2);cursor:pointer;font-weight:500;font-size:13.5px;text-decoration:none;transition:background .12s,color .12s}.nav-item:hover,.jf-nav-item:hover{background:var(--surface-2);color:var(--text)}.nav-item.active,.jf-nav-item.active{background:var(--accent-soft);color:var(--accent)}[data-theme=dark] .nav-item.active,[data-theme=dark] .jf-nav-item.active{color:#c7d2fe}.nav-item svg,.jf-nav-item svg{width:16px;height:16px;flex-shrink:0}.nav-badge,.jf-nav-item em{margin-left:auto;font-size:11px;padding:1px 6px;background:var(--surface-3);border-radius:4px;font-style:normal}
     .sidebar-footer,.jf-user{padding:12px;border-top:1px solid var(--border)}.user-card,.jf-user{display:flex;align-items:center;gap:10px;border-radius:var(--radius-sm)}.user-card{padding:8px;cursor:pointer}.user-card:hover{background:var(--surface-2)}.avatar,.jf-user>span{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);display:grid;place-items:center;color:#fff;font-weight:600;font-size:12px;flex-shrink:0}.user-name,.jf-user strong{font-size:13px;font-weight:500;display:block}.user-email,.jf-user small{font-size:11px;color:var(--text-3);display:block}
     .topbar,.jf-topbar{height:60px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:30}.breadcrumb,.jf-breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2)}.breadcrumb b,.breadcrumb strong,.jf-breadcrumb strong{color:var(--text);font-weight:600}.breadcrumb-sep,.jf-breadcrumb b{color:var(--text-3)}.topbar-actions,.jf-top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
@@ -217,7 +212,7 @@ export function renderJustFlowSidebar(activeKey = "dashboard", { standaloneUtm =
     }
   ];
   return `<aside class="sidebar">
-    <div class="brand"><div class="brand-mark">JF</div><div class="brand-name">Just Flow</div><div class="brand-sub">Hub</div></div>
+    <a class="brand" href="/new" aria-label="Just Flow UTM Builder"><img class="brand-logo" src="/assets/just-flow-logo.png" alt="Just Flow Events &amp; Marketing"></a>
     <nav class="nav" aria-label="Primary">
       ${sections.map((section) => `<div class="nav-section"><div class="nav-label">${section.label}</div>${section.items.map((item) => renderJustFlowNavItem(item, activeKey)).join("")}</div>`).join("")}
     </nav>

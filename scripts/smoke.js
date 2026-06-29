@@ -61,6 +61,8 @@ try {
   });
 
   const health = await (await fetch(`${base}/health`)).json();
+  const logoAsset = await fetch(`${base}/assets/just-flow-logo.png`);
+  const faviconAsset = await fetch(`${base}/assets/jf-drop.png`);
   const builderResponse = await af("/new");
   const builderHtml = await builderResponse.text();
   const usersPage = await af("/users");
@@ -184,6 +186,10 @@ try {
 
   if (
     health.status !== "ok"
+    || logoAsset.status !== 200
+    || logoAsset.headers.get("content-type") !== "image/png"
+    || faviconAsset.status !== 200
+    || faviconAsset.headers.get("content-type") !== "image/png"
     || setupLogin.status !== 302
     || !setupCookie
     || !setupCookieHeader.includes("SameSite=Lax")
@@ -197,6 +203,8 @@ try {
     || crossSitePost.status !== 403
     || builderResponse.status !== 200
     || !builderHtml.includes('id="builder-form"')
+    || !builderHtml.includes('href="/assets/jf-drop.png"')
+    || !builderHtml.includes('src="/assets/just-flow-logo.png"')
     || usersPage.status !== 200
     || !usersHtml.includes("Smoke Admin")
     || !usersHtml.includes("Administrator")

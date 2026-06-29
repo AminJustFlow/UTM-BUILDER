@@ -1,5 +1,5 @@
 import { NodeResponse } from "../http/response.js";
-import { renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar } from "./app-shell.js";
+import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar } from "./app-shell.js";
 
 export class UtmImportController {
   constructor({ utmCsvImportService }) {
@@ -20,7 +20,7 @@ export class UtmImportController {
 }
 
 function renderHtml(user) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Import UTM CSV</title><style>${renderJustFlowShellStyles()}</style></head>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${BRAND_HEAD_HTML}<title>Import UTM CSV</title><style>${renderJustFlowShellStyles()}</style></head>
   <body>${renderJustFlowThemeScript()}<div class="app">${renderJustFlowSidebar("imports", { standaloneUtm: true, user })}<main class="main">${renderJustFlowTopbar({ section: "UTM Builder", title: "Import CSV", showSearch: false })}<div class="page">
     <div class="page-header"><div class="page-title-block"><h1>Import UTM library</h1><p class="subtitle">Upload a UTM Library CSV export. Existing matching links are skipped automatically.</p></div><div class="page-actions"><a class="btn" href="/utms">${renderIcon("link")} Link Library</a></div></div>
     <section class="card"><div class="card-header"><div><h3>Select CSV file</h3><div class="meta">The importer preserves destination, tracked, short, and QR URLs.</div></div></div><div class="card-body">

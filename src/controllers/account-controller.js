@@ -1,6 +1,7 @@
 import { NodeResponse } from "../http/response.js";
 import { parseFormBody, normalizeText, escapeHtml, escapeAttribute } from "./auth-page.js";
 import {
+  BRAND_HEAD_HTML,
   renderJustFlowShellStyles,
   renderJustFlowSidebar,
   renderJustFlowThemeScript,
@@ -48,6 +49,7 @@ function renderPage(view) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  ${BRAND_HEAD_HTML}
   <title>My Account</title>
   <style>
     ${renderJustFlowShellStyles()}

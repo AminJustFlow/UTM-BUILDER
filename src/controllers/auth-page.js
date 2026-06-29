@@ -1,14 +1,18 @@
+import { BRAND_HEAD_HTML } from "./app-shell.js";
+
 export function renderAuthPage({ title = "Just Flow", heading = "", lede = "", error = "", notice = "", body = "" }) {
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  ${BRAND_HEAD_HTML}
   <title>${escapeHtml(title)}</title>
   <style>
     :root{--bg:#f4efe5;--panel:rgba(255,250,242,.96);--ink:#17302a;--muted:#66766f;--accent:#018CC6;--line:rgba(23,48,42,.1);--danger:#b4432b;--ok:#18734c;--shadow:0 24px 60px rgba(20,32,31,.09)}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:1rem;color:var(--ink);font-family:"Aptos","Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(1,140,198,.18),transparent 32rem),radial-gradient(circle at top right,rgba(183,142,65,.12),transparent 26rem),linear-gradient(180deg,#faf7f1 0%,var(--bg) 100%)}
     .card{width:min(100%,30rem);padding:1.5rem;background:var(--panel);border:1px solid var(--line);border-radius:1.35rem;box-shadow:var(--shadow)}
+    .auth-logo{display:block;width:min(100%,18rem);height:auto;margin:0 auto 1.25rem}
     h1,h2,p{margin:0}h1{font-family:"Aptos Display","Trebuchet MS",sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:-.05em}.lede{margin-top:.45rem;color:var(--muted);line-height:1.5}
     form{display:grid;gap:.85rem;margin-top:1.2rem}label{display:grid;gap:.35rem;color:var(--muted);font-size:.92rem}
     input,select{width:100%;padding:.82rem .9rem;border:1px solid rgba(23,48,42,.14);border-radius:.95rem;background:rgba(255,255,255,.9);font:inherit;color:var(--ink)}
@@ -28,6 +32,7 @@ export function renderAuthPage({ title = "Just Flow", heading = "", lede = "", e
 </head>
 <body>
   <main class="card">
+    <img class="auth-logo" src="/assets/just-flow-logo.png" alt="Just Flow Events &amp; Marketing">
     ${heading ? `<h1>${escapeHtml(heading)}</h1>` : ""}
     ${lede ? `<p class="lede">${escapeHtml(lede)}</p>` : ""}
     ${error ? `<div class="error">${escapeHtml(error)}</div>` : ""}

@@ -140,6 +140,16 @@ export async function createUtmBuilderApplication(projectRoot) {
   }
 
   const router = new Router();
+  router.add("GET", "/assets/just-flow-logo.png", () => NodeResponse.binary(
+    fs.readFileSync(path.join(projectRoot, "Just-Flow-Horizontal-No-Drop-Color-FINAL.png")),
+    200,
+    { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" }
+  ));
+  router.add("GET", "/assets/jf-drop.png", () => NodeResponse.binary(
+    fs.readFileSync(path.join(projectRoot, "JF_Drop_40x48px.png")),
+    200,
+    { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" }
+  ));
   const wantsHtml = (request) => request.method === "GET"
     && !request.path.endsWith(".json")
     && !request.path.endsWith(".csv");

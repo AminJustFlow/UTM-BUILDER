@@ -1,4 +1,4 @@
-import { renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar } from "../controllers/app-shell.js";
+import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar } from "../controllers/app-shell.js";
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const FIELD_GUIDANCE = [
@@ -22,6 +22,7 @@ export function renderUtmBuilderHtml(view) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  ${BRAND_HEAD_HTML}
   <title>${isDuplicate ? "Duplicate Link" : mode === "edit" ? "Edit Link" : "Create Link"}</title>
   <style>${renderStyles()}</style>
 </head>

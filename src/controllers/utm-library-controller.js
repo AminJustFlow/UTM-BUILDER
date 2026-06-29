@@ -2,7 +2,7 @@ import { NodeResponse } from "../http/response.js";
 import { isUrlLikeUtmValue } from "../services/utm-value-sanitizer.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
 import { parseFormBody } from "./auth-page.js";
-import { renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
+import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
 const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content"];
 
@@ -233,6 +233,7 @@ function renderHtml(view) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  ${BRAND_HEAD_HTML}
   <title>Link Library</title>
   <style>
     ${renderJustFlowShellStyles()}

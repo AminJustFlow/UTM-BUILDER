@@ -19,6 +19,10 @@ export class NodeResponse {
     }, payload);
   }
 
+  static binary(payload, statusCode = 200, headers = {}) {
+    return new NodeResponse(statusCode, headers, payload);
+  }
+
   static redirect(location, statusCode = 302, headers = {}) {
     return new NodeResponse(statusCode, {
       Location: location,
