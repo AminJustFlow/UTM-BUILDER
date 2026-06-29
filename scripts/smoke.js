@@ -10,6 +10,8 @@ process.env.PORT = "3199";
 process.env.SETUP_ADMIN_USERNAME = "setupadmin";
 process.env.SETUP_ADMIN_PASSWORD = "setup-pass-123";
 process.env.TRACKING_SECRET_ENCRYPTION_KEY = "smoke-test-cookie-secret";
+process.env.BITLY_ACCESS_TOKEN = "";
+process.env.UTM_BUILDER_SKIP_ENV_FILE = "1";
 for (const suffix of ["", "-shm", "-wal"]) {
   fs.rmSync(`${databasePath}${suffix}`, { force: true });
 }
@@ -36,6 +38,7 @@ try {
     body: new URLSearchParams({ username: "setupadmin", password: "setup-pass-123" }).toString()
   });
   const setupCookie = cookieValue(setupLogin, "jf_setup_session");
+  const setupCookieHeader = setupLogin.headers.get("set-cookie") ?? "";
   const createAdmin = await fetch(`${base}/setup/admins`, {
     method: "POST",
     redirect: "manual",
@@ -49,7 +52,13 @@ try {
     body: new URLSearchParams({ username: "smokeadmin", password: "smoke-pass-123" }).toString()
   });
   sessionCookie = cookieValue(adminLogin, "jf_app_session");
+  const appCookieHeader = adminLogin.headers.get("set-cookie") ?? "";
   const unauthenticated = await fetch(`${base}/utms.json`, { redirect: "manual" });
+  const crossSitePost = await fetch(`${base}/login`, {
+    method: "POST",
+    headers: { Origin: "https://attacker.example", "Content-Type": "application/x-www-form-urlencoded" },
+    body: "username=x&password=x"
+  });
 
   const health = await (await fetch(`${base}/health`)).json();
   const builderResponse = await af("/new");
@@ -159,15 +168,31 @@ try {
     body: new URLSearchParams({ field: "campaign", value: govValue }).toString()
   });
   const libraryAfterAck = await (await af("/utms")).text();
+  const passwordChange = await af("/account/password", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      current_password: "smoke-pass-123",
+      new_password: "smoke-pass-456",
+      confirm_password: "smoke-pass-456"
+    }).toString()
+  });
+  const oldSessionAfterPasswordChange = await af("/new", { redirect: "manual" });
 
   if (
     health.status !== "ok"
     || setupLogin.status !== 302
     || !setupCookie
+    || !setupCookieHeader.includes("SameSite=Lax")
+    || setupCookieHeader.includes("; Secure")
     || createAdmin.status !== 302
     || adminLogin.status !== 302
     || !sessionCookie
+    || !appCookieHeader.includes("SameSite=Lax")
+    || appCookieHeader.includes("; Secure")
     || unauthenticated.status !== 401
+    || crossSitePost.status !== 403
     || builderResponse.status !== 200
     || !builderHtml.includes('id="builder-form"')
     || !suggestions.items?.length
@@ -198,6 +223,9 @@ try {
     || !libraryBeforeAck.includes(govMarker)
     || ackResponse.status !== 302
     || libraryAfterAck.includes(govMarker)
+    || passwordChange.status !== 302
+    || oldSessionAfterPasswordChange.status !== 302
+    || oldSessionAfterPasswordChange.headers.get("location")?.startsWith("/login") !== true
   ) {
     throw new Error("Standalone UTM Builder smoke test failed.");
   }

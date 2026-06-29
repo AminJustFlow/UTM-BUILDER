@@ -47,7 +47,9 @@ Guidance changes labels, helper copy, and examples only. It does not make option
 - Health check path: `/health`
 - Node version: 22
 
-The example configuration uses SQLite locally. For production, set `DATABASE_CLIENT=postgres` and provide `DATABASE_URL`, `BITLY_ACCESS_TOKEN`, login credentials, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`.
+The example configuration uses SQLite locally. For production, set the database configuration, `BITLY_ACCESS_TOKEN`, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`. The application refuses to start without the signing secret. Generate one with `openssl rand -hex 32`.
+
+To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, governance acknowledgement, and user management require an administrator account.
 
 ## Publish as its own repository
 

@@ -11,7 +11,10 @@ export class AppSessionAuthService {
     this.userRepository = userRepository;
     this.sessionCookieName = String(sessionCookieName ?? "jf_app_session");
     this.sessionTtlSeconds = Math.max(300, Number(sessionTtlSeconds) || (60 * 60 * 12));
-    this.cookieSecret = String(cookieSecret ?? "") || "jf-utm-builder-insecure-default-secret";
+    this.cookieSecret = String(cookieSecret ?? "");
+    if (!this.cookieSecret) {
+      throw new Error("TRACKING_SECRET_ENCRYPTION_KEY is required for signed sessions.");
+    }
   }
 
   async authenticate(username, password) {
@@ -43,18 +46,21 @@ export class AppSessionAuthService {
     if (!user || Number(user.is_active) !== 1) {
       return null;
     }
+    if (!payload.passwordVersion || !this.matches(payload.passwordVersion, passwordVersion(user.password_hash))) {
+      return null;
+    }
 
     return user;
   }
 
   createSessionCookie(user, { secure = false } = {}) {
-    const sameSite = "None";
-    const effectiveSecure = secure || sameSite === "None";
+    const sameSite = "Lax";
     const now = Math.floor(Date.now() / 1000);
     const payload = JSON.stringify({
       sub: String(user.id),
       name: user.display_name,
       role: user.role,
+      passwordVersion: passwordVersion(user.password_hash),
       iat: now,
       exp: now + this.sessionTtlSeconds
     });
@@ -65,19 +71,18 @@ export class AppSessionAuthService {
       path: "/",
       httpOnly: true,
       sameSite,
-      secure: effectiveSecure,
+      secure,
       maxAge: this.sessionTtlSeconds
     });
   }
 
   clearSessionCookie({ secure = false } = {}) {
-    const sameSite = "None";
-    const effectiveSecure = secure || sameSite === "None";
+    const sameSite = "Lax";
     return serializeCookie(this.sessionCookieName, "", {
       path: "/",
       httpOnly: true,
       sameSite,
-      secure: effectiveSecure,
+      secure,
       maxAge: 0
     });
   }
@@ -122,6 +127,10 @@ export class AppSessionAuthService {
 
     return crypto.timingSafeEqual(leftBuffer, rightBuffer);
   }
+}
+
+function passwordVersion(passwordHash) {
+  return crypto.createHash("sha256").update(String(passwordHash ?? ""), "utf8").digest("base64url");
 }
 
 export function serializeCookie(name, value, {

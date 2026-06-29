@@ -23,6 +23,13 @@ export class Router {
   }
 
   async dispatch(request) {
+    if (request.method === "POST" && !isTrustedPostRequest(request)) {
+      return NodeResponse.json({
+        status: "error",
+        error: { code: "csrf_rejected", message: "Cross-site requests are not allowed." }
+      }, 403);
+    }
+
     const key = `${request.method} ${request.path}`;
     let handler = this.staticRoutes.get(key);
 
@@ -49,5 +56,20 @@ export class Router {
     }
 
     return handler(request);
+  }
+}
+
+function isTrustedPostRequest(request) {
+  const fetchSite = String(request.header("sec-fetch-site", "")).toLowerCase();
+  if (fetchSite === "cross-site") return false;
+
+  const origin = String(request.header("origin", "")).trim();
+  if (!origin) return true;
+
+  const expectedHost = String(request.header("host", "")).trim().toLowerCase();
+  try {
+    return Boolean(expectedHost) && new URL(origin).host.toLowerCase() === expectedHost;
+  } catch {
+    return false;
   }
 }

@@ -38,8 +38,13 @@ import { UtmLibraryService } from "../services/utm-library-service.js";
 import { UtmCsvImportService } from "../services/utm-csv-import-service.js";
 
 export async function createUtmBuilderApplication(projectRoot) {
-  loadEnvFile(path.join(projectRoot, ".env"));
+  if (process.env.UTM_BUILDER_SKIP_ENV_FILE !== "1") {
+    loadEnvFile(path.join(projectRoot, ".env"));
+  }
   const config = resolveConfig(projectRoot);
+  if (!config.auth.cookieSecret) {
+    throw new Error("TRACKING_SECRET_ENCRYPTION_KEY is required. Set it to a long random value before starting the app.");
+  }
   process.env.TZ = config.app.timezone;
 
   if (config.database.client === "sqlite") {
@@ -205,9 +210,9 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));
   router.add("POST", "/utms/governance/acknowledge", requireAdmin((request) => utmLibraryController.handleAcknowledge(request)));
-  router.add("POST", "/utms/delete", protect((request) => utmLibraryController.handleDelete(request)));
-  router.add("GET", "/imports", protect((request) => utmImportController.handleHtml(request)));
-  router.add("POST", "/imports", protect((request) => utmImportController.handleImport(request)));
+  router.add("POST", "/utms/delete", requireAdmin((request) => utmLibraryController.handleDelete(request)));
+  router.add("GET", "/imports", requireAdmin((request) => utmImportController.handleHtml(request)));
+  router.add("POST", "/imports", requireAdmin((request) => utmImportController.handleImport(request)));
 
   return new Application(router, migrationRunner, config, {
     start: async () => {},

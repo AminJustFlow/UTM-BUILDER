@@ -14,7 +14,10 @@ export class SetupConsoleAuthService {
     this.enabled = Boolean(this.username && this.password);
     this.cookieName = String(cookieName ?? "jf_setup_session");
     this.ttlSeconds = Math.max(300, Number(ttlSeconds) || (60 * 60));
-    this.cookieSecret = String(cookieSecret ?? "") || "jf-utm-builder-insecure-default-secret";
+    this.cookieSecret = String(cookieSecret ?? "");
+    if (!this.cookieSecret) {
+      throw new Error("TRACKING_SECRET_ENCRYPTION_KEY is required for signed setup sessions.");
+    }
   }
 
   authenticateCredentials(username, password) {
@@ -34,8 +37,7 @@ export class SetupConsoleAuthService {
   }
 
   createCookie({ secure = false } = {}) {
-    const sameSite = "None";
-    const effectiveSecure = secure || sameSite === "None";
+    const sameSite = "Lax";
     const now = Math.floor(Date.now() / 1000);
     const payload = JSON.stringify({ setup: true, iat: now, exp: now + this.ttlSeconds });
     const encodedPayload = Buffer.from(payload, "utf8").toString("base64url");
@@ -44,19 +46,18 @@ export class SetupConsoleAuthService {
       path: "/",
       httpOnly: true,
       sameSite,
-      secure: effectiveSecure,
+      secure,
       maxAge: this.ttlSeconds
     });
   }
 
   clearCookie({ secure = false } = {}) {
-    const sameSite = "None";
-    const effectiveSecure = secure || sameSite === "None";
+    const sameSite = "Lax";
     return serializeCookie(this.cookieName, "", {
       path: "/",
       httpOnly: true,
       sameSite,
-      secure: effectiveSecure,
+      secure,
       maxAge: 0
     });
   }
