@@ -1,5 +1,5 @@
 import { NodeResponse } from "../http/response.js";
-import { renderAuthPage, parseFormBody, normalizeText, normalizeReturnTo, isSecureRequest, escapeHtml, escapeAttribute } from "./auth-page.js";
+import { renderAuthPage, parseFormBody, normalizeText, normalizeReturnTo, isSecureRequest, escapeAttribute } from "./auth-page.js";
 
 export class AppLoginController {
   constructor({ appSessionAuthService, defaultPath = "/new" }) {
@@ -62,7 +62,6 @@ function renderLoginHtml({ returnTo = "", error = "" }) {
       <label>Username<input type="text" name="username" autocomplete="username" required></label>
       <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
       <button class="button" type="submit">Sign In</button>
-    </form>
-    <p class="auth-foot">Need to create administrator accounts? <a href="/setup">Open the setup console</a>.</p>`
+    </form>`
   });
 }
