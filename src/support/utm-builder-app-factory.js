@@ -21,6 +21,7 @@ import { GeneratedLinkRepository } from "../repositories/generated-link-reposito
 import { RequestRepository } from "../repositories/request-repository.js";
 import { LinkAuditRepository } from "../repositories/link-audit-repository.js";
 import { UserRepository } from "../repositories/user-repository.js";
+import { UtmValueAcknowledgementRepository } from "../repositories/utm-value-acknowledgement-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
 import { SetupConsoleAuthService } from "../services/setup-console-auth-service.js";
 import { UserAccountService } from "../services/user-account-service.js";
@@ -57,6 +58,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   const requestRepository = new RequestRepository(database);
   const generatedLinkRepository = new GeneratedLinkRepository(database);
   const linkAuditRepository = new LinkAuditRepository(database);
+  const utmValueAcknowledgementRepository = new UtmValueAcknowledgementRepository(database);
   const userRepository = new UserRepository(database);
   const userAccountService = new UserAccountService({ userRepository });
   const rulesService = new RulesService(rules);
@@ -108,6 +110,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     rulesService,
     utmIntelligenceService,
     linkAuditRepository,
+    utmValueAcknowledgementRepository,
     standalone: true
   });
   const utmImportController = new UtmImportController({ utmCsvImportService });
@@ -201,6 +204,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));
+  router.add("POST", "/utms/governance/acknowledge", requireAdmin((request) => utmLibraryController.handleAcknowledge(request)));
   router.add("POST", "/utms/delete", protect((request) => utmLibraryController.handleDelete(request)));
   router.add("GET", "/imports", protect((request) => utmImportController.handleHtml(request)));
   router.add("POST", "/imports", protect((request) => utmImportController.handleImport(request)));

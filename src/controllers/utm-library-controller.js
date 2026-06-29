@@ -1,7 +1,14 @@
 import { NodeResponse } from "../http/response.js";
 import { isUrlLikeUtmValue } from "../services/utm-value-sanitizer.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
+import { parseFormBody } from "./auth-page.js";
 import { renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
+
+const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content"];
+
+function acknowledgementKey(field, value) {
+  return `${String(field ?? "").trim().toLowerCase()}:${String(value ?? "").trim().toLowerCase()}`;
+}
 
 const AUDIT_ACTION_LABELS = {
   created: "Created",
@@ -34,6 +41,7 @@ export class UtmLibraryController {
     rulesService,
     utmIntelligenceService = null,
     linkAuditRepository = null,
+    utmValueAcknowledgementRepository = null,
     standalone = false
   }) {
     this.utmLibraryService = utmLibraryService;
@@ -41,6 +49,7 @@ export class UtmLibraryController {
     this.rulesService = rulesService;
     this.utmIntelligenceService = utmIntelligenceService;
     this.linkAuditRepository = linkAuditRepository;
+    this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
     this.standalone = standalone;
   }
 
@@ -50,6 +59,7 @@ export class UtmLibraryController {
       ?? this.utmLibraryService.listCached?.(request.query)
       ?? this.utmLibraryService.listAsync?.(request.query)
       ?? this.utmLibraryService.list(request.query));
+    const acknowledgedSet = await this.loadAcknowledgedSet();
     const view = {
       library,
       toast: normalizeTextValue(request.query.toast),
@@ -57,7 +67,8 @@ export class UtmLibraryController {
       highlightRequestId: positiveInteger(request.query.highlight_request_id, null),
       standalone: this.standalone,
       user: request?.user ?? null,
-      governance: summarizeGovernance(library.items, this.utmIntelligenceService)
+      canManageGovernance: request?.user?.role === "admin",
+      governance: summarizeGovernance(library.items, this.utmIntelligenceService, acknowledgedSet)
     };
 
     return NodeResponse.text(renderHtml(view), 200, {
@@ -107,6 +118,48 @@ export class UtmLibraryController {
     return NodeResponse.json({ status: "ok", events });
   }
 
+  async loadAcknowledgedSet() {
+    if (!this.utmValueAcknowledgementRepository) {
+      return new Set();
+    }
+    const rows = await (this.utmValueAcknowledgementRepository.listAsync?.()
+      ?? this.utmValueAcknowledgementRepository.list?.()
+      ?? []);
+    return new Set(rows.map((row) => acknowledgementKey(row.field, row.value)));
+  }
+
+  async handleAcknowledge(request) {
+    const form = parseFormBody(request.rawBody);
+    const field = normalizeTextValue(form.field).toLowerCase();
+    const value = normalizeTextValue(form.value);
+
+    if (!GOVERNANCE_FIELDS.includes(field) || !value) {
+      return NodeResponse.redirect(`/utms?${buildQueryString({
+        toast: "Could not acknowledge that value.",
+        toast_level: "error"
+      })}`);
+    }
+
+    if (this.utmValueAcknowledgementRepository) {
+      await (this.utmValueAcknowledgementRepository.acknowledgeAsync?.({
+        field,
+        value,
+        userId: request?.user?.id ?? null,
+        userName: request?.user?.displayName ?? null
+      }) ?? this.utmValueAcknowledgementRepository.acknowledge?.({
+        field,
+        value,
+        userId: request?.user?.id ?? null,
+        userName: request?.user?.displayName ?? null
+      }));
+    }
+
+    return NodeResponse.redirect(`/utms?${buildQueryString({
+      toast: `Acknowledged "${value}". It will no longer be flagged for review.`,
+      toast_level: "success"
+    })}`);
+  }
+
   async handleDelete(request) {
     const parsedBody = request.parseJson();
     if (!parsedBody.ok) {
@@ -144,7 +197,7 @@ export class UtmLibraryController {
 }
 
 function renderHtml(view) {
-  const { library, toast, toastLevel, highlightRequestId, governance } = view;
+  const { library, toast, toastLevel, highlightRequestId, governance, canManageGovernance } = view;
   const queryBase = {
     client: library.filters.client,
     source: library.filters.source,
@@ -185,6 +238,7 @@ function renderHtml(view) {
     ${renderJustFlowShellStyles()}
     .library-flow{display:flex;flex-direction:column;gap:16px}.library-actions,.actions,.chips,.mini-actions,.page-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.meta,.muted,.empty{color:var(--text-2);line-height:1.5}.results-head,.panel-head,.card-head,.pagination{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}.results-head h2,.panel-head h2,.card-title h3,.section h4{margin:0}.results-head h2,.panel-head h2{font-size:15px;font-weight:600;letter-spacing:-.01em}.card-title h3{font-size:18px;font-weight:600;letter-spacing:-.02em}.badge,.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-2);font-size:12px;font-weight:500}.chip{background:var(--accent-soft);color:var(--accent);border-color:transparent}.chip.neutral{background:var(--surface-2);color:var(--text-2);border-color:var(--border)}.chip.warning{background:var(--warn-soft);color:var(--warn);border-color:transparent}.chip.error{background:var(--neg-soft);color:var(--neg);border-color:transparent}.library-kpis{margin-bottom:0}.library-filters{grid-template-columns:minmax(180px,1.4fr) repeat(4,minmax(120px,1fr)) auto auto}.library-filters .advanced-fields{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:10px}.button,.link-button,.mini-button,.subtle-link,.page-link,.danger-button{height:32px;padding:0 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-weight:500;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:all .12s;white-space:nowrap}.button{background:var(--accent);border-color:var(--accent);color:#fff}.button:hover,.link-button:hover,.mini-button:hover,.subtle-link:hover,.page-link:hover,.danger-button:hover{background:var(--surface-2);border-color:var(--text-3)}.button:hover{background:var(--accent);filter:brightness(1.1)}.mini-button,.subtle-link,.danger-button.mini,.page-link{height:28px;padding:0 9px;font-size:12px}.danger-button{background:var(--neg-soft);border-color:transparent;color:var(--neg)}.page-link.current{background:var(--accent);border-color:var(--accent);color:#fff}.grid{display:grid;gap:12px}.card{scroll-margin-top:76px}.library-card{padding:0;display:grid;gap:0}.card.highlight{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.card-head{padding:14px 16px;border-bottom:1px solid var(--border)}.eyebrow{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.card-title{display:grid;gap:4px}.card-sub{color:var(--text-2);font-size:12.5px}.banner{display:grid;gap:10px;margin:14px 16px 0;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--accent-soft);grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.banner-label{font-size:11px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;font-weight:600}.banner-main{display:grid;gap:2px;min-width:0}.banner-value{font-size:16px;font-weight:600;letter-spacing:-.02em;word-break:break-word}.banner-meta{color:var(--text-2);font-size:12px;line-height:1.4;word-break:break-word}.card-grid{display:grid;gap:16px;grid-template-columns:minmax(180px,1.05fr) minmax(240px,1.35fr) minmax(170px,.9fr);padding:16px}.section{display:grid;gap:10px;align-content:start;min-width:0}.section h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);font-weight:600}.utm-grid{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}.utm-tile{min-height:64px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2)}.utm-tile strong{display:block;margin-bottom:4px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}.utm-value{word-break:break-word;line-height:1.4;font-size:13px}.list{display:flex;flex-direction:column;gap:10px}.link-item,.usage-item{padding-bottom:10px;border-bottom:1px solid var(--border)}.link-item:last-child,.usage-item:last-child{padding-bottom:0;border-bottom:0}.link-label{margin-bottom:5px;color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.link-target{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:flex-start}.link-value{min-width:0;display:block;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--accent);text-decoration:none;word-break:break-word;line-height:1.45;font-family:"IBM Plex Mono",monospace;font-size:12px}.link-value:hover{text-decoration:underline}.qr-frame{width:min(100%,148px);aspect-ratio:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2);overflow:hidden;display:grid;place-items:center}.qr-frame img{width:100%;height:100%;display:block;object-fit:cover;background:#fff}.qr-placeholder{padding:14px;text-align:center;color:var(--text-3);line-height:1.45;font-size:12px}.usage-item{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.usage-item strong{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase}.usage-item span{text-align:right;line-height:1.4;font-size:12.5px}.warnings{display:flex;gap:6px;flex-wrap:wrap}details{border-top:1px solid var(--border);padding:12px 16px}details summary{cursor:pointer;color:var(--text-2);list-style:none;font-size:12.5px}details summary::-webkit-details-marker{display:none}details[open] summary{margin-bottom:10px}.request{margin:0;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);line-height:1.5;word-break:break-word;color:var(--text-2);font-size:13px}.empty{padding:28px;text-align:center;border:1px dashed var(--border-strong);border-radius:var(--radius);background:var(--surface-2)}.toast{position:fixed;right:16px;bottom:16px;max-width:22rem;padding:12px 14px;border-radius:var(--radius);background:var(--text);color:var(--surface);box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity 140ms ease,transform 140ms ease;z-index:80}.toast.warning{background:var(--warn);color:#fff}.toast.error{background:var(--neg);color:#fff}.toast.success{background:var(--pos);color:#fff}.toast.visible{opacity:1;transform:translateY(0)}
     .card-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface-2);font-size:12.5px;color:var(--text-2)}.card-foot .foot-meta strong{color:var(--text)}.history-panel{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2)}.history-list{display:flex;flex-direction:column;gap:8px}.history-event{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;font-size:12.5px}.history-event .h-action{font-weight:600;color:var(--text)}.history-event .h-actor{color:var(--text-2)}.history-event .h-when{color:var(--text-3);white-space:nowrap}.history-event .h-summary{grid-column:1/-1;color:var(--text-3);word-break:break-word}
+    .gov-chip{padding-right:6px}.gov-ack{display:inline-flex;margin:0}.gov-ack button{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.65;transition:opacity .12s,background .12s}.gov-ack button:hover{opacity:1;background:color-mix(in srgb,currentColor 18%,transparent)}.gov-ack svg{width:13px;height:13px;stroke:currentColor;stroke-width:3;fill:none}
     ${renderLoadingStyles()}
     @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}}
     @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}}
@@ -218,7 +272,7 @@ function renderHtml(view) {
             <div class="kpi"><div class="kpi-label">QR codes</div><div class="kpi-value num">${library.summary.withQr}</div><div class="kpi-sub">Links with QR assets</div></div>
           </div>
           ${library.pending ? `<div class="alert-row ok">${renderIcon("refresh")}<div><div class="title">Library is warming in the background.</div><div class="body">This avoids request timeouts on large link libraries. The page will refresh automatically when the cached snapshot is ready.</div></div></div>` : ""}
-          ${renderGovernancePanel(governance)}
+          ${renderGovernancePanel(governance, { canManage: canManageGovernance })}
           <section class="card">
             <div class="card-header">
               <div>
@@ -598,7 +652,7 @@ function renderCsv(items) {
   return `${lines.join("\n")}\n`;
 }
 
-function renderGovernancePanel(governance) {
+function renderGovernancePanel(governance, { canManage = false } = {}) {
   if (!governance || !governance.totalNewValues) {
     return "";
   }
@@ -606,7 +660,7 @@ function renderGovernancePanel(governance) {
     <div class="card-header">
       <div>
         <h3>New UTM Values To Review</h3>
-        <div class="meta">These values exist in saved links but do not appear in the historical workbook baseline. Review them so naming drift does not spread into reporting.</div>
+        <div class="meta">These values exist in saved links but do not appear in the historical workbook baseline. Review them so naming drift does not spread into reporting.${canManage ? " Acknowledge a value to confirm it is intentional and remove it from this list." : ""}</div>
       </div>
       <div class="chips">
         <span class="chip warning">${governance.totalNewValues} new values</span>
@@ -618,11 +672,22 @@ function renderGovernancePanel(governance) {
       ${governance.fields.filter((field) => field.items.length).map((field) => `<div class="qi-tile">
         <div class="l">${escapeHtml(field.label)}</div>
         <div class="v num">${field.items.length}</div>
-        <div class="warnings" style="margin-top:.6rem">${field.items.slice(0, 8).map((item) => `<span class="chip warning">${escapeHtml(item.value)} (${item.count})</span>`).join("")}</div>
+        <div class="warnings" style="margin-top:.6rem">${field.items.slice(0, 8).map((item) => renderGovernanceChip(field.key, item, canManage)).join("")}</div>
       </div>`).join("")}
       </div>
     </div>
   </section>`;
+}
+
+function renderGovernanceChip(fieldKey, item, canManage) {
+  const acknowledgeForm = canManage
+    ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
+        <input type="hidden" name="field" value="${escapeAttribute(fieldKey)}">
+        <input type="hidden" name="value" value="${escapeAttribute(item.value)}">
+        <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(item.value)}">${renderIcon("check")}</button>
+      </form>`
+    : "";
+  return `<span class="chip warning gov-chip" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.value)} (${item.count})${acknowledgeForm}</span>`;
 }
 
 function renderResultCard(item, { highlightRequestId }) {
@@ -697,7 +762,7 @@ function renderResultCard(item, { highlightRequestId }) {
   </article>`;
 }
 
-export function summarizeGovernance(items, utmIntelligenceService) {
+export function summarizeGovernance(items, utmIntelligenceService, acknowledgedSet = new Set()) {
   if (!utmIntelligenceService) {
     return {
       totalNewValues: 0,
@@ -715,7 +780,12 @@ export function summarizeGovernance(items, utmIntelligenceService) {
     const counts = new Map();
     items.forEach((item) => {
       const value = normalizeTextValue(item[property]);
-      if (!value || isUrlLikeUtmValue(value) || utmIntelligenceService.isKnownValue(field, value)) {
+      if (
+        !value
+        || isUrlLikeUtmValue(value)
+        || utmIntelligenceService.isWorkbookBaselineValue(field, value)
+        || acknowledgedSet.has(acknowledgementKey(field, value))
+      ) {
         return;
       }
       counts.set(value, (counts.get(value) ?? 0) + Number(item.requestCount ?? 1));

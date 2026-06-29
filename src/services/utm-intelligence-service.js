@@ -12,6 +12,11 @@ export class UtmIntelligenceService {
     this.generatedLinkRepository = generatedLinkRepository;
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
+    this.staticBaselineKnownValues = buildKnownValues(
+      this.staticData.uiDictionaries,
+      this.staticData.valueCounts,
+      this.staticData.masterRows
+    );
     this.runtimeRows = [];
     this.data = this.mergeRuntimeData(this.runtimeRows);
   }
@@ -286,6 +291,15 @@ export class UtmIntelligenceService {
       return false;
     }
     return this.data.knownValues[normalizedField]?.includes(normalizedValue) ?? false;
+  }
+
+  isWorkbookBaselineValue(field, value) {
+    const normalizedField = normalizeField(field);
+    const normalizedValue = normalizeOptional(value);
+    if (!normalizedField || !normalizedValue) {
+      return false;
+    }
+    return this.staticBaselineKnownValues[normalizedField]?.includes(normalizedValue) ?? false;
   }
 
   previewFromNormalized(normalized, submitted = {}) {

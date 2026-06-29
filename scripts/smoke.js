@@ -134,6 +134,32 @@ try {
   const duplicate = await duplicateResponse.json();
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
   const historyBody = await historyResponse.json();
+
+  const govCreateResponse = await af("/new", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "jf",
+      destination_url: `https://example.com/governance-smoke-${Date.now()}`,
+      utm_source: "facebook",
+      utm_medium: "social",
+      utm_campaign: "smokegovcampaign",
+      utm_term: "",
+      utm_content: ""
+    })
+  });
+  const govCreated = await govCreateResponse.json();
+  const govValue = govCreated.result?.utm_campaign ?? "";
+  const govMarker = `data-governance-value="${govValue}"`;
+  const libraryBeforeAck = await (await af("/utms")).text();
+  const ackResponse = await fetch(`${base}/utms/governance/acknowledge`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
+    body: new URLSearchParams({ field: "campaign", value: govValue }).toString()
+  });
+  const libraryAfterAck = await (await af("/utms")).text();
+
   if (
     health.status !== "ok"
     || setupLogin.status !== 302
@@ -167,6 +193,11 @@ try {
     || duplicate.summary?.skipped !== 1
     || historyResponse.status !== 200
     || !historyBody.events?.some((event) => event.actor === "Smoke Admin")
+    || govCreateResponse.status !== 200
+    || !govValue
+    || !libraryBeforeAck.includes(govMarker)
+    || ackResponse.status !== 302
+    || libraryAfterAck.includes(govMarker)
   ) {
     throw new Error("Standalone UTM Builder smoke test failed.");
   }
