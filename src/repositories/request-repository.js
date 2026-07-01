@@ -913,6 +913,25 @@ export class RequestRepository {
       `
     };
   }
+
+  listConsistencyHistory() {
+    return syncAll(this.database, `
+      SELECT * FROM requests
+      WHERE status IN ('completed', 'completed_without_short_link', 'imported')
+        AND normalized_payload IS NOT NULL
+      ORDER BY created_at ASC, id ASC
+    `);
+  }
+
+  async listConsistencyHistoryAsync() {
+    if (typeof this.database.allAsync !== "function") return this.listConsistencyHistory();
+    return await this.database.allAsync(`
+      SELECT * FROM requests
+      WHERE status IN ('completed', 'completed_without_short_link', 'imported')
+        AND normalized_payload IS NOT NULL
+      ORDER BY created_at ASC, id ASC
+    `);
+  }
 }
 
 function normalizeShortUrl(value) {

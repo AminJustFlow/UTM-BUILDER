@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
+import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
 process.env.DATABASE_CLIENT = "sqlite";
@@ -12,6 +13,8 @@ process.env.SETUP_ADMIN_PASSWORD = "setup-pass-123";
 process.env.TRACKING_SECRET_ENCRYPTION_KEY = "smoke-test-cookie-secret";
 process.env.BITLY_ACCESS_TOKEN = "";
 process.env.UTM_BUILDER_SKIP_ENV_FILE = "1";
+process.env.SMTP_HOST = "";
+process.env.SMTP_FROM = "";
 for (const suffix of ["", "-shm", "-wal"]) {
   fs.rmSync(`${databasePath}${suffix}`, { force: true });
 }
@@ -30,6 +33,20 @@ const af = (path, options = {}) => fetch(`${base}${path}`, {
   ...options,
   headers: { ...(options.headers ?? {}), Cookie: sessionCookie }
 });
+async function createWithConsistencyConfirmation(payload) {
+  const firstResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+  });
+  const firstBody = await firstResponse.json();
+  if (firstResponse.status !== 409 || firstBody.error?.code !== "consistency_confirmation_required") {
+    return { firstResponse, firstBody, response: firstResponse, body: firstBody };
+  }
+  const response = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, consistency_warning_fingerprint: firstBody.error.consistency_warning_fingerprint })
+  });
+  return { firstResponse, firstBody, response, body: await response.json() };
+}
 try {
   const setupLogin = await fetch(`${base}/setup/login`, {
     method: "POST",
@@ -67,23 +84,44 @@ try {
   const builderHtml = await builderResponse.text();
   const usersPage = await af("/users");
   const usersHtml = await usersPage.text();
+  const notificationSettingsResponse = await af("/users/notification-settings", {
+    method: "POST", redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ enabled: "0", recipients: "alerts@example.com, second@example.com" }).toString()
+  });
+  const usersAfterSettings = await (await af("/users")).text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=jf")).json();
-  const createResponse = await af("/new", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const createAttempt = await createWithConsistencyConfirmation({
       client: "jf",
       destination_url: "https://example.com/bitly-degradation-smoke",
       utm_source: "facebook",
       utm_medium: "social",
       utm_campaign: "website",
-      utm_term: "smoke",
-      utm_content: "missing_token",
+      utm_term: "jfclientspecificterm",
+      utm_content: "jfclientspecificcontent",
       needs_qr: true
+  });
+  const createResponse = createAttempt.response;
+  const created = createAttempt.body;
+  const familiarResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "jf", destination_url: "https://example.com/familiar-combination",
+      utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
+      utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
     })
   });
-  const created = await createResponse.json();
+  const clientNewResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "castle", destination_url: "https://example.com/client-new-combination",
+      utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
+      utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
+    })
+  });
+  const clientNew = await clientNewResponse.json();
+  const typoContext = await (await af("/new/utm-intelligence/context.json?client=jf&campaign=websit&source=facebook&medium=social")).json();
   const duplicateResponseExact = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -93,8 +131,8 @@ try {
       utm_source: "facebook",
       utm_medium: "social",
       utm_campaign: "website",
-      utm_term: "smoke",
-      utm_content: "missing_token",
+      utm_term: "jfclientspecificterm",
+      utm_content: "jfclientspecificcontent",
       needs_qr: false
     })
   });
@@ -102,19 +140,26 @@ try {
   const duplicatePage = await af(`/new?duplicate_request_id=${created.result?.request_id}`);
   const duplicateHtml = await duplicatePage.text();
   const missingDuplicatePage = await af("/new?duplicate_request_id=99999999");
-  const changedCopyResponse = await af("/new", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const staleConsistencyResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      client: "jf", destination_url: "https://example.com/stale-consistency",
+      utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
+      utm_term: "jfclientspecificterm", utm_content: "changed_copy",
+      consistency_warning_fingerprint: createAttempt.firstBody.error?.consistency_warning_fingerprint
+    })
+  });
+  const staleConsistency = await staleConsistencyResponse.json();
+  const changedCopyAttempt = await createWithConsistencyConfirmation({
       client: "jf",
       destination_url: "https://example.com/bitly-degradation-smoke",
       utm_source: "facebook",
       utm_medium: "social",
       utm_campaign: "website",
-      utm_term: "smoke",
+      utm_term: "jfclientspecificterm",
       utm_content: "changed_copy"
-    })
   });
+  const changedCopyResponse = changedCopyAttempt.response;
   const concurrentPayload = (destination_url) => ({
     client: "jf",
     destination_url,
@@ -124,10 +169,12 @@ try {
     utm_term: "",
     utm_content: ""
   });
-  const concurrentResponses = await Promise.all([
-    af("/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?b=2&a=1")) }),
-    af("/new", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(concurrentPayload("https://example.com/concurrent?a=1&b=2")) })
-  ]);
+  const concurrentFirst = await createWithConsistencyConfirmation(concurrentPayload("https://example.com/concurrent?b=2&a=1"));
+  const concurrentFingerprint = concurrentFirst.firstBody.error?.consistency_warning_fingerprint;
+  const concurrentResponses = [concurrentFirst.response, await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...concurrentPayload("https://example.com/concurrent?a=1&b=2"), consistency_warning_fingerprint: concurrentFingerprint })
+  })];
   const concurrentStatuses = concurrentResponses.map((response) => response.status).sort((left, right) => left - right);
   const csv = [
     "request_id,status,client,channel,asset_type,campaign_label,canonical_campaign,utm_source,utm_medium,utm_campaign,utm_term,utm_content,destination_url,final_long_url,short_url,qr_url,request_count,first_seen_at,last_seen_at,original_message",
@@ -148,10 +195,7 @@ try {
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
   const historyBody = await historyResponse.json();
 
-  const govCreateResponse = await af("/new", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const govCreateAttempt = await createWithConsistencyConfirmation({
       client: "jf",
       destination_url: `https://example.com/governance-smoke-${Date.now()}`,
       utm_source: "facebook",
@@ -159,9 +203,9 @@ try {
       utm_campaign: "smokegovcampaign",
       utm_term: "",
       utm_content: ""
-    })
   });
-  const govCreated = await govCreateResponse.json();
+  const govCreateResponse = govCreateAttempt.response;
+  const govCreated = govCreateAttempt.body;
   const govValue = govCreated.result?.utm_campaign ?? "";
   const govMarker = `data-governance-value="${govValue}"`;
   const libraryBeforeAck = await (await af("/utms")).text();
@@ -169,7 +213,7 @@ try {
     method: "POST",
     redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
-    body: new URLSearchParams({ field: "campaign", value: govValue }).toString()
+    body: new URLSearchParams({ field: "campaign", value: govValue, client: "jf", warning_type: "new_value" }).toString()
   });
   const libraryAfterAck = await (await af("/utms")).text();
   const passwordChange = await af("/account/password", {
@@ -208,9 +252,22 @@ try {
     || usersPage.status !== 200
     || !usersHtml.includes("Smoke Admin")
     || !usersHtml.includes("Administrator")
+    || !usersHtml.includes("Consistency review emails")
+    || notificationSettingsResponse.status !== 302
+    || !usersAfterSettings.includes("alerts@example.com, second@example.com")
     || !suggestions.items?.length
     || !history.items?.length
     || createResponse.status !== 200
+    || createAttempt.firstResponse.status !== 409
+    || createAttempt.firstBody.error?.code !== "consistency_confirmation_required"
+    || !createAttempt.firstBody.error?.consistency_warning_fingerprint
+    || !createAttempt.firstBody.error?.consistency_warnings?.every((warning) => warning.type && warning.severity && Array.isArray(warning.fields) && Array.isArray(warning.recommendations))
+    || created.result?.request_id !== 1
+    || familiarResponse.status !== 200
+    || clientNewResponse.status !== 409
+    || clientNew.error?.code !== "consistency_confirmation_required"
+    || !clientNew.error?.consistency_warnings?.some((warning) => warning.type === "new_value")
+    || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "website"))
     || created.result?.status !== "completed_without_short_link"
     || created.result?.degradation_reason !== "bitly_not_configured"
     || !created.result?.tracked_url
@@ -223,6 +280,8 @@ try {
     || !duplicateHtml.includes("Create Duplicate")
     || !duplicateHtml.includes('name="duplicated_from_request_id"')
     || missingDuplicatePage.status !== 404
+    || staleConsistencyResponse.status !== 409
+    || staleConsistency.error?.code !== "consistency_confirmation_required"
     || changedCopyResponse.status !== 200
     || concurrentStatuses.join(",") !== "200,409"
     || !builderHtml.includes("Campaign Term — Publication Name")
@@ -231,9 +290,13 @@ try {
     || duplicate.summary?.skipped !== 1
     || historyResponse.status !== 200
     || !historyBody.events?.some((event) => event.actor === "Smoke Admin")
+    || !historyBody.events?.some((event) => event.action === "consistency_override")
     || govCreateResponse.status !== 200
     || !govValue
     || !libraryBeforeAck.includes(govMarker)
+    || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
+    || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
+    || libraryBeforeAck.includes("Last edited by")
     || ackResponse.status !== 302
     || libraryAfterAck.includes(govMarker)
     || passwordChange.status !== 302
@@ -248,6 +311,7 @@ try {
 }
 
 await verifyBitlyFailureClassification();
+await verifyConsistencyNotificationSchedule();
 
 async function verifyBitlyFailureClassification() {
   const cases = [
@@ -310,4 +374,39 @@ function mockNormalized() {
     finalLongUrl: "https://example.com/?utm_source=facebook&utm_medium=social&utm_campaign=website",
     needsQr: true
   };
+}
+
+async function verifyConsistencyNotificationSchedule() {
+  const settings = { enabled: true, recipients: ["alerts@example.com"], lastRunLocalDate: null };
+  const sent = [];
+  const service = new ConsistencyNotificationService({
+    settingsRepository: {
+      async get() { return settings; },
+      async recordRun({ localDate, result, error }) {
+        settings.lastRunLocalDate = localDate;
+        settings.lastResult = result;
+        settings.lastError = error;
+      }
+    },
+    requestRepository: {
+      async listConsistencyHistoryAsync() {
+        return [{
+          raw_payload: JSON.stringify({ accepted_consistency_warnings: [{
+            type: "new_value", fields: ["campaign"], values: { campaign: "new_campaign" }, message: "New campaign"
+          }] }),
+          normalized_payload: JSON.stringify({ client: "jf" }),
+          source_user_name: "Smoke Admin", created_at: "2026-07-01T09:00:00.000Z"
+        }];
+      }
+    },
+    acknowledgementRepository: { async listAsync() { return []; } },
+    mailer: { async send(message) { sent.push(message); } },
+    appBaseUrl: "https://utm.example.com",
+    timezone: "America/New_York"
+  });
+  const first = await service.runIfDue(new Date("2026-07-01T10:00:00.000Z"));
+  const second = await service.runIfDue(new Date("2026-07-01T10:30:00.000Z"));
+  if (!first.sent || second.sent || sent.length !== 1 || !sent[0].html.includes("new_campaign")) {
+    throw new Error("Consistency notification schedule verification failed.");
+  }
 }

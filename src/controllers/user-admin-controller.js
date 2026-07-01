@@ -11,20 +11,39 @@ import {
 } from "./app-shell.js";
 
 export class UserAdminController {
-  constructor({ userAccountService, standalone = true }) {
+  constructor({ userAccountService, notificationSettingsRepository = null, smtpConfigured = false, standalone = true }) {
     this.userAccountService = userAccountService;
+    this.notificationSettingsRepository = notificationSettingsRepository;
+    this.smtpConfigured = smtpConfigured;
     this.standalone = standalone;
   }
 
   async handleHtml(request) {
     const users = await this.userAccountService.list();
+    const notificationSettings = await this.notificationSettingsRepository?.get?.();
     return NodeResponse.text(renderPage({
       user: request.user,
       standalone: this.standalone,
       users,
+      notificationSettings,
+      smtpConfigured: this.smtpConfigured,
       toast: normalizeText(request.query.toast),
       toastLevel: normalizeText(request.query.toast_level) || "success"
     }), 200, htmlHeaders());
+  }
+
+  async handleNotificationSettings(request) {
+    const form = parseFormBody(request.rawBody);
+    const recipients = normalizeRecipients(form.recipients);
+    const invalid = recipients.filter((email) => !EMAIL_PATTERN.test(email));
+    if (invalid.length) return redirectWithMessage(`Invalid email address: ${invalid[0]}`, "error");
+    const enabled = normalizeText(form.enabled) === "1";
+    if (enabled && !recipients.length) return redirectWithMessage("Add at least one recipient before enabling notifications.", "error");
+    if (enabled && !this.smtpConfigured) return redirectWithMessage("Configure SMTP in .env before enabling notifications.", "error");
+    await this.notificationSettingsRepository.update({
+      enabled, recipients, userId: request.user.id, userName: request.user.displayName
+    });
+    return redirectWithMessage("Notification settings updated.", "success");
   }
 
   async handleCreate(request) {
@@ -58,7 +77,7 @@ export class UserAdminController {
 }
 
 function renderPage(view) {
-  const { user, users, toast, toastLevel } = view;
+  const { user, users, toast, toastLevel, notificationSettings = {}, smtpConfigured } = view;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -103,6 +122,18 @@ function renderPage(view) {
                 <div class="field"><label>Temporary password</label><input type="password" name="password" autocomplete="new-password" required></div>
                 <div class="field"><button class="btn btn-primary" type="submit">${renderIcon("users")} Create user</button></div>
               </form>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header"><div><h3>Consistency review emails</h3><div class="meta">Send one notification at 6:00 AM America/New_York when UTM values or combinations are waiting for review.</div></div></div>
+            <div class="card-body">
+              ${smtpConfigured ? "" : '<div class="toast error visible" style="position:static;margin-bottom:12px">SMTP is not configured. Add the SMTP variables to .env before enabling notifications.</div>'}
+              <form method="post" action="/users/notification-settings" class="form-grid">
+                <div class="field" style="grid-column:span 2"><label>Recipient emails</label><input type="text" name="recipients" value="${escapeAttribute((notificationSettings.recipients ?? []).join(", "))}" placeholder="person@example.com, manager@example.com"></div>
+                <div class="field"><label>Delivery</label><select name="enabled"><option value="0"${notificationSettings.enabled ? "" : " selected"}>Off</option><option value="1"${notificationSettings.enabled ? " selected" : ""}>On — daily at 6:00 AM</option></select></div>
+                <div class="field"><button class="btn btn-primary" type="submit">Save notification settings</button></div>
+              </form>
+              <div class="meta" style="margin-top:10px">Last run: ${escapeHtml(notificationSettings.lastRunLocalDate || "Never")} · Result: ${escapeHtml(notificationSettings.lastResult || "Not run")}${notificationSettings.lastError ? ` · Error: ${escapeHtml(notificationSettings.lastError)}` : ""}</div>
             </div>
           </section>
           <section class="card">
@@ -174,6 +205,15 @@ function redirectWithResult(result, successMessage) {
     return NodeResponse.redirect(`/users?${new URLSearchParams({ toast: result.message, toast_level: "error" }).toString()}`);
   }
   return NodeResponse.redirect(`/users?${new URLSearchParams({ toast: successMessage, toast_level: "success" }).toString()}`);
+}
+
+function redirectWithMessage(message, level) {
+  return NodeResponse.redirect(`/users?${new URLSearchParams({ toast: message, toast_level: level }).toString()}`);
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
+function normalizeRecipients(value) {
+  return [...new Set(String(value ?? "").split(/[\s,;]+/u).map((email) => email.trim().toLowerCase()).filter(Boolean))];
 }
 
 function htmlHeaders() {

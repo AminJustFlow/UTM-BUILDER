@@ -1,15 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const DEFAULT_SUGGESTION_LIMIT = 8;
 const DEFAULT_HISTORY_LIMIT = 6;
 
 export class UtmIntelligenceService {
-  constructor({ projectRoot, rulesService, generatedLinkRepository = null, currentYear = new Date().getFullYear() }) {
+  constructor({ projectRoot, rulesService, generatedLinkRepository = null, requestRepository = null, currentYear = new Date().getFullYear() }) {
     this.projectRoot = projectRoot;
     this.rulesService = rulesService;
     this.generatedLinkRepository = generatedLinkRepository;
+    this.requestRepository = requestRepository;
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
     this.staticBaselineKnownValues = buildKnownValues(
@@ -189,6 +191,7 @@ export class UtmIntelligenceService {
     const filters = this.normalizeSelection(input);
     const recommendations = this.recommendations(filters);
     const policyWarnings = this.policyWarnings(filters, recommendations);
+    const consistency = this.consistencyAnalysis(filters);
     return {
       counts: this.counts(filters),
       combination: this.combinationStats(filters),
@@ -200,10 +203,113 @@ export class UtmIntelligenceService {
         content: this.suggestions({ ...filters, field: "content", limit: 6 }).items
       },
       policy_warnings: policyWarnings,
+      consistency,
       duplicate_warnings: UTM_FIELDS
         .map((field) => this.findNearDuplicate(field, filters[field]))
         .filter(Boolean)
     };
+  }
+
+  consistencyAnalysis(input = {}, acknowledgedRows = []) {
+    this.refreshData();
+    const filters = this.normalizeSelection(input);
+    const client = filters.client;
+    if (!client) return emptyConsistency();
+    const clientRows = this.data.masterRows.filter((row) => row.client === client);
+    const acknowledged = new Set((acknowledgedRows ?? []).map((row) => `${row.field}:${normalizeOptional(row.value)}`));
+    const warnings = [];
+    const newFields = new Set();
+
+    for (const field of UTM_FIELDS) {
+      const value = filters[field];
+      if (!value) continue;
+      const usageCount = clientRows.filter((row) => row[field] === value).length;
+      if (usageCount > 0 || acknowledged.has(`${client}|${field}:${value}`)) continue;
+      const near = this.findNearDuplicateForRows(field, value, clientRows)
+        ?? this.findNearDuplicateForRows(field, value, this.data.masterRows);
+      const recommendationRows = clientRows.length ? clientRows : this.data.masterRows;
+      const globalExactCount = this.data.masterRows.filter((row) => row[field] === value).length;
+      const recommendations = near
+        ? [{ field, value: near, usage_count: recommendationRows.filter((row) => row[field] === near).length }]
+        : globalExactCount
+          ? [{ field, value, usage_count: globalExactCount }]
+        : topValues(recommendationRows, field, 3).map((entry) => ({ field, ...entry }));
+      warnings.push({
+        type: near ? "possible_typo" : "new_value",
+        severity: "warning",
+        fields: [field],
+        values: { [field]: value },
+        message: near
+          ? `${title(field)} "${value}" looks close to the established client value "${near}".`
+          : `${title(field)} "${value}" has never been used for this client.`,
+        usage_count: 0,
+        recommendations,
+        requires_confirmation: true
+      });
+      newFields.add(field);
+    }
+
+    const pairs = [
+      ["campaign", "source"], ["campaign", "medium"], ["source", "medium"],
+      ["campaign", "term"], ["campaign", "content"]
+    ];
+    for (const fields of pairs) {
+      if (fields.some((field) => !filters[field] || newFields.has(field))) continue;
+      const usageCount = clientRows.filter((row) => fields.every((field) => row[field] === filters[field])).length;
+      const valueKey = fields.map((field) => filters[field]).join("|");
+      const acknowledgement = `${client}|pair:${fields.join("+")}:${valueKey}`;
+      if (usageCount === 0 && !acknowledged.has(acknowledgement)) {
+        const target = fields[fields.length - 1];
+        const relatedRows = clientRows.filter((row) => row[fields[0]] === filters[fields[0]]);
+        warnings.push({
+          type: "new_pairing",
+          severity: "warning",
+          fields,
+          values: Object.fromEntries(fields.map((field) => [field, filters[field]])),
+          message: `${fields.map((field) => `${title(field)} "${filters[field]}"`).join(" with ")} has not been used for this client.`,
+          usage_count: 0,
+          recommendations: topValues(relatedRows, target, 3).map((entry) => ({ field: target, ...entry })),
+          requires_confirmation: true
+        });
+      }
+    }
+
+    const populatedFields = UTM_FIELDS.filter((field) => filters[field]);
+    const exactCount = clientRows.filter((row) => populatedFields.every((field) => row[field] === filters[field])).length;
+    const combinationValue = populatedFields.map((field) => `${field}=${filters[field]}`).join("|");
+    if (!newFields.size && !warnings.some((warning) => warning.type === "new_pairing") && exactCount === 0
+      && !acknowledged.has(`${client}|combination:${combinationValue}`)) {
+      warnings.push({
+        type: "new_combination", severity: "warning", fields: populatedFields,
+        values: Object.fromEntries(populatedFields.map((field) => [field, filters[field]])),
+        message: "This complete UTM combination has never been used for this client.",
+        usage_count: 0, recommendations: [], requires_confirmation: true
+      });
+    } else if (exactCount === 1) {
+      warnings.push({
+        type: "rare_combination", severity: "info", fields: populatedFields,
+        values: Object.fromEntries(populatedFields.map((field) => [field, filters[field]])),
+        message: "This UTM combination has only been used once for this client.",
+        usage_count: 1, recommendations: [], requires_confirmation: false
+      });
+    }
+
+    const confirmationWarnings = warnings.filter((warning) => warning.requires_confirmation);
+    return {
+      warnings,
+      requires_confirmation: confirmationWarnings.length > 0,
+      fingerprint: confirmationWarnings.length ? consistencyFingerprint(client, filters, confirmationWarnings) : null
+    };
+  }
+
+  findNearDuplicateForRows(field, value, rows) {
+    const values = [...new Set(rows.map((row) => row[field]).filter(Boolean))];
+    const compact = compactValue(value);
+    return values.find((candidate) => {
+      if (candidate === value) return false;
+      const candidateCompact = compactValue(candidate);
+      return compact === candidateCompact || levenshtein(compact, candidateCompact) <= 2;
+    }) ?? null;
   }
 
   recommendations(input = {}) {
@@ -302,7 +408,7 @@ export class UtmIntelligenceService {
     return this.staticBaselineKnownValues[normalizedField]?.includes(normalizedValue) ?? false;
   }
 
-  previewFromNormalized(normalized, submitted = {}) {
+  previewFromNormalized(normalized, submitted = {}, acknowledgedRows = []) {
     this.refreshData();
     const filters = {
       client: normalizeOptional(normalized.client),
@@ -338,7 +444,10 @@ export class UtmIntelligenceService {
         needs_qr: normalized.needsQr,
         warnings: [...new Set([...(normalized.warnings ?? []), ...duplicateWarnings])]
       },
-      context: this.context(filters)
+      context: {
+        ...this.context(filters),
+        consistency: this.consistencyAnalysis(filters, acknowledgedRows)
+      }
     };
   }
 
@@ -397,6 +506,9 @@ export class UtmIntelligenceService {
   }
 
   loadRuntimeRows() {
+    if (this.requestRepository?.listConsistencyHistory) {
+      return this.requestRepository.listConsistencyHistory().map((row) => this.normalizeRequestRow(row)).filter(Boolean);
+    }
     if (!this.generatedLinkRepository) {
       return this.runtimeRows;
     }
@@ -410,6 +522,10 @@ export class UtmIntelligenceService {
   }
 
   async loadRuntimeRowsAsync() {
+    if (this.requestRepository?.listConsistencyHistoryAsync) {
+      const rows = await this.requestRepository.listConsistencyHistoryAsync();
+      return rows.map((row) => this.normalizeRequestRow(row)).filter(Boolean);
+    }
     if (!this.generatedLinkRepository) {
       return this.runtimeRows;
     }
@@ -452,6 +568,24 @@ export class UtmIntelligenceService {
       creationYear,
       bitly: normalizeOptional(row.short_url)
     };
+  }
+
+  normalizeRequestRow(row) {
+    const normalized = safeObject(row.normalized_payload);
+    return this.normalizeGeneratedLinkRow({
+      normalized_destination_url: normalized.normalized_destination_url,
+      final_long_url: normalized.final_long_url ?? row.final_long_url,
+      utm_source: normalized.utm_source,
+      utm_medium: normalized.utm_medium,
+      utm_campaign: normalized.utm_campaign,
+      canonical_campaign: normalized.canonical_campaign,
+      utm_term: normalized.utm_term,
+      utm_content: normalized.utm_content,
+      client: normalized.client,
+      channel: normalized.channel,
+      created_at: row.created_at,
+      short_url: row.short_url
+    });
   }
 
   normalizeMasterRow(row) {
@@ -682,6 +816,15 @@ function readJson(filePath) {
   return JSON.parse(readText(filePath));
 }
 
+function safeObject(value) {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 function parseCsv(text) {
   const rows = [];
   let field = "";
@@ -909,6 +1052,31 @@ function extractDestinationUrl(finalLongUrl) {
   } catch {
     return "";
   }
+}
+
+function emptyConsistency() {
+  return { warnings: [], requires_confirmation: false, fingerprint: null };
+}
+
+function topValues(rows, field, limit = 3) {
+  const counts = new Map();
+  rows.forEach((row) => {
+    const value = normalizeOptional(row[field]);
+    if (value) counts.set(value, (counts.get(value) ?? 0) + 1);
+  });
+  return [...counts.entries()]
+    .map(([value, usage_count]) => ({ value, usage_count }))
+    .sort((left, right) => right.usage_count - left.usage_count || left.value.localeCompare(right.value))
+    .slice(0, limit);
+}
+
+function consistencyFingerprint(client, filters, warnings) {
+  const payload = {
+    client,
+    values: Object.fromEntries(UTM_FIELDS.map((field) => [field, filters[field] ?? ""])),
+    warnings: warnings.map((warning) => ({ type: warning.type, fields: warning.fields, message: warning.message }))
+  };
+  return crypto.createHash("sha256").update(JSON.stringify(payload), "utf8").digest("hex");
 }
 
 function buildKnownValues(uiDictionaries, valueCounts, masterRows) {

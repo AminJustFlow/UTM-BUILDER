@@ -10,6 +10,7 @@ export class UtmBuilderController {
     rulesService,
     requestNormalizer,
     utmIntelligenceService,
+    utmValueAcknowledgementRepository = null,
     standalone = false
   }) {
     this.utmLibraryEditorService = utmLibraryEditorService;
@@ -17,6 +18,7 @@ export class UtmBuilderController {
     this.rulesService = rulesService;
     this.requestNormalizer = requestNormalizer;
     this.utmIntelligenceService = utmIntelligenceService;
+    this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
     this.standalone = standalone;
   }
 
@@ -73,7 +75,9 @@ export class UtmBuilderController {
           message: result.message,
           warnings: result.warnings ?? [],
           missing_fields: result.missingFields ?? [],
-          existing: result.existing ?? null
+          existing: result.existing ?? null,
+          consistency_warnings: result.consistencyWarnings ?? [],
+          consistency_warning_fingerprint: result.consistencyWarningFingerprint ?? null
         }
       }, result.statusCode ?? 500);
     }
@@ -145,9 +149,12 @@ export class UtmBuilderController {
 
   async handleContext(request) {
     await this.utmIntelligenceService.refreshDataAsync?.();
+    const acknowledgements = await this.loadAcknowledgements();
+    const context = this.utmIntelligenceService.context(request.query);
+    context.consistency = this.utmIntelligenceService.consistencyAnalysis(request.query, acknowledgements);
     return NodeResponse.json({
       status: "ok",
-      ...this.utmIntelligenceService.context(request.query)
+      ...context
     });
   }
 
@@ -158,7 +165,7 @@ export class UtmBuilderController {
       return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
     }
 
-    const preview = this.buildPreview(parsedBody.value);
+    const preview = this.buildPreview(parsedBody.value, await this.loadAcknowledgements());
     if (!preview.ok) {
       const guidedValidation = buildGuidedBuilderValidation(preview, parsedBody.value);
       return NodeResponse.json({
@@ -178,7 +185,7 @@ export class UtmBuilderController {
     });
   }
 
-  buildPreview(input = {}) {
+  buildPreview(input = {}, acknowledgements = []) {
     const parsed = ParsedLinkRequest.fromObject({
       client: normalizeOptional(input.client),
       channel: normalizeOptional(input.channel),
@@ -208,8 +215,15 @@ export class UtmBuilderController {
 
     return {
       ok: true,
-      value: this.utmIntelligenceService.previewFromNormalized(decision.normalizedRequest, input)
+      value: this.utmIntelligenceService.previewFromNormalized(decision.normalizedRequest, input, acknowledgements)
     };
+  }
+
+  async loadAcknowledgements() {
+    if (!this.utmValueAcknowledgementRepository) return [];
+    return await (this.utmValueAcknowledgementRepository.listAsync?.()
+      ?? this.utmValueAcknowledgementRepository.list?.()
+      ?? []);
   }
 
   badRequest(code, message) {

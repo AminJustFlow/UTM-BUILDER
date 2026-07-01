@@ -22,6 +22,7 @@ import { RequestRepository } from "../repositories/request-repository.js";
 import { LinkAuditRepository } from "../repositories/link-audit-repository.js";
 import { UserRepository } from "../repositories/user-repository.js";
 import { UtmValueAcknowledgementRepository } from "../repositories/utm-value-acknowledgement-repository.js";
+import { ConsistencyNotificationSettingsRepository } from "../repositories/consistency-notification-settings-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
 import { SetupConsoleAuthService } from "../services/setup-console-auth-service.js";
 import { UserAccountService } from "../services/user-account-service.js";
@@ -36,6 +37,8 @@ import { UtmIntelligenceService } from "../services/utm-intelligence-service.js"
 import { UtmLibraryEditorService } from "../services/utm-library-editor-service.js";
 import { UtmLibraryService } from "../services/utm-library-service.js";
 import { UtmCsvImportService } from "../services/utm-csv-import-service.js";
+import { SmtpMailer } from "../services/smtp-mailer.js";
+import { ConsistencyNotificationService, ConsistencyNotificationScheduler } from "../services/consistency-notification-service.js";
 
 export async function createUtmBuilderApplication(projectRoot) {
   if (process.env.UTM_BUILDER_SKIP_ENV_FILE !== "1") {
@@ -64,6 +67,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   const generatedLinkRepository = new GeneratedLinkRepository(database);
   const linkAuditRepository = new LinkAuditRepository(database);
   const utmValueAcknowledgementRepository = new UtmValueAcknowledgementRepository(database);
+  const notificationSettingsRepository = new ConsistencyNotificationSettingsRepository(database);
   const userRepository = new UserRepository(database);
   const userAccountService = new UserAccountService({ userRepository });
   const rulesService = new RulesService(rules);
@@ -80,18 +84,21 @@ export async function createUtmBuilderApplication(projectRoot) {
     qrCodeService: new QrCodeService(config.qr),
     logger
   });
+  const utmIntelligenceService = new UtmIntelligenceService({
+    projectRoot,
+    rulesService,
+    generatedLinkRepository,
+    requestRepository
+  });
   const utmLibraryEditorService = new UtmLibraryEditorService({
     requestRepository,
     requestNormalizer,
     fingerprintService,
     linkGenerationService,
     generatedLinkRepository,
-    linkAuditRepository
-  });
-  const utmIntelligenceService = new UtmIntelligenceService({
-    projectRoot,
-    rulesService,
-    generatedLinkRepository
+    linkAuditRepository,
+    utmIntelligenceService,
+    utmValueAcknowledgementRepository
   });
   const utmLibraryService = new UtmLibraryService(requestRepository, { logger });
   const utmCsvImportService = new UtmCsvImportService({
@@ -107,6 +114,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     rulesService,
     requestNormalizer,
     utmIntelligenceService,
+    utmValueAcknowledgementRepository,
     standalone: true
   });
   const utmLibraryController = new UtmLibraryController({
@@ -131,7 +139,22 @@ export async function createUtmBuilderApplication(projectRoot) {
   });
   const login = new AppLoginController({ appSessionAuthService: auth, defaultPath: "/new" });
   const setupConsoleController = new SetupConsoleController({ setupConsoleAuthService, userAccountService });
-  const userAdminController = new UserAdminController({ userAccountService });
+  const mailer = new SmtpMailer(config.smtp);
+  const notificationService = new ConsistencyNotificationService({
+    settingsRepository: notificationSettingsRepository,
+    requestRepository,
+    acknowledgementRepository: utmValueAcknowledgementRepository,
+    mailer,
+    appBaseUrl: config.app.baseUrl,
+    timezone: config.app.timezone,
+    logger
+  });
+  const notificationScheduler = new ConsistencyNotificationScheduler(notificationService);
+  const userAdminController = new UserAdminController({
+    userAccountService,
+    notificationSettingsRepository,
+    smtpConfigured: mailer.isConfigured()
+  });
   const accountController = new AccountController({ userAccountService });
 
   const totalUsers = await userRepository.countAll();
@@ -202,6 +225,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/users/update", requireAdmin((request) => userAdminController.handleUpdate(request)));
   router.add("POST", "/users/reset-password", requireAdmin((request) => userAdminController.handleResetPassword(request)));
   router.add("POST", "/users/delete", requireAdmin((request) => userAdminController.handleDelete(request)));
+  router.add("POST", "/users/notification-settings", requireAdmin((request) => userAdminController.handleNotificationSettings(request)));
   router.add("GET", "/account", protect((request) => accountController.handleHtml(request)));
   router.add("POST", "/account/password", protect((request) => accountController.handlePassword(request)));
   router.add("GET", "/new", protect((request) => utmBuilderController.handleHtml(request)));
@@ -225,8 +249,12 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/imports", requireAdmin((request) => utmImportController.handleImport(request)));
 
   return new Application(router, migrationRunner, config, {
-    start: async () => {},
-    stop: async () => database.close?.()
+    start: async () => notificationScheduler.start(),
+    stop: async () => {
+      notificationScheduler.stop();
+      mailer.close();
+      await database.close?.();
+    }
   }, { logger, slowRequestMs: config.app.slowRequestMs });
 }
 
@@ -235,6 +263,7 @@ function resolveConfig(projectRoot) {
   return {
     app: {
       name: "JF UTM Builder",
+      baseUrl: process.env.APP_BASE_URL ?? "http://localhost:3000",
       port: Number(process.env.PORT ?? process.env.UTM_BUILDER_PORT ?? process.env.APP_PORT ?? 3000),
       timezone: process.env.DEFAULT_TIMEZONE ?? baseConfig.app.timezone,
       confidenceThreshold: Number(process.env.PARSER_CONFIDENCE_THRESHOLD ?? baseConfig.app.confidenceThreshold),
@@ -266,6 +295,14 @@ function resolveConfig(projectRoot) {
     setup: {
       username: process.env.SETUP_ADMIN_USERNAME ?? "",
       password: process.env.SETUP_ADMIN_PASSWORD ?? ""
+    },
+    smtp: {
+      host: process.env.SMTP_HOST ?? "",
+      port: Number(process.env.SMTP_PORT ?? 587),
+      secure: parseBoolean(process.env.SMTP_SECURE, false),
+      user: process.env.SMTP_USER ?? "",
+      password: process.env.SMTP_PASSWORD ?? "",
+      from: process.env.SMTP_FROM ?? ""
     }
   };
 }

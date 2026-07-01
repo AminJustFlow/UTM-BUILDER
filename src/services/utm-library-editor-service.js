@@ -9,7 +9,9 @@ export class UtmLibraryEditorService {
     fingerprintService,
     linkGenerationService,
     generatedLinkRepository,
-    linkAuditRepository = null
+    linkAuditRepository = null,
+    utmIntelligenceService = null,
+    utmValueAcknowledgementRepository = null
   }) {
     this.requestRepository = requestRepository;
     this.requestNormalizer = requestNormalizer;
@@ -17,6 +19,8 @@ export class UtmLibraryEditorService {
     this.linkGenerationService = linkGenerationService;
     this.generatedLinkRepository = generatedLinkRepository;
     this.linkAuditRepository = linkAuditRepository;
+    this.utmIntelligenceService = utmIntelligenceService;
+    this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
   }
 
   async regenerate(input = {}, actor = null) {
@@ -91,7 +95,7 @@ export class UtmLibraryEditorService {
     };
   }
 
-  async recordSubmitAudit(context, input, normalized, fingerprint, requestId) {
+  async recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings = []) {
     const action = input.duplicated_from_request_id
       ? "duplicated"
       : input.original_request_id
@@ -106,6 +110,17 @@ export class UtmLibraryEditorService {
       sourceUserName: context.sourceUserName,
       summary: `${normalized.clientDisplayName} · ${normalized.utmCampaign || normalized.canonicalCampaign || "campaign"} → ${normalized.destinationUrl}`
     });
+    if (acceptedConsistencyWarnings.length) {
+      await this.recordAudit({
+        fingerprint,
+        requestId,
+        action: "consistency_override",
+        actor: context.actor,
+        sourceUserId: context.sourceUserId,
+        sourceUserName: context.sourceUserName,
+        summary: acceptedConsistencyWarnings.map((warning) => warning.message).join(" | ")
+      });
+    }
   }
 
   async recordAudit({ fingerprint = null, requestId = null, action, actor = null, sourceUserId = null, sourceUserName = null, summary = null }) {
@@ -167,6 +182,21 @@ export class UtmLibraryEditorService {
     if (existingDuplicate) {
       return duplicateFailure(existingDuplicate);
     }
+    const consistency = await this.analyzeConsistency(normalized);
+    if (consistency.requires_confirmation && input.consistency_warning_fingerprint !== consistency.fingerprint) {
+      return {
+        ok: false,
+        statusCode: 409,
+        code: "consistency_confirmation_required",
+        message: "Review these unfamiliar UTM values and combinations before creating the link.",
+        consistencyWarnings: consistency.warnings,
+        consistencyWarningFingerprint: consistency.fingerprint
+      };
+    }
+    const acceptedConsistencyWarnings = consistency.warnings.filter((warning) => warning.requires_confirmation);
+    if (acceptedConsistencyWarnings.length) {
+      normalized.warnings = [...new Set([...normalized.warnings, ...acceptedConsistencyWarnings.map((warning) => warning.message)])];
+    }
     const timestamp = new Date().toISOString();
     const requestId = await (this.requestRepository.createIncomingAsync?.({
       requestUuid: crypto.randomUUID(),
@@ -177,6 +207,8 @@ export class UtmLibraryEditorService {
         source: context.requestSource,
         original_request_id: input.original_request_id ?? null,
         duplicated_from_request_id: input.duplicated_from_request_id ?? null,
+        consistency_warning_fingerprint: input.consistency_warning_fingerprint ?? null,
+        accepted_consistency_warnings: acceptedConsistencyWarnings,
         submitted_values: {
           client: input.client ?? null,
           channel: input.channel ?? null,
@@ -203,6 +235,8 @@ export class UtmLibraryEditorService {
         source: context.requestSource,
         original_request_id: input.original_request_id ?? null,
         duplicated_from_request_id: input.duplicated_from_request_id ?? null,
+        consistency_warning_fingerprint: input.consistency_warning_fingerprint ?? null,
+        accepted_consistency_warnings: acceptedConsistencyWarnings,
         submitted_values: {
           client: input.client ?? null,
           channel: input.channel ?? null,
@@ -287,7 +321,7 @@ export class UtmLibraryEditorService {
           error_message: generation.degradedMessage
         }));
 
-        await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId);
+        await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings);
 
         return {
           ok: true,
@@ -319,7 +353,7 @@ export class UtmLibraryEditorService {
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }));
 
-      await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId);
+      await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings);
 
       return {
         ok: true,
@@ -347,6 +381,24 @@ export class UtmLibraryEditorService {
         message: "Unable to regenerate this link right now."
       };
     }
+  }
+
+  async analyzeConsistency(normalized) {
+    if (!this.utmIntelligenceService) {
+      return { warnings: [], requires_confirmation: false, fingerprint: null };
+    }
+    await this.utmIntelligenceService.refreshDataAsync?.();
+    const acknowledgements = this.utmValueAcknowledgementRepository
+      ? await (this.utmValueAcknowledgementRepository.listAsync?.() ?? this.utmValueAcknowledgementRepository.list?.() ?? [])
+      : [];
+    return this.utmIntelligenceService.consistencyAnalysis({
+      client: normalized.client,
+      campaign: normalized.utmCampaign,
+      source: normalized.utmSource,
+      medium: normalized.utmMedium,
+      term: normalized.utmTerm,
+      content: normalized.utmContent
+    }, acknowledgements);
   }
 }
 

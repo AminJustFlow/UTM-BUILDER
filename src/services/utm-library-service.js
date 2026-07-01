@@ -454,6 +454,7 @@ export class UtmLibraryService {
 
   mapRequestRecord(row, overrides = {}) {
     const normalized = safeJsonParse(row.normalized_payload);
+    const rawPayload = safeJsonParse(row.raw_payload);
     const warnings = safeJsonArray(row.warnings);
     const missingFields = safeJsonArray(row.missing_fields);
     const finalLongUrl = normalized.final_long_url ?? row.final_long_url ?? "";
@@ -487,12 +488,13 @@ export class UtmLibraryService {
       hasQr: Boolean(String(row.qr_url ?? "").trim()),
       originalMessage: row.original_message ?? "",
       warnings,
+      acceptedConsistencyWarnings: Array.isArray(rawPayload.accepted_consistency_warnings) ? rawPayload.accepted_consistency_warnings : [],
       missingFields,
       requestCount: Number(overrides.requestCount ?? row.request_count ?? 1),
       firstCreatedAt: overrides.firstCreatedAt ?? row.first_created_at ?? row.created_at,
       lastCreatedAt: overrides.lastCreatedAt ?? row.last_created_at ?? row.created_at,
-      lastEditedByName: friendlyActorName(row.source_user_name),
-      lastEditedAt: overrides.lastCreatedAt ?? row.updated_at ?? row.last_created_at ?? row.created_at,
+      createdByName: friendlyActorName(row.source_user_name),
+      createdAt: row.created_at ?? overrides.firstCreatedAt ?? row.first_created_at,
       reusedExisting: Number(row.reused_existing ?? 0) === 1
     };
   }

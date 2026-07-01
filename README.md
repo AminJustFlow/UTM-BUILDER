@@ -51,6 +51,10 @@ The example configuration uses SQLite locally. For production, set the database 
 
 To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, governance acknowledgement, and user management require an administrator account.
 
+The builder compares populated UTM values and combinations against the selected client's workbook, imported, and saved-link history. Unfamiliar selections return `409 consistency_confirmation_required`; the UI requires an explicit **Create Anyway** confirmation using the returned `consistency_warning_fingerprint`. Confirmed standards remain available for administrator review in the Link Library.
+
+Administrators can enable daily consistency-review email notifications and manage recipients from the Users page. Delivery runs once at 6:00 AM in the configured application timezone and only sends when review items exist. Configure `APP_BASE_URL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` in `.env`; credentials are never stored in the database or admin UI.
+
 ## Publish as its own repository
 
 Copy this directory outside the parent project, then run:

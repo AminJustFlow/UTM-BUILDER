@@ -1,10 +1,9 @@
 import { NodeResponse } from "../http/response.js";
-import { isUrlLikeUtmValue } from "../services/utm-value-sanitizer.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
 import { parseFormBody } from "./auth-page.js";
 import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
-const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content"];
+const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content", "pair", "combination"];
 
 function acknowledgementKey(field, value) {
   return `${String(field ?? "").trim().toLowerCase()}:${String(value ?? "").trim().toLowerCase()}`;
@@ -15,7 +14,8 @@ const AUDIT_ACTION_LABELS = {
   regenerated: "Updated",
   duplicated: "Duplicated",
   imported: "Imported",
-  deleted: "Deleted"
+  deleted: "Deleted",
+  consistency_override: "Consistency override"
 };
 
 const SORT_LABELS = {
@@ -132,22 +132,36 @@ export class UtmLibraryController {
     const form = parseFormBody(request.rawBody);
     const field = normalizeTextValue(form.field).toLowerCase();
     const value = normalizeTextValue(form.value);
+    const client = normalizeTextValue(form.client).toLowerCase();
+    const warningType = normalizeTextValue(form.warning_type).toLowerCase();
 
-    if (!GOVERNANCE_FIELDS.includes(field) || !value) {
+    const validField = GOVERNANCE_FIELDS.includes(field) || /^pair:(campaign\+(source|medium|term|content)|source\+medium)$/u.test(field);
+    if (!validField || !value || !client || warningType === "possible_typo") {
       return NodeResponse.redirect(`/utms?${buildQueryString({
         toast: "Could not acknowledge that value.",
         toast_level: "error"
       })}`);
     }
 
+    if (["campaign", "source", "medium", "term", "content"].includes(field) && this.utmIntelligenceService) {
+      await this.utmIntelligenceService.refreshDataAsync?.();
+      const analysis = this.utmIntelligenceService.consistencyAnalysis({ client, [field]: value });
+      if (analysis.warnings.some((warning) => warning.type === "possible_typo")) {
+        return NodeResponse.redirect(`/utms?${buildQueryString({
+          toast: "Possible typos must be corrected and cannot be acknowledged as standards.",
+          toast_level: "error"
+        })}`);
+      }
+    }
+
     if (this.utmValueAcknowledgementRepository) {
       await (this.utmValueAcknowledgementRepository.acknowledgeAsync?.({
-        field,
+        field: `${client}|${field}`,
         value,
         userId: request?.user?.id ?? null,
         userName: request?.user?.displayName ?? null
       }) ?? this.utmValueAcknowledgementRepository.acknowledge?.({
-        field,
+        field: `${client}|${field}`,
         value,
         userId: request?.user?.id ?? null,
         userName: request?.user?.displayName ?? null
@@ -155,7 +169,7 @@ export class UtmLibraryController {
     }
 
     return NodeResponse.redirect(`/utms?${buildQueryString({
-      toast: `Acknowledged "${value}". It will no longer be flagged for review.`,
+      toast: `Acknowledged "${value}" for ${client}. It will no longer be flagged for review.`,
       toast_level: "success"
     })}`);
   }
@@ -253,6 +267,7 @@ function renderHtml(view) {
       ${renderJustFlowTopbar({ section: "UTM Builder", title: "Link Library", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
       <div class="page">
         <div class="library-flow">
+          ${renderGovernancePanel(governance, { canManage: canManageGovernance })}
           <div class="page-header">
             <div class="page-title-block">
               <h1>Link Library</h1>
@@ -273,7 +288,6 @@ function renderHtml(view) {
             <div class="kpi"><div class="kpi-label">QR codes</div><div class="kpi-value num">${library.summary.withQr}</div><div class="kpi-sub">Links with QR assets</div></div>
           </div>
           ${library.pending ? `<div class="alert-row ok">${renderIcon("refresh")}<div><div class="title">Library is warming in the background.</div><div class="body">This avoids request timeouts on large link libraries. The page will refresh automatically when the cached snapshot is ready.</div></div></div>` : ""}
-          ${renderGovernancePanel(governance, { canManage: canManageGovernance })}
           <section class="card">
             <div class="card-header">
               <div>
@@ -660,11 +674,11 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
   return `<section class="card">
     <div class="card-header">
       <div>
-        <h3>New UTM Values To Review</h3>
-        <div class="meta">These values exist in saved links but do not appear in the historical workbook baseline. Review them so naming drift does not spread into reporting.${canManage ? " Acknowledge a value to confirm it is intentional and remove it from this list." : ""}</div>
+        <h3>Consistency Warnings To Review</h3>
+        <div class="meta">These client-specific values and combinations were explicitly confirmed during link creation. Review them so naming drift does not spread into reporting.${canManage ? " Acknowledge an intentional standard to remove it from future warnings." : ""}</div>
       </div>
       <div class="chips">
-        <span class="chip warning">${governance.totalNewValues} new values</span>
+        <span class="chip warning">${governance.totalNewValues} items</span>
       </div>
     </div>
     <div class="card-body">
@@ -683,12 +697,14 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
 function renderGovernanceChip(fieldKey, item, canManage) {
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
-        <input type="hidden" name="field" value="${escapeAttribute(fieldKey)}">
+        <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
         <input type="hidden" name="value" value="${escapeAttribute(item.value)}">
+        <input type="hidden" name="client" value="${escapeAttribute(item.client)}">
+        <input type="hidden" name="warning_type" value="${escapeAttribute(item.type)}">
         <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(item.value)}">${renderIcon("check")}</button>
       </form>`
     : "";
-  return `<span class="chip warning gov-chip" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.value)} (${item.count})${acknowledgeForm}</span>`;
+  return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(item.value)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
 }
 
 function renderResultCard(item, { highlightRequestId }) {
@@ -756,7 +772,7 @@ function renderResultCard(item, { highlightRequestId }) {
       <p class="request">${escapeHtml(item.originalMessage || "No original request text was saved.")}</p>
     </details>
     <div class="card-foot">
-      <div class="foot-meta">Last edited by <strong>${escapeHtml(item.lastEditedByName)}</strong>${item.lastEditedAt ? ` · ${escapeHtml(formatDate(item.lastEditedAt))}` : ""}</div>
+      <div class="foot-meta">Created by <strong>${escapeHtml(item.createdByName)}</strong>${item.createdAt ? ` · ${escapeHtml(formatDate(item.createdAt))}` : ""}</div>
       ${item.fingerprint ? `<button type="button" class="subtle-link" data-history-toggle data-fingerprint="${escapeAttribute(item.fingerprint)}" aria-expanded="false">View edit history</button>` : ""}
     </div>
     ${item.fingerprint ? `<div class="history-panel" data-history-panel="${escapeAttribute(item.fingerprint)}" hidden></div>` : ""}
@@ -770,35 +786,34 @@ export function summarizeGovernance(items, utmIntelligenceService, acknowledgedS
       fields: []
     };
   }
-  const fieldMap = [
-    ["campaign", "utmCampaign"],
-    ["source", "utmSource"],
-    ["medium", "utmMedium"],
-    ["term", "utmTerm"],
-    ["content", "utmContent"]
-  ];
-  const fields = fieldMap.map(([field, property]) => {
-    const counts = new Map();
-    items.forEach((item) => {
-      const value = normalizeTextValue(item[property]);
-      if (
-        !value
-        || isUrlLikeUtmValue(value)
-        || utmIntelligenceService.isWorkbookBaselineValue(field, value)
-        || acknowledgedSet.has(acknowledgementKey(field, value))
-      ) {
-        return;
-      }
-      counts.set(value, (counts.get(value) ?? 0) + Number(item.requestCount ?? 1));
+  const grouped = new Map();
+  items.forEach((item) => {
+    (item.acceptedConsistencyWarnings ?? []).forEach((warning) => {
+      if (!["new_value", "new_pairing", "new_combination"].includes(warning.type)) return;
+      const fields = warning.fields ?? [];
+      const storageField = warning.type === "new_pairing" ? `pair:${fields.join("+")}`
+        : warning.type === "new_combination" ? "combination" : fields[0];
+      const value = warning.type === "new_combination"
+        ? fields.map((field) => `${field}=${warning.values?.[field] ?? ""}`).join("|")
+        : fields.map((field) => warning.values?.[field] ?? "").join("|");
+      const client = normalizeTextValue(item.client);
+      if (!client || !value || acknowledgedSet.has(acknowledgementKey(`${client}|${storageField}`, value))) return;
+      const key = `${client}|${storageField}|${value}`;
+      const current = grouped.get(key) ?? {
+        client, storageField, value, type: warning.type, fields,
+        message: warning.message, count: 0, createdBy: item.createdByName, createdAt: item.createdAt
+      };
+      current.count += Number(item.requestCount ?? 1);
+      grouped.set(key, current);
     });
-    return {
-      key: field,
-      label: humanize(field),
-      items: [...counts.entries()]
-        .map(([value, count]) => ({ value, count }))
-        .sort((left, right) => right.count - left.count || left.value.localeCompare(right.value))
-    };
   });
+  const labels = { new_value: "New values", new_pairing: "New pairings", new_combination: "New combinations" };
+  const fields = Object.entries(labels).map(([type, label]) => ({
+    key: type,
+    label,
+    items: [...grouped.values()].filter((item) => item.type === type)
+      .sort((left, right) => right.count - left.count || left.value.localeCompare(right.value))
+  }));
   return {
     totalNewValues: fields.reduce((sum, field) => sum + field.items.length, 0),
     fields
