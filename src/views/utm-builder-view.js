@@ -136,6 +136,11 @@ export function renderUtmBuilderHtml(view) {
               </div>
               <div class="card-body context-stack">
                 <div class="context-block">
+                  <h3>Consistency warnings</h3>
+                  <div class="helper-copy" id="warning-empty">Checks compare your values and their combination with this client's history. New or unfamiliar choices require one confirmation.</div>
+                  <div class="warning-list" id="warning-list"></div>
+                </div>
+                <div class="context-block">
                   <h3>Resolved preview</h3>
                   <div class="helper-copy" id="preview-empty">Choose a client and destination URL to see the resolved UTM values before link creation.</div>
                   <div class="preview-grid" id="preview-grid"></div>
@@ -168,11 +173,6 @@ export function renderUtmBuilderHtml(view) {
                   <h3>Term and content examples</h3>
                   <div class="helper-copy" id="related-empty">These stay light until a campaign is chosen.</div>
                   <div class="warning-list" id="related-list"></div>
-                </div>
-                <div class="context-block">
-                  <h3>Consistency warnings</h3>
-                  <div class="helper-copy" id="warning-empty">Checks compare your values and their combination with this client’s history. New or unfamiliar choices require one confirmation.</div>
-                  <div class="warning-list" id="warning-list"></div>
                 </div>
               </div>
             </aside>

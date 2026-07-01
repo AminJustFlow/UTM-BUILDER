@@ -249,6 +249,7 @@ try {
     || !builderHtml.includes('id="builder-form"')
     || !builderHtml.includes('href="/assets/jf-drop.png"')
     || !builderHtml.includes('src="/assets/just-flow-logo.png"')
+    || builderHtml.indexOf("Consistency warnings") > builderHtml.indexOf("Resolved preview")
     || usersPage.status !== 200
     || !usersHtml.includes("Smoke Admin")
     || !usersHtml.includes("Administrator")
