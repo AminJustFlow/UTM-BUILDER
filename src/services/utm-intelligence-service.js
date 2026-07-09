@@ -224,16 +224,16 @@ export class UtmIntelligenceService {
     for (const field of UTM_FIELDS) {
       const value = filters[field];
       if (!value) continue;
-      const usageCount = clientRows.filter((row) => row[field] === value).length;
+      const usageCount = countComparableRows(clientRows, field, value);
       if (usageCount > 0 || acknowledged.has(`${client}|${field}:${value}`)) continue;
       const near = this.findNearDuplicateForRows(field, value, clientRows)
         ?? this.findNearDuplicateForRows(field, value, this.data.masterRows);
       const recommendationRows = clientRows.length ? clientRows : this.data.masterRows;
-      const globalExactCount = this.data.masterRows.filter((row) => row[field] === value).length;
+      const globalExactCount = countComparableRows(this.data.masterRows, field, value);
       const displayValue = formatUtmValue(value);
       const displayNear = formatUtmValue(near);
       const recommendations = near
-        ? [{ field, value: displayNear, normalized_value: near, usage_count: recommendationRows.filter((row) => row[field] === near).length }]
+        ? [{ field, value: displayNear, normalized_value: near, usage_count: countComparableRows(recommendationRows, field, near) }]
         : globalExactCount
           ? [{ field, value: displayValue, normalized_value: value, usage_count: globalExactCount }]
         : topValues(recommendationRows, field, 3).map((entry) => ({ field, ...entry }));
@@ -258,12 +258,12 @@ export class UtmIntelligenceService {
     ];
     for (const fields of pairs) {
       if (fields.some((field) => !filters[field] || newFields.has(field))) continue;
-      const usageCount = clientRows.filter((row) => fields.every((field) => row[field] === filters[field])).length;
+      const usageCount = clientRows.filter((row) => fields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
       const valueKey = fields.map((field) => filters[field]).join("|");
       const acknowledgement = `${client}|pair:${fields.join("+")}:${valueKey}`;
       if (usageCount === 0 && !acknowledged.has(acknowledgement)) {
         const target = fields[fields.length - 1];
-        const relatedRows = clientRows.filter((row) => row[fields[0]] === filters[fields[0]]);
+        const relatedRows = clientRows.filter((row) => compactValue(row[fields[0]]) === compactValue(filters[fields[0]]));
         warnings.push({
           type: "new_pairing",
           severity: "warning",
@@ -278,7 +278,7 @@ export class UtmIntelligenceService {
     }
 
     const populatedFields = UTM_FIELDS.filter((field) => filters[field]);
-    const exactCount = clientRows.filter((row) => populatedFields.every((field) => row[field] === filters[field])).length;
+    const exactCount = clientRows.filter((row) => populatedFields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
     const combinationValue = populatedFields.map((field) => `${field}=${filters[field]}`).join("|");
     if (!newFields.size && !warnings.some((warning) => warning.type === "new_pairing") && exactCount === 0
       && !acknowledged.has(`${client}|combination:${combinationValue}`)) {
@@ -309,9 +309,9 @@ export class UtmIntelligenceService {
     const values = [...new Set(rows.map((row) => row[field]).filter(Boolean))];
     const compact = compactValue(value);
     return values.find((candidate) => {
-      if (candidate === value) return false;
       const candidateCompact = compactValue(candidate);
-      return compact === candidateCompact || levenshtein(compact, candidateCompact) <= 2;
+      if (compact === candidateCompact) return false;
+      return levenshtein(compact, candidateCompact) <= 2;
     }) ?? null;
   }
 
@@ -787,6 +787,9 @@ export class UtmIntelligenceService {
       return null;
     }
     const compact = compactValue(normalized);
+    if (knownValues.some((candidate) => compactValue(candidate) === compact)) {
+      return null;
+    }
     let best = null;
     for (const candidate of knownValues) {
       const candidateCompact = compactValue(candidate);
@@ -1072,6 +1075,11 @@ function topValues(rows, field, limit = 3) {
     .map(([value, usage_count]) => ({ value: formatUtmValue(value), normalized_value: value, usage_count }))
     .sort((left, right) => right.usage_count - left.usage_count || left.value.localeCompare(right.value))
     .slice(0, limit);
+}
+
+function countComparableRows(rows, field, value) {
+  const compact = compactValue(value);
+  return rows.filter((row) => compactValue(row[field]) === compact).length;
 }
 
 function consistencyFingerprint(client, filters, warnings) {

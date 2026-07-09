@@ -137,6 +137,7 @@ try {
   });
   const clientNew = await clientNewResponse.json();
   const typoContext = await (await af("/new/utm-intelligence/context.json?client=jf&campaign=websit&source=facebook&medium=social")).json();
+  const compactEquivalentContext = await (await af("/new/utm-intelligence/context.json?client=studleys&campaign=Plantfinder&source=Constantcontact&medium=email&term=Landingpage&content=Homepage")).json();
   const duplicateResponseExact = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -295,6 +296,8 @@ try {
     || clientNew.error?.code !== "consistency_confirmation_required"
     || !clientNew.error?.consistency_warnings?.some((warning) => warning.type === "new_value")
     || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "Website"))
+    || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo")
+    || compactEquivalentContext.duplicate_warnings?.length
     || created.result?.utm_source !== "Facebook"
     || created.result?.utm_medium !== "Social"
     || created.result?.utm_campaign !== "Website"
