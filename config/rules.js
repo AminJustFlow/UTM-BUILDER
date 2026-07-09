@@ -39,12 +39,12 @@ const manualClients = {
         term: {
           label: "Campaign Term — Publication Name",
           help: "Enter the publication carrying the advertisement.",
-          placeholder: "new_hampshire_magazine"
+	          placeholder: "NewHampshireMagazine"
         },
         content: {
           label: "Campaign Content — Issue Name",
           help: "Enter the publication issue or edition.",
-          placeholder: "spring_2026"
+	          placeholder: "Spring2026"
         }
       }
     }

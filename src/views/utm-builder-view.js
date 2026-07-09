@@ -2,11 +2,11 @@ import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowS
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const FIELD_GUIDANCE = [
-  { key: "campaign", label: "Campaign", meaning: "Strategic bucket", example: "collateral" },
-  { key: "source", label: "Source", meaning: "Specific asset", example: "cic_rack_card" },
-  { key: "medium", label: "Medium", meaning: "Access method", example: "qr_code" },
-  { key: "term", label: "Term", meaning: "Optional qualifier", example: "fall_open_house" },
-  { key: "content", label: "Content", meaning: "Optional creative detail", example: "front_panel" }
+  { key: "campaign", label: "Campaign", meaning: "Strategic bucket", example: "Collateral" },
+  { key: "source", label: "Source", meaning: "Specific asset", example: "CicRackCard" },
+  { key: "medium", label: "Medium", meaning: "Access method", example: "QRCode" },
+  { key: "term", label: "Term", meaning: "Optional qualifier", example: "FallOpenHouse" },
+  { key: "content", label: "Content", meaning: "Optional creative detail", example: "FrontPanel" }
 ];
 
 export function renderUtmBuilderHtml(view) {
@@ -111,11 +111,11 @@ export function renderUtmBuilderHtml(view) {
                   <div class="summary-banner" id="client-guidance" style="display:none"><div class="summary-text" id="client-guidance-copy"></div></div>
 
                   <div class="advanced-grid">
-                    ${renderCombobox("campaign", "Campaign", "Strategic bucket", "collateral", defaults.utm_campaign)}
-                    ${renderCombobox("source", "Source", "Specific asset", "cic_rack_card", defaults.utm_source)}
-                    ${renderCombobox("medium", "Medium", "Access method", "qr_code", defaults.utm_medium)}
-                    ${renderCombobox("term", "Term", "Optional qualifier", "fall_open_house", defaults.utm_term)}
-                    ${renderCombobox("content", "Content", "Optional creative detail", "front_panel", defaults.utm_content, true)}
+                    ${renderCombobox("campaign", "Campaign", "Strategic bucket", "Collateral", defaults.utm_campaign)}
+                    ${renderCombobox("source", "Source", "Specific asset", "CicRackCard", defaults.utm_source)}
+                    ${renderCombobox("medium", "Medium", "Access method", "QRCode", defaults.utm_medium)}
+                    ${renderCombobox("term", "Term", "Optional qualifier", "FallOpenHouse", defaults.utm_term)}
+                    ${renderCombobox("content", "Content", "Optional creative detail", "FrontPanel", defaults.utm_content, true)}
                   </div>
 
                   <div class="actions">

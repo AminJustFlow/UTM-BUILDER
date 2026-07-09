@@ -1268,9 +1268,9 @@ function title(value) {
 
 function describeField(field) {
   const descriptions = {
-    campaign: "Strategic bucket, such as collateral.",
-    source: "Specific asset, such as cic_rack_card.",
-    medium: "Access method, such as qr_code.",
+    campaign: "Strategic bucket, such as Collateral.",
+    source: "Specific asset, such as CicRackCard.",
+    medium: "Access method, such as QRCode.",
     term: "Optional qualifier for intentional segmentation.",
     content: "Optional creative or placement detail."
   };
