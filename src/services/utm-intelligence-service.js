@@ -75,6 +75,7 @@ export class UtmIntelligenceService {
 
     const limit = clampNumber(input.limit, DEFAULT_SUGGESTION_LIMIT, 1, 20);
     const query = normalizeOptional(input.query);
+    const compactQuery = compactValue(query);
     const filters = this.normalizeSelection(input);
     const scopedRows = this.scopeRows(filters);
     const candidateValues = this.collectCandidateValues(field, filters);
@@ -82,7 +83,7 @@ export class UtmIntelligenceService {
     const ranked = candidateValues
       .map((value) => this.buildSuggestion(field, value, scopedRows, filters))
       .filter(Boolean)
-      .filter((item) => !query || item.normalized_value.includes(query))
+      .filter((item) => !query || item.normalized_value.includes(query) || compactValue(item.normalized_value).includes(compactQuery))
       .sort(compareSuggestions)
       .slice(0, limit);
 
