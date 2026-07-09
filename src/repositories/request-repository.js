@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { normalizeUtmComparable } from "../services/utm-value-format.js";
 import { syncAll, syncGet, syncRun } from "../support/database.js";
 
 function serializeValue(value) {
@@ -68,25 +69,30 @@ export class RequestRepository {
     const campaignExpr = jsonFieldExpression("normalized_payload", "utm_campaign", this.database.client);
     const termExpr = jsonFieldExpression("normalized_payload", "utm_term", this.database.client);
     const contentExpr = jsonFieldExpression("normalized_payload", "utm_content", this.database.client);
+    const comparableSourceExpr = utmComparableSql(sourceExpr);
+    const comparableMediumExpr = utmComparableSql(mediumExpr);
+    const comparableCampaignExpr = utmComparableSql(campaignExpr);
+    const comparableTermExpr = utmComparableSql(termExpr);
+    const comparableContentExpr = utmComparableSql(contentExpr);
     return await this.database.getAsync(`
       SELECT *
       FROM requests
       WHERE status IN ('normalized', 'completed', 'completed_without_short_link')
         AND COALESCE(${destinationExpr}, '') = :destination
-        AND COALESCE(${sourceExpr}, '') = :source
-        AND COALESCE(${mediumExpr}, '') = :medium
-        AND COALESCE(${campaignExpr}, '') = :campaign
-        AND COALESCE(${termExpr}, '') = :term
-        AND COALESCE(${contentExpr}, '') = :content
+        AND ${comparableSourceExpr} = :source
+        AND ${comparableMediumExpr} = :medium
+        AND ${comparableCampaignExpr} = :campaign
+        AND ${comparableTermExpr} = :term
+        AND ${comparableContentExpr} = :content
       ORDER BY created_at DESC, id DESC
       LIMIT 1
     `, {
       destination: normalized.normalizedDestinationUrl,
-      source: normalized.utmSource ?? "",
-      medium: normalized.utmMedium ?? "",
-      campaign: normalized.utmCampaign ?? normalized.canonicalCampaign ?? "",
-      term: normalized.utmTerm ?? "",
-      content: normalized.utmContent ?? ""
+      source: normalizeUtmComparable(normalized.utmSource),
+      medium: normalizeUtmComparable(normalized.utmMedium),
+      campaign: normalizeUtmComparable(normalized.utmCampaign ?? normalized.canonicalCampaign),
+      term: normalizeUtmComparable(normalized.utmTerm),
+      content: normalizeUtmComparable(normalized.utmContent)
     }) ?? null;
   }
 
@@ -939,6 +945,10 @@ function normalizeShortUrl(value) {
     .trim()
     .toLowerCase()
     .replace(/\/+$/u, "");
+}
+
+function utmComparableSql(expression) {
+  return `LOWER(REPLACE(REPLACE(REPLACE(COALESCE(${expression}, ''), '_', ''), '-', ''), ' ', ''))`;
 }
 
 function resolveTrackedRequestLibraryOrderBy(sort, client = "sqlite") {

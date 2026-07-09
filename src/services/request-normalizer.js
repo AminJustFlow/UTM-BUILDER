@@ -1,5 +1,6 @@
 import { NormalizedLinkRequest } from "../domain/normalized-link-request.js";
 import { WorkflowDecision } from "../domain/workflow-decision.js";
+import { formatUtmValue } from "./utm-value-format.js";
 import { sanitizeOptionalUtmValue } from "./utm-value-sanitizer.js";
 
 export class RequestNormalizer {
@@ -98,13 +99,20 @@ export class RequestNormalizer {
       sanitizedWarnings.push("URL-like value removed from utm_content.");
     }
     const finalWarnings = [...new Set(sanitizedWarnings)];
+    const formattedUtm = {
+      source: formatUtmValue(utm.source),
+      medium: formatUtmValue(utm.medium),
+      campaign: formatUtmValue(utm.campaign),
+      term: formatUtmValue(sanitizedTerm),
+      content: formatUtmValue(sanitizedContent)
+    };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
-      utm_source: utm.source,
-      utm_medium: utm.medium,
-      utm_campaign: utm.campaign,
-      utm_term: sanitizedTerm,
-      utm_content: sanitizedContent
+      utm_source: formattedUtm.source,
+      utm_medium: formattedUtm.medium,
+      utm_campaign: formattedUtm.campaign,
+      utm_term: formattedUtm.term,
+      utm_content: formattedUtm.content
     });
 
     return new WorkflowDecision({
@@ -117,15 +125,15 @@ export class RequestNormalizer {
         channel,
         channelDisplayName: this.rulesService.getChannelDisplayName(channel),
         assetType,
-        campaignLabel: correctedCampaignLabel ?? utm.campaign,
-        canonicalCampaign: utm.campaign,
+        campaignLabel: formatUtmValue(correctedCampaignLabel ?? formattedUtm.campaign),
+        canonicalCampaign: formattedUtm.campaign,
         destinationUrl: parsed.destinationUrl,
         normalizedDestinationUrl: normalizedDestination,
-        utmSource: utm.source,
-        utmMedium: utm.medium,
-        utmCampaign: utm.campaign,
-        utmTerm: sanitizedTerm,
-        utmContent: sanitizedContent,
+        utmSource: formattedUtm.source,
+        utmMedium: formattedUtm.medium,
+        utmCampaign: formattedUtm.campaign,
+        utmTerm: formattedUtm.term,
+        utmContent: formattedUtm.content,
         finalLongUrl,
         needsQr: parsed.needsQr || channel === "qr",
         confidence: parsed.confidence,

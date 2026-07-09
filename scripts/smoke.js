@@ -91,7 +91,22 @@ try {
   });
   const usersAfterSettings = await (await af("/users")).text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
+  const plantFinderSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys&query=plant")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=jf")).json();
+  const existingQueryPreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "jf",
+      destination_url: "https://example.com/existing-query-smoke?existing=1",
+      utm_source: "facebook",
+      utm_medium: "social",
+      utm_campaign: "website",
+      utm_term: "",
+      utm_content: ""
+    })
+  });
+  const existingQueryPreview = await existingQueryPreviewResponse.json();
   const createAttempt = await createWithConsistencyConfirmation({
       client: "jf",
       destination_url: "https://example.com/bitly-degradation-smoke",
@@ -207,7 +222,7 @@ try {
   const govCreateResponse = govCreateAttempt.response;
   const govCreated = govCreateAttempt.body;
   const govValue = govCreated.result?.utm_campaign ?? "";
-  const govMarker = `data-governance-value="${govValue}"`;
+  const govMarker = `data-governance-value="${String(govValue).toLowerCase()}"`;
   const libraryBeforeAck = await (await af("/utms")).text();
   const ackResponse = await fetch(`${base}/utms/governance/acknowledge`, {
     method: "POST",
@@ -249,6 +264,8 @@ try {
     || !builderHtml.includes('id="builder-form"')
     || !builderHtml.includes('href="/assets/jf-drop.png"')
     || !builderHtml.includes('src="/assets/just-flow-logo.png"')
+    || !builderHtml.includes('id="destination-query-notice"')
+    || !builderHtml.includes("This URL already has query parameters, so UTM values will be added with &amp; instead of another ?.")
     || builderHtml.indexOf("Consistency warnings") > builderHtml.indexOf("Resolved preview")
     || usersPage.status !== 200
     || !usersHtml.includes("Smoke Admin")
@@ -257,7 +274,16 @@ try {
     || notificationSettingsResponse.status !== 302
     || !usersAfterSettings.includes("alerts@example.com, second@example.com")
     || !suggestions.items?.length
+    || !suggestions.items?.some((item) => item.value === "Website" && item.normalized_value === "website")
+    || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
+    || !plantFinderSuggestions.items?.some((item) => item.value === "PlantFinder" && item.normalized_value === "plant_finder")
     || !history.items?.length
+    || existingQueryPreviewResponse.status !== 200
+    || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"
+    || existingQueryPreview.preview?.resolved?.utm_medium !== "Social"
+    || existingQueryPreview.preview?.resolved?.utm_campaign !== "Website"
+    || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=Facebook")
+    || existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1?utm_source=")
     || createResponse.status !== 200
     || createAttempt.firstResponse.status !== 409
     || createAttempt.firstBody.error?.code !== "consistency_confirmation_required"
@@ -268,7 +294,14 @@ try {
     || clientNewResponse.status !== 409
     || clientNew.error?.code !== "consistency_confirmation_required"
     || !clientNew.error?.consistency_warnings?.some((warning) => warning.type === "new_value")
-    || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "website"))
+    || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "Website"))
+    || created.result?.utm_source !== "Facebook"
+    || created.result?.utm_medium !== "Social"
+    || created.result?.utm_campaign !== "Website"
+    || created.result?.utm_term !== "Jfclientspecificterm"
+    || created.result?.utm_content !== "Jfclientspecificcontent"
+    || !created.result?.tracked_url?.includes("utm_campaign=Website")
+    || created.result?.tracked_url?.includes("jfclientspecificterm")
     || created.result?.status !== "completed_without_short_link"
     || created.result?.degradation_reason !== "bitly_not_configured"
     || !created.result?.tracked_url

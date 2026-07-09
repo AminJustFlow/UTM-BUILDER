@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import { formatUtmValue } from "./utm-value-format.js";
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const DEFAULT_SUGGESTION_LIMIT = 8;
@@ -81,7 +82,7 @@ export class UtmIntelligenceService {
     const ranked = candidateValues
       .map((value) => this.buildSuggestion(field, value, scopedRows, filters))
       .filter(Boolean)
-      .filter((item) => !query || item.value.includes(query))
+      .filter((item) => !query || item.normalized_value.includes(query))
       .sort(compareSuggestions)
       .slice(0, limit);
 
@@ -229,10 +230,12 @@ export class UtmIntelligenceService {
         ?? this.findNearDuplicateForRows(field, value, this.data.masterRows);
       const recommendationRows = clientRows.length ? clientRows : this.data.masterRows;
       const globalExactCount = this.data.masterRows.filter((row) => row[field] === value).length;
+      const displayValue = formatUtmValue(value);
+      const displayNear = formatUtmValue(near);
       const recommendations = near
-        ? [{ field, value: near, usage_count: recommendationRows.filter((row) => row[field] === near).length }]
+        ? [{ field, value: displayNear, normalized_value: near, usage_count: recommendationRows.filter((row) => row[field] === near).length }]
         : globalExactCount
-          ? [{ field, value, usage_count: globalExactCount }]
+          ? [{ field, value: displayValue, normalized_value: value, usage_count: globalExactCount }]
         : topValues(recommendationRows, field, 3).map((entry) => ({ field, ...entry }));
       warnings.push({
         type: near ? "possible_typo" : "new_value",
@@ -240,8 +243,8 @@ export class UtmIntelligenceService {
         fields: [field],
         values: { [field]: value },
         message: near
-          ? `${title(field)} "${value}" looks close to the established client value "${near}".`
-          : `${title(field)} "${value}" has never been used for this client.`,
+          ? `${title(field)} "${displayValue}" looks close to the established client value "${displayNear}".`
+          : `${title(field)} "${displayValue}" has never been used for this client.`,
         usage_count: 0,
         recommendations,
         requires_confirmation: true
@@ -266,7 +269,7 @@ export class UtmIntelligenceService {
           severity: "warning",
           fields,
           values: Object.fromEntries(fields.map((field) => [field, filters[field]])),
-          message: `${fields.map((field) => `${title(field)} "${filters[field]}"`).join(" with ")} has not been used for this client.`,
+          message: `${fields.map((field) => `${title(field)} "${formatUtmValue(filters[field])}"`).join(" with ")} has not been used for this client.`,
           usage_count: 0,
           recommendations: topValues(relatedRows, target, 3).map((entry) => ({ field: target, ...entry })),
           requires_confirmation: true
@@ -704,7 +707,8 @@ export class UtmIntelligenceService {
     const recommended = this.isRecommended(field, normalized, filters);
 
     return {
-      value: normalized,
+      value: formatUtmValue(normalized),
+      normalized_value: normalized,
       count: scoped || global,
       global_count: global,
       scoped_count: scoped,
@@ -802,8 +806,8 @@ export class UtmIntelligenceService {
     return {
       field,
       entered: normalized,
-      similar_to: best,
-      message: `This ${field} looks close to existing "${best}".`
+      similar_to: formatUtmValue(best),
+      message: `This ${field} looks close to existing "${formatUtmValue(best)}".`
     };
   }
 }
@@ -1065,7 +1069,7 @@ function topValues(rows, field, limit = 3) {
     if (value) counts.set(value, (counts.get(value) ?? 0) + 1);
   });
   return [...counts.entries()]
-    .map(([value, usage_count]) => ({ value, usage_count }))
+    .map(([value, usage_count]) => ({ value: formatUtmValue(value), normalized_value: value, usage_count }))
     .sort((left, right) => right.usage_count - left.usage_count || left.value.localeCompare(right.value))
     .slice(0, limit);
 }
@@ -1169,20 +1173,20 @@ function compareSuggestions(left, right) {
   return Number(right.scoped_count) - Number(left.scoped_count)
     || Number(right.channel_boost) - Number(left.channel_boost)
     || Number(right.global_count) - Number(left.global_count)
-    || left.value.localeCompare(right.value);
+    || left.normalized_value.localeCompare(right.normalized_value);
 }
 
 function buildRelationLabel(field, value, filters, maps) {
   if (field === "source" && filters.campaign) {
     const match = (maps.campaignSource.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Used with ${filters.campaign} ${match.count} times`;
+      return `Used with ${formatUtmValue(filters.campaign)} ${match.count} times`;
     }
   }
   if (field === "medium" && filters.campaign) {
     const match = (maps.campaignMedium.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Used with ${filters.campaign} ${match.count} times`;
+      return `Used with ${formatUtmValue(filters.campaign)} ${match.count} times`;
     }
   }
   if (field === "medium" && filters.source) {
@@ -1194,13 +1198,13 @@ function buildRelationLabel(field, value, filters, maps) {
   if (field === "term" && filters.campaign) {
     const match = (maps.campaignTerm.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Common for ${filters.campaign}`;
+      return `Common for ${formatUtmValue(filters.campaign)}`;
     }
   }
   if (field === "content" && filters.campaign) {
     const match = (maps.campaignContent.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Common for ${filters.campaign}`;
+      return `Common for ${formatUtmValue(filters.campaign)}`;
     }
   }
   return "";
