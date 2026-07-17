@@ -155,21 +155,14 @@ export class UtmLibraryEditorService {
 
     const requestFields = {};
     if (supplement.generatedShort) {
-      const normalizedPayload = safeJsonObject(existing.normalized_payload);
       const warnings = removeShortLinkWarnings(existing.warnings);
       requestFields.status = "completed";
-      requestFields.final_long_url = supplement.finalLongUrl;
       requestFields.short_url = supplement.shortUrl;
       requestFields.bitly_id = supplement.bitlyId;
       requestFields.bitly_payload = supplement.bitlyPayload;
       requestFields.error_code = null;
       requestFields.error_message = null;
       requestFields.warnings = warnings;
-      requestFields.normalized_payload = {
-        ...normalizedPayload,
-        final_long_url: supplement.finalLongUrl,
-        warnings
-      };
     }
     if (supplement.generatedQr) {
       requestFields.qr_url = supplement.qrUrl;

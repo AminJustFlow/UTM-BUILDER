@@ -174,13 +174,11 @@ export class LinkGenerationService {
     let degradation = null;
 
     if (generateShort && !shortUrl) {
-      const trackedLongUrl = this.withFingerprint(finalLongUrl, fingerprint);
       try {
-        const bitly = await this.bitlyService.shorten(trackedLongUrl);
+        const bitly = await this.bitlyService.shorten(finalLongUrl);
         shortUrl = bitly.link;
         bitlyId = bitly.id ?? null;
         bitlyPayload = bitly.payload ?? {};
-        fields.final_long_url = trackedLongUrl;
         fields.short_url = shortUrl;
         fields.bitly_id = bitlyId;
         fields.bitly_payload = bitlyPayload;
@@ -199,7 +197,7 @@ export class LinkGenerationService {
     }
 
     if (generateQr && !qrUrl) {
-      qrUrl = this.qrCodeService.generateUrl(shortUrl || fields.final_long_url || finalLongUrl);
+      qrUrl = this.qrCodeService.generateUrl(shortUrl || finalLongUrl);
       fields.qr_url = qrUrl;
     }
 
@@ -213,7 +211,7 @@ export class LinkGenerationService {
       qrUrl: qrUrl || null,
       bitlyId,
       bitlyPayload,
-      finalLongUrl: fields.final_long_url || finalLongUrl,
+      finalLongUrl,
       generatedShort: Boolean(fields.short_url),
       generatedQr: Boolean(fields.qr_url),
       degraded: Boolean(degradation),

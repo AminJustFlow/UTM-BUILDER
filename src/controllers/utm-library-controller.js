@@ -833,7 +833,7 @@ function renderResultCard(item, { highlightRequestId }) {
         <h4>Links</h4>
         <div class="list">
           ${renderLinkItem("Destination page", item.destinationUrl)}
-          ${renderLinkItem("Tracked link", item.finalLongUrl)}
+          ${renderLinkItem("Tracked link", hideInternalTracking(item.finalLongUrl))}
           ${renderLinkItem("Short link", item.shortUrl, {
             requestId: item.requestId,
             asset: "short",
@@ -1017,6 +1017,19 @@ function renderLinkItem(label, url, missingAction = null) {
       </div>
     </div>
   </div>`;
+}
+
+function hideInternalTracking(url) {
+  if (!url) {
+    return url;
+  }
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("jf_fp");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 function renderQrPanel(item) {

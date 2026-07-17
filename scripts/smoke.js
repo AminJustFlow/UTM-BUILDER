@@ -424,6 +424,42 @@ async function verifyBitlyFailureClassification() {
     throw new Error("Successful Bitly response did not retain its short link.");
   }
 
+  let supplementedLongUrl = null;
+  let supplementedFields = null;
+  const supplementService = new LinkGenerationService({
+    generatedLinkRepository: {
+      async updateByFingerprintAsync(_fingerprint, fields) {
+        supplementedFields = fields;
+      }
+    },
+    bitlyService: {
+      async shorten(longUrl) {
+        supplementedLongUrl = longUrl;
+        return {
+          link: "https://bit.ly/supplement",
+          id: "bitly/supplement",
+          payload: { link: "https://bit.ly/supplement" }
+        };
+      }
+    },
+    qrCodeService: { generateUrl(url) { return `https://qr.example/?data=${encodeURIComponent(url)}`; } }
+  });
+  const cleanLongUrl = "https://example.com/?utm_source=Facebook&utm_medium=Social&utm_campaign=Website";
+  const supplement = await supplementService.supplement({
+    fingerprint: "supplement-fingerprint",
+    final_long_url: cleanLongUrl,
+    short_url: "",
+    qr_url: null
+  }, { generateShort: true });
+  if (
+    supplement.shortUrl !== "https://bit.ly/supplement"
+    || supplementedLongUrl !== cleanLongUrl
+    || supplementedLongUrl.includes("jf_fp")
+    || Object.hasOwn(supplementedFields ?? {}, "final_long_url")
+  ) {
+    throw new Error("Missing short-link generation must not add jf_fp to the tracked URL.");
+  }
+
   const unexpected = new Error("database-style unexpected failure");
   try {
     await createMockLinkGenerationService(async () => { throw unexpected; }).generate(mockNormalized(), "smoke-unexpected");
