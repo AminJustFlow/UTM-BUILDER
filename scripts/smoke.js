@@ -313,6 +313,11 @@ try {
     || !builderHtml.includes('href="/assets/jf-drop.png"')
     || !builderHtml.includes('src="/assets/just-flow-logo.png"')
     || !builderHtml.includes('id="destination-query-notice"')
+    || !builderHtml.includes('id="campaign-standards"')
+    || !builderHtml.includes("Meta Ad campaign name")
+    || !builderHtml.includes("Use only for destinations under /links.")
+    || !builderHtml.includes("activeCampaignProfile")
+    || !builderHtml.includes("Campaign Term — Publication Name")
     || !builderHtml.includes("This URL already has query parameters, so UTM values will be added with &amp; instead of another ?.")
     || builderHtml.indexOf("Consistency warnings") > builderHtml.indexOf("Resolved preview")
     || usersPage.status !== 200

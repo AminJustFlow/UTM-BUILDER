@@ -112,15 +112,30 @@ export class RulesService {
   getClientGuidance(client) {
     const guidance = this.rules.clients?.[client]?.guidance;
     if (!guidance || typeof guidance !== "object") {
-      return { summary: "", fields: {} };
+      return { summary: "", fields: {}, campaignProfiles: [] };
     }
+    const normalizeFields = (fields) => Object.fromEntries(Object.entries(fields ?? {}).map(([field, details]) => [field, {
+      label: String(details?.label ?? "").trim(),
+      help: String(details?.help ?? "").trim(),
+      placeholder: String(details?.placeholder ?? "").trim()
+    }]));
+    const campaignProfiles = (Array.isArray(guidance.campaignProfiles) ? guidance.campaignProfiles : [])
+      .map((profile) => ({
+        priority: Math.max(1, Number.parseInt(String(profile?.priority ?? 99), 10) || 99),
+        campaign: String(profile?.campaign ?? "").trim(),
+        displayName: String(profile?.displayName ?? profile?.campaign ?? "").trim(),
+        aliases: (Array.isArray(profile?.aliases) ? profile.aliases : []).map((alias) => String(alias ?? "").trim()).filter(Boolean),
+        guideline: String(profile?.guideline ?? "").trim(),
+        source: String(profile?.source ?? "").trim(),
+        medium: String(profile?.medium ?? "").trim(),
+        fields: normalizeFields(profile?.fields)
+      }))
+      .filter((profile) => profile.campaign)
+      .sort((left, right) => left.priority - right.priority || left.displayName.localeCompare(right.displayName));
     return {
       summary: String(guidance.summary ?? "").trim(),
-      fields: Object.fromEntries(Object.entries(guidance.fields ?? {}).map(([field, details]) => [field, {
-        label: String(details?.label ?? "").trim(),
-        help: String(details?.help ?? "").trim(),
-        placeholder: String(details?.placeholder ?? "").trim()
-      }]))
+      fields: normalizeFields(guidance.fields),
+      campaignProfiles
     };
   }
 

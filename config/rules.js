@@ -14,6 +14,120 @@ const manualClients = {
         term: "",
         content: "PlantFinder"
       }
+    },
+    guidance: {
+      summary: "Use the highest-priority Studleys campaign that fits the destination and message. The campaign standards below explain when to use each bucket and how to name Term and Content.",
+      fields: {
+        campaign: {
+          label: "Campaign — Studleys reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the page or promotion.",
+          placeholder: "Floral"
+        }
+      },
+      campaignProfiles: [
+        {
+          priority: 1,
+          campaign: "LimitedCampaign",
+          guideline: "Use sparingly and only when determined by Ami or Matt. Example: GardenTour."
+        },
+        ...["Floral", "Houseplants", "GardenCenter", "Wedding", "Landscaping", "PlantFinder", "About"].map((campaign) => ({
+          priority: 1,
+          campaign,
+          guideline: "Use for pages and products within this section of the website.",
+          fields: {
+            term: {
+              label: "Term — Page or product",
+              help: "Use LandingPage, the product category, or the specific product name.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or the messaging used to engage the audience.",
+              placeholder: "LearnMore"
+            }
+          }
+        })),
+        {
+          priority: 1,
+          campaign: "MetaAdCampaignName",
+          displayName: "Meta Ad campaign name",
+          guideline: "Use the Meta campaign name with no punctuation, spaces, or date.",
+          source: "MetaAd",
+          medium: "Social",
+          fields: {
+            term: {
+              label: "Term — Meta ad set",
+              help: "Use the Meta ad set name, excluding the campaign name.",
+              placeholder: "AdSetName"
+            },
+            content: {
+              label: "Content — Meta creative type",
+              help: "Identify the creative format.",
+              placeholder: "Static"
+            }
+          }
+        },
+        {
+          priority: 2,
+          campaign: "Community",
+          guideline: "Use only for community events, awards, donations, and similar community activity.",
+          fields: {
+            term: {
+              label: "Term — Community item",
+              help: "Use the name of the community event, award, donation, or initiative.",
+              placeholder: "CommunityEventName"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or the messaging used to engage the audience.",
+              placeholder: "LearnMore"
+            }
+          }
+        },
+        {
+          priority: 2,
+          campaign: "Inspiration",
+          displayName: "Inspiration (formerly News)",
+          aliases: ["News"],
+          guideline: "Use for inspirational or editorial content. Choose the most relevant area of business for cross-functional articles.",
+          fields: {
+            term: {
+              label: "Term — Area of business",
+              help: "Use the area of business, such as Floral, Houseplants, GardenCenter, or Landscaping.",
+              placeholder: "Floral"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or the messaging used to engage the audience.",
+              placeholder: "ReadMore"
+            }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "MobileLinks",
+          guideline: "Use only for destinations under /links.",
+          fields: {
+            content: {
+              label: "Content — Link profile",
+              help: "Use Profile when the destination represents a social profile.",
+              placeholder: "Profile"
+            }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "Website",
+          guideline: "Use only for the home page unless another page does not fit a priority 1 campaign.",
+          fields: {
+            term: {
+              label: "Term — Website page",
+              help: "Use HomePage for the website home page.",
+              placeholder: "HomePage"
+            }
+          }
+        }
+      ]
     }
   },
   gas: {
