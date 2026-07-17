@@ -14,6 +14,7 @@ import { AppLoginController } from "../controllers/app-login-controller.js";
 import { AccountController } from "../controllers/account-controller.js";
 import { SetupConsoleController } from "../controllers/setup-console-controller.js";
 import { UserAdminController } from "../controllers/user-admin-controller.js";
+import { CampaignStandardsAdminController } from "../controllers/campaign-standards-admin-controller.js";
 import { UtmBuilderController } from "../controllers/utm-builder-controller.js";
 import { UtmLibraryController } from "../controllers/utm-library-controller.js";
 import { UtmImportController } from "../controllers/utm-import-controller.js";
@@ -23,6 +24,7 @@ import { LinkAuditRepository } from "../repositories/link-audit-repository.js";
 import { UserRepository } from "../repositories/user-repository.js";
 import { UtmValueAcknowledgementRepository } from "../repositories/utm-value-acknowledgement-repository.js";
 import { ConsistencyNotificationSettingsRepository } from "../repositories/consistency-notification-settings-repository.js";
+import { ClientCampaignStandardsRepository } from "../repositories/client-campaign-standards-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
 import { SetupConsoleAuthService } from "../services/setup-console-auth-service.js";
 import { UserAccountService } from "../services/user-account-service.js";
@@ -39,6 +41,7 @@ import { UtmLibraryService } from "../services/utm-library-service.js";
 import { UtmCsvImportService } from "../services/utm-csv-import-service.js";
 import { SmtpMailer } from "../services/smtp-mailer.js";
 import { ConsistencyNotificationService, ConsistencyNotificationScheduler } from "../services/consistency-notification-service.js";
+import { ClientCampaignStandardsService } from "../services/client-campaign-standards-service.js";
 
 export async function createUtmBuilderApplication(projectRoot) {
   if (process.env.UTM_BUILDER_SKIP_ENV_FILE !== "1") {
@@ -68,9 +71,15 @@ export async function createUtmBuilderApplication(projectRoot) {
   const linkAuditRepository = new LinkAuditRepository(database);
   const utmValueAcknowledgementRepository = new UtmValueAcknowledgementRepository(database);
   const notificationSettingsRepository = new ConsistencyNotificationSettingsRepository(database);
+  const campaignStandardsRepository = new ClientCampaignStandardsRepository(database);
   const userRepository = new UserRepository(database);
   const userAccountService = new UserAccountService({ userRepository });
   const rulesService = new RulesService(rules);
+  const campaignStandardsService = new ClientCampaignStandardsService({
+    repository: campaignStandardsRepository,
+    rulesService
+  });
+  await campaignStandardsService.bootstrap();
   const urlService = new UrlService();
   const fingerprintService = new FingerprintService();
   const requestNormalizer = new RequestNormalizer(
@@ -112,6 +121,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     utmLibraryEditorService,
     utmLibraryService,
     rulesService,
+    campaignStandardsService,
     requestNormalizer,
     utmIntelligenceService,
     utmValueAcknowledgementRepository,
@@ -154,6 +164,11 @@ export async function createUtmBuilderApplication(projectRoot) {
     userAccountService,
     notificationSettingsRepository,
     smtpConfigured: mailer.isConfigured()
+  });
+  const campaignStandardsAdminController = new CampaignStandardsAdminController({
+    standardsService: campaignStandardsService,
+    rulesService,
+    standalone: true
   });
   const accountController = new AccountController({ userAccountService });
 
@@ -226,6 +241,13 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/users/reset-password", requireAdmin((request) => userAdminController.handleResetPassword(request)));
   router.add("POST", "/users/delete", requireAdmin((request) => userAdminController.handleDelete(request)));
   router.add("POST", "/users/notification-settings", requireAdmin((request) => userAdminController.handleNotificationSettings(request)));
+  router.add("GET", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleHtml(request)));
+  router.add("POST", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleCreate(request)));
+  router.add("POST", "/standards/settings", requireAdmin((request) => campaignStandardsAdminController.handleSettings(request)));
+  router.add("POST", "/standards/update", requireAdmin((request) => campaignStandardsAdminController.handleUpdate(request)));
+  router.add("POST", "/standards/duplicate", requireAdmin((request) => campaignStandardsAdminController.handleDuplicate(request)));
+  router.add("POST", "/standards/toggle", requireAdmin((request) => campaignStandardsAdminController.handleToggle(request)));
+  router.add("POST", "/standards/delete", requireAdmin((request) => campaignStandardsAdminController.handleDelete(request)));
   router.add("GET", "/account", protect((request) => accountController.handleHtml(request)));
   router.add("POST", "/account/password", protect((request) => accountController.handlePassword(request)));
   router.add("GET", "/new", protect((request) => utmBuilderController.handleHtml(request)));

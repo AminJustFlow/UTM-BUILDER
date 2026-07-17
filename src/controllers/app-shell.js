@@ -175,7 +175,10 @@ export function renderJustFlowSidebar(activeKey = "dashboard", { standaloneUtm =
         { key: "builder", href: "/new", label: "New Link", icon: "message" },
         { key: "library", href: "/utms", label: "Link Library", icon: "link" },
         { key: "imports", href: "/imports", label: "Import CSV", icon: "download" },
-        ...(isAdmin ? [{ key: "users", href: "/users", label: "Users", icon: "users" }] : [])
+        ...(isAdmin ? [
+          { key: "standards", href: "/standards", label: "Campaign Standards", icon: "bookmark" },
+          { key: "users", href: "/users", label: "Users", icon: "users" }
+        ] : [])
       ]
     }
   ] : [

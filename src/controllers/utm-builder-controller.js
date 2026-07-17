@@ -8,6 +8,7 @@ export class UtmBuilderController {
     utmLibraryEditorService,
     utmLibraryService = null,
     rulesService,
+    campaignStandardsService = null,
     requestNormalizer,
     utmIntelligenceService,
     utmValueAcknowledgementRepository = null,
@@ -16,6 +17,7 @@ export class UtmBuilderController {
     this.utmLibraryEditorService = utmLibraryEditorService;
     this.utmLibraryService = utmLibraryService;
     this.rulesService = rulesService;
+    this.campaignStandardsService = campaignStandardsService;
     this.requestNormalizer = requestNormalizer;
     this.utmIntelligenceService = utmIntelligenceService;
     this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
@@ -32,14 +34,16 @@ export class UtmBuilderController {
         "Content-Type": "text/plain; charset=utf-8"
       });
     }
-    const view = {
-      clients: this.rulesService.clients()
-        .map((clientKey) => ({
+    const clients = await Promise.all(this.rulesService.clients()
+      .map(async (clientKey) => ({
           key: clientKey,
           displayName: this.rulesService.getClientDisplayName(clientKey),
-          guidance: this.rulesService.getClientGuidance(clientKey)
-        }))
-        .sort((left, right) => left.displayName.localeCompare(right.displayName)),
+          guidance: this.campaignStandardsService
+            ? await this.campaignStandardsService.getEffectiveGuidance(clientKey)
+            : this.rulesService.getClientGuidance(clientKey)
+        })));
+    const view = {
+      clients: clients.sort((left, right) => left.displayName.localeCompare(right.displayName)),
       channels: this.rulesService.createChannelCatalog()
         .map((channel) => ({
           key: channel.key,

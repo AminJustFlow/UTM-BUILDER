@@ -22,22 +22,17 @@ Select **Duplicate** on a Link Library card. The builder opens with the existing
 
 ## Client-specific guidance
 
-Add optional guidance to a client in `config/rules.js`:
+Administrators manage client campaign guidance from **Campaign Standards** in the sidebar or `/standards`. Select a client to:
 
-```js
-guidance: {
-  summary: "Short explanation of this client's tracking ecosystem.",
-  fields: {
-    term: {
-      label: "Campaign Term — Client-specific label",
-      help: "Explain what belongs in this field.",
-      placeholder: "example_value"
-    }
-  }
-}
-```
+- Edit the client guidance summary.
+- Add, edit, duplicate, activate, deactivate, or delete prioritized campaign standards.
+- Document optional source and medium conventions.
+- Set campaign-specific Term and Content labels, helper copy, and examples.
+- Review taxonomy warnings and an administrator change history.
 
-Guidance changes labels, helper copy, and examples only. It does not make optional UTM fields required. Castle is configured with Publication Name for Campaign Term and Issue Name for Campaign Content.
+The first application start after migration copies configured guidance, including the Studleys and GAS standards, into database-managed records. Future edits are stored in the database and appear when the builder page is reloaded; no code change or deployment is required.
+
+Campaign standards are advisory. They change labels, helper copy, examples, and the standards panel, but they do not auto-fill values or prevent a user from creating a UTM.
 
 ## Deployment
 
@@ -49,7 +44,7 @@ Guidance changes labels, helper copy, and examples only. It does not make option
 
 The example configuration uses SQLite locally. For production, set the database configuration, `BITLY_ACCESS_TOKEN`, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`. The application refuses to start without the signing secret. Generate one with `openssl rand -hex 32`.
 
-To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, governance acknowledgement, and user management require an administrator account.
+To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, campaign standards, governance acknowledgement, and user management require an administrator account.
 
 The builder compares populated UTM values and combinations against the selected client's workbook, imported, and saved-link history. Unfamiliar selections return `409 consistency_confirmation_required`; the UI requires an explicit **Create Anyway** confirmation using the returned `consistency_warning_fingerprint`. Confirmed standards remain available for administrator review in the Link Library.
 

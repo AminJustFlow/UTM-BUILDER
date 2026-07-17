@@ -134,7 +134,159 @@ const manualClients = {
     displayName: "GAS",
     aliases: ["gas", "guardian angel", "guardian angel senior services"],
     domains: ["guardianangelseniorservices.com"],
-    taxonomyKey: "gas"
+    taxonomyKey: "gas",
+    guidance: {
+      summary: "Use the highest-priority GAS campaign that fits the destination. Campaign standards are guidance for consistent reporting and do not block link creation.",
+      fields: {
+        campaign: {
+          label: "Campaign — GAS reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the destination or promotion.",
+          placeholder: "About"
+        }
+      },
+      campaignProfiles: [
+        {
+          priority: 1,
+          campaign: "LimitedCampaign",
+          displayName: "Limited Campaign",
+          guideline: "Use sparingly and only when determined by Ami or Matt. Example: GUIDE."
+        },
+        {
+          priority: 1,
+          campaign: "MetaAdCampaignName",
+          displayName: "Meta Ad campaign name",
+          guideline: "Use the Meta campaign name with no punctuation, spaces, or date. Example: Recruiting.",
+          source: "MetaAd",
+          medium: "Social",
+          fields: {
+            term: {
+              label: "Term — Meta ad set",
+              help: "Use the Meta ad set name minus the campaign name, plus location when applicable.",
+              placeholder: "AdSetNameLocation"
+            },
+            content: {
+              label: "Content — Creative type",
+              help: "Identify the creative format as Static, Video, or Carousel.",
+              placeholder: "Static"
+            }
+          }
+        },
+        ...["About", "Services"].map((campaign) => ({
+          priority: 1,
+          campaign,
+          guideline: "Use for pages within this section of the website.",
+          fields: {
+            term: {
+              label: "Term — Landing page",
+              help: "Use LandingPage or the page name.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage.",
+              placeholder: "LearnMore"
+            }
+          }
+        })),
+        {
+          priority: 1,
+          campaign: "Careers",
+          guideline: "Use for pages within the Careers section of the website.",
+          fields: {
+            term: {
+              label: "Term — Position or role",
+              help: "Use the position or role being promoted.",
+              placeholder: "RegisteredNurse"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage.",
+              placeholder: "ApplyNow"
+            }
+          }
+        },
+        {
+          priority: 1,
+          campaign: "Shop",
+          guideline: "Use for pages within the Shop section of the website.",
+          fields: {
+            term: {
+              label: "Term — Shop page",
+              help: "Use LandingPage, Accessories, or Apparel.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage.",
+              placeholder: "ShopNow"
+            }
+          }
+        },
+        {
+          priority: 1,
+          campaign: "Contact",
+          guideline: "Use for pages within the Contact section of the website.",
+          fields: {
+            term: {
+              label: "Term — Contact page",
+              help: "Use LandingPage.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage.",
+              placeholder: "ContactUs"
+            }
+          }
+        },
+        {
+          priority: 2,
+          campaign: "News",
+          guideline: "Use for news content. Category and cross-functional article rules still need final business confirmation.",
+          fields: {
+            term: {
+              label: "Term — News category",
+              help: "Use the article category once the category standard is finalized.",
+              placeholder: "CategoryTBD"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage.",
+              placeholder: "ReadMore"
+            }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "MobileLinks",
+          guideline: "Use only for /links destinations. This is not currently used on the GAS website.",
+          fields: {
+            content: {
+              label: "Content — Link profile",
+              help: "Use Profile when the destination represents a social profile.",
+              placeholder: "Profile"
+            }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "Website",
+          guideline: "Use only for the home page unless another page does not fit a priority 1 campaign.",
+          fields: {
+            term: {
+              label: "Term — Website page",
+              help: "Use HomePage for the website home page.",
+              placeholder: "HomePage"
+            },
+            content: {
+              label: "Content — Social profile",
+              help: "Use Profile when the link is used on a social profile.",
+              placeholder: "Profile"
+            }
+          }
+        }
+      ]
+    }
   },
   jf: {
     displayName: "JF",

@@ -71,6 +71,7 @@ try {
   sessionCookie = cookieValue(adminLogin, "jf_app_session");
   const appCookieHeader = adminLogin.headers.get("set-cookie") ?? "";
   const unauthenticated = await fetch(`${base}/utms.json`, { redirect: "manual" });
+  const unauthenticatedStandards = await fetch(`${base}/standards`, { redirect: "manual" });
   const crossSitePost = await fetch(`${base}/login`, {
     method: "POST",
     headers: { Origin: "https://attacker.example", "Content-Type": "application/x-www-form-urlencoded" },
@@ -90,6 +91,91 @@ try {
     body: new URLSearchParams({ enabled: "0", recipients: "alerts@example.com, second@example.com" }).toString()
   });
   const usersAfterSettings = await (await af("/users")).text();
+  const gasStandardsBefore = await (await af("/standards?client=gas")).text();
+  const createStandardResponse = await af("/standards", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_key: "gas",
+      priority: "2",
+      sort_order: "99",
+      campaign: "SmokeCampaign",
+      display_name: "Smoke Standard",
+      aliases: "SmokeAlias",
+      guideline: "Smoke guidance",
+      source: "SmokeSource",
+      medium: "SmokeMedium",
+      term_label: "Smoke Term",
+      term_help: "Use the smoke term.",
+      term_placeholder: "SmokeTerm",
+      content_label: "Smoke Content",
+      content_help: "Use the smoke content.",
+      content_placeholder: "SmokeContent",
+      is_active: "1"
+    }).toString()
+  });
+  const standardsAfterCreate = await (await af("/standards?client=gas")).text();
+  const standardId = Number(standardsAfterCreate.match(/Smoke Standard[\s\S]*?name="id" value="(\d+)"/u)?.[1] ?? 0);
+  const duplicateCampaignResponse = await af("/standards", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_key: "gas", priority: "2", campaign: "SmokeCampaign", guideline: "Duplicate smoke guidance", is_active: "1"
+    }).toString()
+  });
+  const updateStandardResponse = await af("/standards/update", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      id: String(standardId),
+      client_key: "gas",
+      priority: "2",
+      sort_order: "99",
+      campaign: "SmokeCampaign",
+      display_name: "Smoke Standard",
+      aliases: "SmokeAlias",
+      guideline: "Updated smoke guidance",
+      source: "SmokeSource",
+      medium: "SmokeMedium",
+      term_label: "Smoke Term",
+      term_help: "Use the smoke term.",
+      term_placeholder: "SmokeTerm",
+      content_label: "Smoke Content",
+      content_help: "Use the smoke content.",
+      content_placeholder: "SmokeContent",
+      is_active: "1"
+    }).toString()
+  });
+  const deactivateStandardResponse = await af("/standards/toggle", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ id: String(standardId), client_key: "gas", action: "deactivate" }).toString()
+  });
+  const builderWithInactiveStandard = await (await af("/new")).text();
+  const activateStandardResponse = await af("/standards/toggle", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ id: String(standardId), client_key: "gas", action: "activate" }).toString()
+  });
+  const builderWithActiveStandard = await (await af("/new")).text();
+  const duplicateStandardResponse = await af("/standards/duplicate", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ id: String(standardId), client_key: "gas" }).toString()
+  });
+  const deleteStandardResponse = await af("/standards/delete", {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ id: String(standardId), client_key: "gas" }).toString()
+  });
+  const standardsAfterMutations = await (await af("/standards?client=gas")).text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
   const plantFinderSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys&query=plant")).json();
   const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=studleys&query=ConstantContact")).json();
@@ -267,6 +353,32 @@ try {
   });
   const oldSessionAfterPasswordChange = await af("/new", { redirect: "manual" });
 
+  const standardsChecks = {
+    unauthenticatedRedirect: unauthenticatedStandards.status === 302 && unauthenticatedStandards.headers.get("location")?.startsWith("/login") === true,
+    seededGas: gasStandardsBefore.includes("Limited Campaign") && gasStandardsBefore.includes("Meta Ad campaign name"),
+    created: createStandardResponse.status === 302 && standardId > 0 && standardsAfterCreate.includes("Smoke Standard"),
+    taxonomyWarnings: standardsAfterCreate.includes("not currently in this client"),
+    duplicateRejected: duplicateCampaignResponse.status === 302 && (duplicateCampaignResponse.headers.get("location") ?? "").includes("already+has+a+standard"),
+    updated: updateStandardResponse.status === 302,
+    deactivated: deactivateStandardResponse.status === 302 && !builderWithInactiveStandard.includes("Updated smoke guidance"),
+    activated: activateStandardResponse.status === 302 && builderWithActiveStandard.includes("Updated smoke guidance"),
+    duplicated: duplicateStandardResponse.status === 302 && standardsAfterMutations.includes("SmokeCampaignCopy"),
+    deleted: deleteStandardResponse.status === 302 && !standardsAfterMutations.includes('name="campaign" value="SmokeCampaign"'),
+    audited: standardsAfterMutations.includes("Created") && standardsAfterMutations.includes("Updated") && standardsAfterMutations.includes("Deleted")
+  };
+  const failedStandardsChecks = Object.entries(standardsChecks).filter(([, passed]) => !passed).map(([name]) => name);
+  if (failedStandardsChecks.length) {
+    throw new Error(`Campaign standards smoke checks failed: ${failedStandardsChecks.join(", ")} ${JSON.stringify({
+      standardId,
+      duplicateCampaign: [duplicateCampaignResponse.status, duplicateCampaignResponse.headers.get("location")],
+      update: [updateStandardResponse.status, updateStandardResponse.headers.get("location")],
+      deactivate: [deactivateStandardResponse.status, deactivateStandardResponse.headers.get("location")],
+      activate: [activateStandardResponse.status, activateStandardResponse.headers.get("location")],
+      duplicate: [duplicateStandardResponse.status, duplicateStandardResponse.headers.get("location")],
+      delete: [deleteStandardResponse.status, deleteStandardResponse.headers.get("location")]
+    })}`);
+  }
+
   if (
     qrSupplementResponse.status !== 200
     || !qrSupplement.qr_url
@@ -307,6 +419,8 @@ try {
     || !appCookieHeader.includes("SameSite=Lax")
     || appCookieHeader.includes("; Secure")
     || unauthenticated.status !== 401
+    || unauthenticatedStandards.status !== 302
+    || unauthenticatedStandards.headers.get("location")?.startsWith("/login") !== true
     || crossSitePost.status !== 403
     || builderResponse.status !== 200
     || !builderHtml.includes('id="builder-form"')
@@ -326,6 +440,28 @@ try {
     || !usersHtml.includes("Consistency review emails")
     || notificationSettingsResponse.status !== 302
     || !usersAfterSettings.includes("alerts@example.com, second@example.com")
+    || !gasStandardsBefore.includes("Campaign Standards")
+    || !gasStandardsBefore.includes("Limited Campaign")
+    || !gasStandardsBefore.includes("Meta Ad campaign name")
+    || !gasStandardsBefore.includes("Campaign Standards")
+    || createStandardResponse.status !== 302
+    || standardId <= 0
+    || !standardsAfterCreate.includes("Smoke Standard")
+    || !standardsAfterCreate.includes("not currently in this client")
+    || duplicateCampaignResponse.status !== 302
+    || !(duplicateCampaignResponse.headers.get("location") ?? "").includes("already+has+a+standard")
+    || updateStandardResponse.status !== 302
+    || deactivateStandardResponse.status !== 302
+    || builderWithInactiveStandard.includes("Updated smoke guidance")
+    || activateStandardResponse.status !== 302
+    || !builderWithActiveStandard.includes("Updated smoke guidance")
+    || duplicateStandardResponse.status !== 302
+    || deleteStandardResponse.status !== 302
+    || !standardsAfterMutations.includes("SmokeCampaignCopy")
+    || standardsAfterMutations.includes('name="campaign" value="SmokeCampaign"')
+    || !standardsAfterMutations.includes("Created")
+    || !standardsAfterMutations.includes("Updated")
+    || !standardsAfterMutations.includes("Deleted")
     || !suggestions.items?.length
     || !suggestions.items?.some((item) => item.value === "Website" && item.normalized_value === "website")
     || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
