@@ -36,7 +36,7 @@ export function renderUtmBuilderHtml(view) {
         <div class="builder-flow">
           <div class="page-header">
             <div class="page-title-block">
-              <div class="eyebrow">${isDuplicate ? "Duplicate mode" : mode === "edit" ? "Edit mode" : "Simple builder, upgraded"}</div>
+              ${isDuplicate || mode === "edit" ? `<div class="eyebrow">${isDuplicate ? "Duplicate mode" : "Edit mode"}</div>` : ""}
               <h1>${isDuplicate ? "Duplicate a tracked link" : mode === "edit" ? "Edit a tracked link" : "Create a tracked link"}</h1>
               <p class="subtitle">${isDuplicate
                 ? "This is a new link prefilled from the selected library entry. Change the platform or any other needed field before creating it."

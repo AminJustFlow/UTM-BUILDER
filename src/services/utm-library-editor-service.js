@@ -43,6 +43,177 @@ export class UtmLibraryEditorService {
     });
   }
 
+  async supplementAssets(input = {}, actor = null) {
+    const requestId = positiveInteger(input.request_id, null);
+    const generateShort = Boolean(input.generate_short);
+    const generateQr = Boolean(input.generate_qr);
+    if (!requestId || (!generateShort && !generateQr)) {
+      return {
+        ok: false,
+        statusCode: 422,
+        code: "invalid_asset_request",
+        message: "Select a saved link and an asset to generate."
+      };
+    }
+
+    const existing = await (this.requestRepository.findByIdAsync?.(requestId)
+      ?? this.requestRepository.findById(requestId));
+    if (!existing) {
+      return {
+        ok: false,
+        statusCode: 404,
+        code: "request_not_found",
+        message: "That UTM entry no longer exists."
+      };
+    }
+
+    const fingerprint = normalizeOptional(existing.fingerprint);
+    let generatedLink = fingerprint
+      ? await (this.generatedLinkRepository.findByFingerprintAsync?.(fingerprint)
+        ?? this.generatedLinkRepository.findByFingerprint(fingerprint))
+      : null;
+    if (!fingerprint) {
+      return {
+        ok: false,
+        statusCode: 422,
+        code: "generated_link_not_found",
+        message: "This saved link cannot be supplemented because its fingerprint is missing."
+      };
+    }
+
+    if (!generatedLink) {
+      const normalized = safeJsonObject(existing.normalized_payload);
+      const finalLongUrl = normalizeOptional(existing.final_long_url ?? normalized.final_long_url);
+      if (!finalLongUrl) {
+        return {
+          ok: false,
+          statusCode: 422,
+          code: "generated_link_not_found",
+          message: "This saved link cannot be supplemented because its tracked URL is missing."
+        };
+      }
+      const timestamp = new Date().toISOString();
+      const seed = {
+        fingerprint,
+        client: normalized.client ?? "unknown",
+        channel: normalized.channel ?? "unknown",
+        assetType: normalized.asset_type ?? "link",
+        normalizedDestinationUrl: normalized.normalized_destination_url ?? normalized.destination_url ?? finalLongUrl,
+        canonicalCampaign: normalized.canonical_campaign ?? normalized.utm_campaign ?? "",
+        utmSource: normalized.utm_source ?? "",
+        utmMedium: normalized.utm_medium ?? "",
+        utmCampaign: normalized.utm_campaign ?? "",
+        utmTerm: normalized.utm_term ?? "",
+        utmContent: normalized.utm_content ?? "",
+        finalLongUrl,
+        shortUrl: normalizeOptional(existing.short_url) ?? "",
+        qrUrl: normalizeOptional(existing.qr_url),
+        bitlyId: normalizeOptional(existing.bitly_id),
+        bitlyPayload: safeJsonObject(existing.bitly_payload),
+        createdAt: existing.created_at ?? timestamp,
+        updatedAt: timestamp
+      };
+      try {
+        await (this.generatedLinkRepository.createAsync?.(seed)
+          ?? this.generatedLinkRepository.create(seed));
+        generatedLink = {
+          fingerprint,
+          final_long_url: seed.finalLongUrl,
+          short_url: seed.shortUrl,
+          qr_url: seed.qrUrl,
+          bitly_id: seed.bitlyId,
+          bitly_payload: seed.bitlyPayload
+        };
+      } catch {
+        generatedLink = await (this.generatedLinkRepository.findByFingerprintAsync?.(fingerprint)
+          ?? this.generatedLinkRepository.findByFingerprint(fingerprint));
+        if (!generatedLink) {
+          return {
+            ok: false,
+            statusCode: 500,
+            code: "generated_link_recovery_failed",
+            message: "Unable to prepare this saved link for asset generation."
+          };
+        }
+      }
+    }
+
+    let supplement;
+    try {
+      supplement = await this.linkGenerationService.supplement(generatedLink, {
+        generateShort,
+        generateQr
+      });
+    } catch {
+      return {
+        ok: false,
+        statusCode: 500,
+        code: "asset_generation_failed",
+        message: "Unable to generate the requested asset right now."
+      };
+    }
+
+    const requestFields = {};
+    if (supplement.generatedShort) {
+      const normalizedPayload = safeJsonObject(existing.normalized_payload);
+      const warnings = removeShortLinkWarnings(existing.warnings);
+      requestFields.status = "completed";
+      requestFields.final_long_url = supplement.finalLongUrl;
+      requestFields.short_url = supplement.shortUrl;
+      requestFields.bitly_id = supplement.bitlyId;
+      requestFields.bitly_payload = supplement.bitlyPayload;
+      requestFields.error_code = null;
+      requestFields.error_message = null;
+      requestFields.warnings = warnings;
+      requestFields.normalized_payload = {
+        ...normalizedPayload,
+        final_long_url: supplement.finalLongUrl,
+        warnings
+      };
+    }
+    if (supplement.generatedQr) {
+      requestFields.qr_url = supplement.qrUrl;
+    }
+
+    if (Object.keys(requestFields).length > 0) {
+      await (this.requestRepository.updateAsync?.(requestId, requestFields)
+        ?? this.requestRepository.update(requestId, requestFields));
+      const generatedLabels = [
+        supplement.generatedShort ? "short link" : "",
+        supplement.generatedQr ? "QR code" : ""
+      ].filter(Boolean);
+      await this.recordAudit({
+        fingerprint,
+        requestId,
+        action: "supplemented",
+        actor,
+        sourceUserId: actorSourceId(actor, "utm_library"),
+        sourceUserName: actorSourceName(actor, "UTM Library"),
+        summary: `Generated ${generatedLabels.join(" and ")} for the saved link.`
+      });
+    }
+
+    if (supplement.degraded && !supplement.generatedQr) {
+      return {
+        ok: false,
+        statusCode: 503,
+        code: supplement.degradedReason,
+        message: supplement.degradedMessage
+      };
+    }
+
+    return {
+      ok: true,
+      requestId,
+      shortUrl: supplement.shortUrl,
+      qrUrl: supplement.qrUrl,
+      generatedShort: supplement.generatedShort,
+      generatedQr: supplement.generatedQr,
+      alreadyPresent: !supplement.generatedShort && !supplement.generatedQr,
+      warning: supplement.degradedMessage
+    };
+  }
+
   async deleteEntry(input = {}, actor = null) {
     const requestId = positiveInteger(input.request_id ?? input.original_request_id, null);
     if (!requestId) {
@@ -462,5 +633,24 @@ function safeJsonObject(value) {
     return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
   } catch {
     return {};
+  }
+}
+
+function removeShortLinkWarnings(value) {
+  const warnings = Array.isArray(value) ? value : safeJsonArray(value);
+  return warnings.filter((warning) => ![
+    "Bitly is not configured, so no short link was created.",
+    "Bitly authentication failed, so no short link was created.",
+    "Bitly quota was reached, so no short link was created.",
+    "Bitly is temporarily unavailable, so no short link was created."
+  ].includes(String(warning)));
+}
+
+function safeJsonArray(value) {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
 }

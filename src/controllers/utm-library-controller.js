@@ -14,6 +14,7 @@ const AUDIT_ACTION_LABELS = {
   regenerated: "Updated",
   duplicated: "Duplicated",
   imported: "Imported",
+  supplemented: "Generated missing asset",
   deleted: "Deleted",
   consistency_override: "Consistency override"
 };
@@ -205,6 +206,49 @@ export class UtmLibraryController {
           ? "Saved link deleted. Matching history rows were deleted too."
           : "Saved link deleted.",
         toast_level: "success"
+      })}`
+    });
+  }
+
+  async handleSupplement(request) {
+    const parsedBody = request.parseJson();
+    if (!parsedBody.ok) {
+      return NodeResponse.json({
+        status: "error",
+        error: {
+          code: parsedBody.errorCode,
+          message: parsedBody.errorMessage
+        }
+      }, 400);
+    }
+
+    const result = await this.utmLibraryEditorService.supplementAssets(parsedBody.value, request.user);
+    if (!result.ok) {
+      return NodeResponse.json({
+        status: "error",
+        error: {
+          code: result.code,
+          message: result.message
+        }
+      }, result.statusCode ?? 500);
+    }
+
+    const generated = [
+      result.generatedShort ? "Short link" : "",
+      result.generatedQr ? "QR code" : ""
+    ].filter(Boolean);
+    const toast = generated.length > 0
+      ? `${generated.join(" and ")} generated.`
+      : "That asset is already available.";
+
+    return NodeResponse.json({
+      status: "ok",
+      short_url: result.shortUrl,
+      qr_url: result.qrUrl,
+      redirect_url: `/utms?${buildQueryString({
+        highlight_request_id: result.requestId,
+        toast: result.warning || toast,
+        toast_level: result.warning ? "warning" : "success"
       })}`
     });
   }
@@ -426,6 +470,42 @@ function renderHtml(view) {
         } finally {
           button.classList.remove("btn-loading");
           button.disabled = false;
+        }
+      });
+      document.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-generate-asset]");
+        if (!button) return;
+        event.preventDefault();
+        const requestId = button.getAttribute("data-request-id");
+        const asset = button.getAttribute("data-generate-asset");
+        if (!requestId || !["short", "qr"].includes(asset)) return;
+        button.classList.add("btn-loading");
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        try {
+          const response = await fetch("/utms/supplement", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              request_id: requestId,
+              generate_short: asset === "short",
+              generate_qr: asset === "qr"
+            })
+          });
+          const body = await response.json();
+          if (!response.ok || body.status !== "ok") {
+            const message = body && body.error && body.error.message ? body.error.message : "Unable to generate this asset right now.";
+            showToast(message, "error");
+            return;
+          }
+          window.location.assign(body.redirect_url || "/utms");
+        } catch (error) {
+          const message = error && error.message ? error.message : "Unable to generate this asset right now.";
+          showToast(message, "error");
+        } finally {
+          button.classList.remove("btn-loading");
+          button.disabled = false;
+          button.removeAttribute("aria-busy");
         }
       });
       document.addEventListener("click", async (event) => {
@@ -754,7 +834,11 @@ function renderResultCard(item, { highlightRequestId }) {
         <div class="list">
           ${renderLinkItem("Destination page", item.destinationUrl)}
           ${renderLinkItem("Tracked link", item.finalLongUrl)}
-          ${renderLinkItem("Short link", item.shortUrl)}
+          ${renderLinkItem("Short link", item.shortUrl, {
+            requestId: item.requestId,
+            asset: "short",
+            buttonLabel: "Generate short link"
+          })}
         </div>
       </section>
       <section class="section details-rail">
@@ -914,9 +998,13 @@ function renderUtmTile(label, value) {
   return `<div class="utm-tile"><strong>${escapeHtml(label)}</strong><div class="utm-value">${escapeHtml(display)}</div></div>`;
 }
 
-function renderLinkItem(label, url) {
+function renderLinkItem(label, url, missingAction = null) {
   if (!url) {
-    return `<div class="link-item"><div class="link-label">${escapeHtml(label)}</div><div class="meta">Not available for this link.</div></div>`;
+    return `<div class="link-item">
+      <div class="link-label">${escapeHtml(label)}</div>
+      <div class="meta">Not available for this link.</div>
+      ${missingAction ? `<div class="mini-actions" style="margin-top:8px">${renderGenerateAssetButton(missingAction)}</div>` : ""}
+    </div>`;
   }
 
   return `<div class="link-item">
@@ -933,7 +1021,14 @@ function renderLinkItem(label, url) {
 
 function renderQrPanel(item) {
   if (!item.qrUrl) {
-    return `<div class="section"><div class="qr-frame"><div class="qr-placeholder">No QR code has been created for this link yet. Open the editor below if you want to add one.</div></div></div>`;
+    return `<div class="section">
+      <div class="qr-frame"><div class="qr-placeholder">No QR code has been created for this link yet.</div></div>
+      <div class="mini-actions">${renderGenerateAssetButton({
+        requestId: item.requestId,
+        asset: "qr",
+        buttonLabel: "Generate QR code"
+      })}</div>
+    </div>`;
   }
 
   return `<div class="section">
@@ -961,6 +1056,10 @@ function renderWarnings(warnings) {
 
 function renderCopyButton(value) {
   return `<button type="button" class="mini-button" data-copy="${escapeAttribute(value)}">Copy</button>`;
+}
+
+function renderGenerateAssetButton({ requestId, asset, buttonLabel }) {
+  return `<button type="button" class="mini-button" data-generate-asset="${escapeAttribute(asset)}" data-request-id="${escapeAttribute(requestId)}">${escapeHtml(buttonLabel)}</button>`;
 }
 
 function renderPaginationLinks(pagination, queryBase) {

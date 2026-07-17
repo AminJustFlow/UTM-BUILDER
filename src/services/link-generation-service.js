@@ -159,6 +159,69 @@ export class LinkGenerationService {
     }
   }
 
+  async supplement(existing, { generateShort = false, generateQr = false } = {}) {
+    const fingerprint = String(existing?.fingerprint ?? "").trim();
+    const finalLongUrl = String(existing?.final_long_url ?? "").trim();
+    if (!fingerprint || !finalLongUrl) {
+      throw new Error("A saved fingerprint and tracked URL are required to generate missing assets.");
+    }
+
+    const fields = {};
+    let shortUrl = String(existing.short_url ?? "").trim();
+    let qrUrl = String(existing.qr_url ?? "").trim();
+    let bitlyId = existing.bitly_id ?? null;
+    let bitlyPayload = safeJsonParse(existing.bitly_payload);
+    let degradation = null;
+
+    if (generateShort && !shortUrl) {
+      const trackedLongUrl = this.withFingerprint(finalLongUrl, fingerprint);
+      try {
+        const bitly = await this.bitlyService.shorten(trackedLongUrl);
+        shortUrl = bitly.link;
+        bitlyId = bitly.id ?? null;
+        bitlyPayload = bitly.payload ?? {};
+        fields.final_long_url = trackedLongUrl;
+        fields.short_url = shortUrl;
+        fields.bitly_id = bitlyId;
+        fields.bitly_payload = bitlyPayload;
+      } catch (error) {
+        degradation = this.classifyBitlyFailure(error);
+        if (!degradation) {
+          throw error;
+        }
+        this.logger?.warning?.("Bitly short-link supplementation failed.", {
+          reason: degradation.reason,
+          error_name: error?.name ?? "Error",
+          error_code: error?.code ?? null,
+          status_code: error?.statusCode ?? null
+        });
+      }
+    }
+
+    if (generateQr && !qrUrl) {
+      qrUrl = this.qrCodeService.generateUrl(shortUrl || fields.final_long_url || finalLongUrl);
+      fields.qr_url = qrUrl;
+    }
+
+    if (Object.keys(fields).length > 0) {
+      await (this.generatedLinkRepository.updateByFingerprintAsync?.(fingerprint, fields)
+        ?? this.generatedLinkRepository.updateByFingerprint(fingerprint, fields));
+    }
+
+    return {
+      shortUrl: shortUrl || null,
+      qrUrl: qrUrl || null,
+      bitlyId,
+      bitlyPayload,
+      finalLongUrl: fields.final_long_url || finalLongUrl,
+      generatedShort: Boolean(fields.short_url),
+      generatedQr: Boolean(fields.qr_url),
+      degraded: Boolean(degradation),
+      degradedReason: degradation?.reason ?? null,
+      degradedMessage: degradation?.message ?? null
+    };
+  }
+
   classifyBitlyFailure(error) {
     if (!(error instanceof BitlyError)) {
       return null;
@@ -239,6 +302,9 @@ export class LinkGenerationService {
 function safeJsonParse(value) {
   if (!value) {
     return {};
+  }
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return value;
   }
 
   try {

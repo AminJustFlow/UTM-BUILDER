@@ -177,6 +177,28 @@ try {
       utm_content: "changed_copy"
   });
   const changedCopyResponse = changedCopyAttempt.response;
+  const supplementedRequestId = changedCopyAttempt.body.result?.request_id;
+  const qrSupplementResponse = await af("/utms/supplement", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: supplementedRequestId, generate_qr: true })
+  });
+  const qrSupplement = await qrSupplementResponse.json();
+  const repeatedQrSupplementResponse = await af("/utms/supplement", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: supplementedRequestId, generate_qr: true })
+  });
+  const repeatedQrSupplement = await repeatedQrSupplementResponse.json();
+  const shortSupplementResponse = await af("/utms/supplement", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: supplementedRequestId, generate_short: true })
+  });
+  const shortSupplement = await shortSupplementResponse.json();
+  const supplementedHistoryResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(changedCopyAttempt.body.result?.fingerprint ?? "")}`);
+  const supplementedHistory = await supplementedHistoryResponse.json();
+  const supplementedLibraryHtml = await (await af("/utms")).text();
   const concurrentPayload = (destination_url) => ({
     client: "jf",
     destination_url,
@@ -244,6 +266,30 @@ try {
     }).toString()
   });
   const oldSessionAfterPasswordChange = await af("/new", { redirect: "manual" });
+
+  if (
+    qrSupplementResponse.status !== 200
+    || !qrSupplement.qr_url
+    || repeatedQrSupplementResponse.status !== 200
+    || repeatedQrSupplement.qr_url !== qrSupplement.qr_url
+    || shortSupplementResponse.status !== 503
+    || shortSupplement.error?.code !== "bitly_not_configured"
+    || !supplementedHistory.events?.some((event) => event.action === "supplemented")
+    || !supplementedLibraryHtml.includes('data-generate-asset="short"')
+    || !supplementedLibraryHtml.includes('data-generate-asset="qr"')
+  ) {
+    throw new Error(`Missing-asset supplementation smoke test failed: ${JSON.stringify({
+      qrStatus: qrSupplementResponse.status,
+      qrUrl: qrSupplement.qr_url ?? null,
+      repeatedQrStatus: repeatedQrSupplementResponse.status,
+      repeatedQrUrl: repeatedQrSupplement.qr_url ?? null,
+      shortStatus: shortSupplementResponse.status,
+      shortCode: shortSupplement.error?.code ?? null,
+      supplementedHistory: supplementedHistory.events?.map((event) => event.action) ?? [],
+      hasShortButton: supplementedLibraryHtml.includes('data-generate-asset="short"'),
+      hasQrButton: supplementedLibraryHtml.includes('data-generate-asset="qr"')
+    })}`);
+  }
 
   if (
     health.status !== "ok"
