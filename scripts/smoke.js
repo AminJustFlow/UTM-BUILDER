@@ -176,10 +176,10 @@ try {
     body: new URLSearchParams({ id: String(standardId), client_key: "gas" }).toString()
   });
   const standardsAfterMutations = await (await af("/standards?client=gas")).text();
-  const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
-  const plantFinderSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys&query=plant")).json();
-  const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=studleys&query=ConstantContact")).json();
-  const history = await (await af("/new/utm-intelligence/history.json?client=jf")).json();
+  const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
+  const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
+  const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=ConstantContact")).json();
+  const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -463,10 +463,10 @@ try {
     || !standardsAfterMutations.includes("Updated")
     || !standardsAfterMutations.includes("Deleted")
     || !suggestions.items?.length
-    || !suggestions.items?.some((item) => item.value === "Website" && item.normalized_value === "website")
+    || !suggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
-    || !plantFinderSuggestions.items?.some((item) => item.value === "PlantFinder" && item.normalized_value === "plant_finder")
-    || !constantContactSuggestions.items?.some((item) => item.value === "ConstantContact" && item.normalized_value === "constant_contact" && item.known)
+    || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
+    || !constantContactSuggestions.items?.some((item) => item.value === "Constantcontact" && item.normalized_value === "constantcontact" && item.known)
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
     || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"

@@ -16,6 +16,26 @@ Open `http://localhost:3000/new`. The link library is available at `/utms` and t
 
 Open `/imports` or select **Import CSV** from the sidebar. Choose a CSV exported from the Link Library and submit it. Matching links are skipped when the same file is imported again.
 
+## Maintain the approved UTM dictionary
+
+Approved static UTM values are maintained one client at a time in `Utms-Generator/clients/`. Each workbook contains an **Approved UTMs** sheet and the combined set of workbooks is the complete static source of truth. Rebuilding retains every workbook currently in that folder; replacing or removing one workbook changes only that client on the next rebuild.
+
+Install the workbook dependency once:
+
+```bash
+python -m pip install openpyxl
+```
+
+Create or replace a client's workbook from a clean Link Library CSV, review the resulting workbook, validate all clients, and publish the combined outputs:
+
+```bash
+python Utms-Generator/utm_dictionary_generator.py import --input Utms-Generator/gas-starter-utm-import.csv --client GAS
+python Utms-Generator/utm_dictionary_generator.py validate
+python Utms-Generator/utm_dictionary_generator.py rebuild
+```
+
+The rebuild replaces `utm_dictionary_output/utm_ui_dictionaries.json`, `utm_dictionary_output/utm_value_counts.csv`, and `utm_clean_output/utm_master_clean.csv` only after every approved workbook passes validation. Required fields are client, destination URL, source, medium, and campaign. Term, content, Bitly URL, and creation date are optional.
+
 ## Duplicate and reuse a link
 
 Select **Duplicate** on a Link Library card. The builder opens with the existing destination and UTM values prefilled, but saving creates a new link and never changes the original. Change at least the destination or one UTM value before saving; exact destination-plus-five-UTM duplicates are rejected.
