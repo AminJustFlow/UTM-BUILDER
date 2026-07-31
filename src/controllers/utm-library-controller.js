@@ -252,6 +252,43 @@ export class UtmLibraryController {
       })}`
     });
   }
+
+  async handleBulk(request) {
+    const parsedBody = request.parseJson();
+    if (!parsedBody.ok) {
+      return NodeResponse.json({ status: "error", error: { code: parsedBody.errorCode, message: parsedBody.errorMessage } }, 400);
+    }
+    const action = normalizeTextValue(parsedBody.value.action).toLowerCase();
+    const requestIds = [...new Set((Array.isArray(parsedBody.value.request_ids) ? parsedBody.value.request_ids : [])
+      .map((value) => positiveInteger(value, null)).filter(Boolean))].slice(0, 100);
+    if (!requestIds.length || !["short", "qr", "delete"].includes(action)) {
+      return NodeResponse.json({ status: "error", error: { code: "invalid_bulk_request", message: "Select at least one link and a valid bulk action." } }, 422);
+    }
+    if (action === "delete" && request.user?.role !== "admin") {
+      return NodeResponse.json({ status: "error", error: { code: "forbidden", message: "Administrator access is required to delete links." } }, 403);
+    }
+
+    const results = [];
+    for (const requestId of requestIds) {
+      const result = action === "delete"
+        ? await this.utmLibraryEditorService.deleteEntry({ request_id: requestId }, request.user)
+        : await this.utmLibraryEditorService.supplementAssets({
+          request_id: requestId,
+          generate_short: action === "short",
+          generate_qr: action === "qr"
+        }, request.user);
+      results.push({ request_id: requestId, ok: result.ok, code: result.code ?? null, message: result.message ?? result.warning ?? "" });
+    }
+    const succeeded = results.filter((result) => result.ok).length;
+    return NodeResponse.json({
+      status: succeeded ? "ok" : "error",
+      action,
+      selected: requestIds.length,
+      succeeded,
+      failed: results.length - succeeded,
+      results
+    }, succeeded ? 200 : 422);
+  }
 }
 
 function renderHtml(view) {
@@ -296,7 +333,7 @@ function renderHtml(view) {
   <style>
     ${renderJustFlowShellStyles()}
     .library-flow{display:flex;flex-direction:column;gap:16px}.library-actions,.actions,.chips,.mini-actions,.page-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.meta,.muted,.empty{color:var(--text-2);line-height:1.5}.results-head,.panel-head,.card-head,.pagination{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}.results-head h2,.panel-head h2,.card-title h3,.section h4{margin:0}.results-head h2,.panel-head h2{font-size:15px;font-weight:600;letter-spacing:-.01em}.card-title h3{font-size:18px;font-weight:600;letter-spacing:-.02em}.badge,.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-2);font-size:12px;font-weight:500}.chip{background:var(--accent-soft);color:var(--accent);border-color:transparent}.chip.neutral{background:var(--surface-2);color:var(--text-2);border-color:var(--border)}.chip.warning{background:var(--warn-soft);color:var(--warn);border-color:transparent}.chip.error{background:var(--neg-soft);color:var(--neg);border-color:transparent}.library-kpis{margin-bottom:0}.library-filters{grid-template-columns:minmax(180px,1.4fr) repeat(4,minmax(120px,1fr)) auto auto}.library-filters .advanced-fields{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:10px}.button,.link-button,.mini-button,.subtle-link,.page-link,.danger-button{height:32px;padding:0 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-weight:500;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:all .12s;white-space:nowrap}.button{background:var(--accent);border-color:var(--accent);color:#fff}.button:hover,.link-button:hover,.mini-button:hover,.subtle-link:hover,.page-link:hover,.danger-button:hover{background:var(--surface-2);border-color:var(--text-3)}.button:hover{background:var(--accent);filter:brightness(1.1)}.mini-button,.subtle-link,.danger-button.mini,.page-link{height:28px;padding:0 9px;font-size:12px}.danger-button{background:var(--neg-soft);border-color:transparent;color:var(--neg)}.page-link.current{background:var(--accent);border-color:var(--accent);color:#fff}.grid{display:grid;gap:12px}.card{scroll-margin-top:76px}.library-card{padding:0;display:grid;gap:0}.card.highlight{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.card-head{padding:14px 16px;border-bottom:1px solid var(--border)}.eyebrow{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.card-title{display:grid;gap:4px}.card-sub{color:var(--text-2);font-size:12.5px}.banner{display:grid;gap:10px;margin:14px 16px 0;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--accent-soft);grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.banner-label{font-size:11px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;font-weight:600}.banner-main{display:grid;gap:2px;min-width:0}.banner-value{font-size:16px;font-weight:600;letter-spacing:-.02em;word-break:break-word}.banner-meta{color:var(--text-2);font-size:12px;line-height:1.4;word-break:break-word}.card-grid{display:grid;gap:16px;grid-template-columns:minmax(180px,1.05fr) minmax(240px,1.35fr) minmax(170px,.9fr);padding:16px}.section{display:grid;gap:10px;align-content:start;min-width:0}.section h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);font-weight:600}.utm-grid{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}.utm-tile{min-height:64px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2)}.utm-tile strong{display:block;margin-bottom:4px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}.utm-value{word-break:break-word;line-height:1.4;font-size:13px}.list{display:flex;flex-direction:column;gap:10px}.link-item,.usage-item{padding-bottom:10px;border-bottom:1px solid var(--border)}.link-item:last-child,.usage-item:last-child{padding-bottom:0;border-bottom:0}.link-label{margin-bottom:5px;color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.link-target{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:flex-start}.link-value{min-width:0;display:block;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--accent);text-decoration:none;word-break:break-word;line-height:1.45;font-family:"IBM Plex Mono",monospace;font-size:12px}.link-value:hover{text-decoration:underline}.qr-frame{width:min(100%,148px);aspect-ratio:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2);overflow:hidden;display:grid;place-items:center}.qr-frame img{width:100%;height:100%;display:block;object-fit:cover;background:#fff}.qr-placeholder{padding:14px;text-align:center;color:var(--text-3);line-height:1.45;font-size:12px}.usage-item{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.usage-item strong{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase}.usage-item span{text-align:right;line-height:1.4;font-size:12.5px}.warnings{display:flex;gap:6px;flex-wrap:wrap}details{border-top:1px solid var(--border);padding:12px 16px}details summary{cursor:pointer;color:var(--text-2);list-style:none;font-size:12.5px}details summary::-webkit-details-marker{display:none}details[open] summary{margin-bottom:10px}.request{margin:0;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);line-height:1.5;word-break:break-word;color:var(--text-2);font-size:13px}.empty{padding:28px;text-align:center;border:1px dashed var(--border-strong);border-radius:var(--radius);background:var(--surface-2)}.toast{position:fixed;right:16px;bottom:16px;max-width:22rem;padding:12px 14px;border-radius:var(--radius);background:var(--text);color:var(--surface);box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity 140ms ease,transform 140ms ease;z-index:80}.toast.warning{background:var(--warn);color:#fff}.toast.error{background:var(--neg);color:#fff}.toast.success{background:var(--pos);color:#fff}.toast.visible{opacity:1;transform:translateY(0)}
-    .card-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface-2);font-size:12.5px;color:var(--text-2)}.card-foot .foot-meta strong{color:var(--text)}.history-panel{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2)}.history-list{display:flex;flex-direction:column;gap:8px}.history-event{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;font-size:12.5px}.history-event .h-action{font-weight:600;color:var(--text)}.history-event .h-actor{color:var(--text-2)}.history-event .h-when{color:var(--text-3);white-space:nowrap}.history-event .h-summary{grid-column:1/-1;color:var(--text-3);word-break:break-word}
+    .card-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface-2);font-size:12.5px;color:var(--text-2)}.card-foot .foot-meta strong{color:var(--text)}.history-panel{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2)}.history-list{display:flex;flex-direction:column;gap:8px}.history-event{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;font-size:12.5px}.history-event .h-action{font-weight:600;color:var(--text)}.history-event .h-actor{color:var(--text-2)}.history-event .h-when{color:var(--text-3);white-space:nowrap}.history-event .h-summary{grid-column:1/-1;color:var(--text-3);word-break:break-word}.bulk-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2)}.bulk-bar[hidden]{display:none}.select-link{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;cursor:pointer}.select-link input{width:17px;height:17px;accent-color:var(--accent)}.library-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
     .gov-chip{padding-right:6px}.gov-ack{display:inline-flex;margin:0}.gov-ack button{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.65;transition:opacity .12s,background .12s}.gov-ack button:hover{opacity:1;background:color-mix(in srgb,currentColor 18%,transparent)}.gov-ack svg{width:13px;height:13px;stroke:currentColor;stroke-width:3;fill:none}
     ${renderLoadingStyles()}
     @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}}
@@ -375,6 +412,13 @@ function renderHtml(view) {
               </div>
             </div>
             <div class="card-body">
+              <div class="bulk-bar" id="bulk-bar">
+                <label class="select-link"><input type="checkbox" id="select-page"> Select all on this page</label>
+                <span class="meta" id="selected-count">0 selected</span>
+                <button type="button" class="button mini-button" data-bulk-action="short">Generate Bitlys</button>
+                <button type="button" class="mini-button" data-bulk-action="qr">Generate QR codes</button>
+                ${canManageGovernance ? `<button type="button" class="danger-button mini" data-bulk-action="delete">Delete selected</button>` : ""}
+              </div>
               ${highlightRequestId ? (() => { const hi = library.items.find((i) => i.requestId === highlightRequestId); return `<div class="meta" style="margin-bottom:12px"><a class="link" href="/utms">Link Library</a> / ${escapeHtml(hi ? (hi.utmCampaign || `Link ${hi.requestId}`) : "Link")}</div>`; })() : ""}
               <div class="grid">
                 ${library.items.length > 0
@@ -396,6 +440,8 @@ function renderHtml(view) {
     (function () {
       const toast = document.getElementById("toast");
       const filterForm = document.getElementById("library-filter-form");
+      const selectPage = document.getElementById("select-page");
+      const selectedCount = document.getElementById("selected-count");
       let facetAbortController = null;
       let facetRequestToken = 0;
       let toastTimer = null;
@@ -413,6 +459,53 @@ function renderHtml(view) {
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove("visible"), 2600);
       }
+      function selectedIds() {
+        return Array.from(document.querySelectorAll("[data-link-select]:checked")).map((input) => input.value);
+      }
+      function updateSelection() {
+        const boxes = Array.from(document.querySelectorAll("[data-link-select]"));
+        const selected = boxes.filter((input) => input.checked);
+        boxes.forEach((input) => input.closest(".library-card")?.classList.toggle("selected", input.checked));
+        if (selectedCount) selectedCount.textContent = selected.length + " selected";
+        if (selectPage) {
+          selectPage.checked = boxes.length > 0 && selected.length === boxes.length;
+          selectPage.indeterminate = selected.length > 0 && selected.length < boxes.length;
+        }
+        document.querySelectorAll("[data-bulk-action]").forEach((button) => { button.disabled = selected.length === 0; });
+      }
+      selectPage?.addEventListener("change", function () {
+        document.querySelectorAll("[data-link-select]").forEach((input) => { input.checked = selectPage.checked; });
+        updateSelection();
+      });
+      document.addEventListener("change", function (event) {
+        if (event.target.matches("[data-link-select]")) updateSelection();
+      });
+      document.addEventListener("click", async function (event) {
+        const button = event.target.closest("[data-bulk-action]");
+        if (!button) return;
+        const ids = selectedIds();
+        const action = button.dataset.bulkAction;
+        if (!ids.length) return;
+        if (action === "delete" && !window.confirm("Delete " + ids.length + " selected links? Their matching saved history will also be removed.")) return;
+        document.querySelectorAll("[data-bulk-action]").forEach((item) => { item.disabled = true; });
+        button.classList.add("btn-loading");
+        try {
+          const response = await fetch("/utms/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, request_ids: ids }) });
+          const body = await response.json();
+          if (!body.succeeded) throw new Error(body?.error?.message || body?.results?.[0]?.message || "The bulk action failed.");
+          const label = action === "short" ? "Bitly generation" : action === "qr" ? "QR generation" : "Deletion";
+          const message = label + " completed for " + body.succeeded + " of " + body.selected + " selected links.";
+          const next = new URL(window.location.href);
+          next.searchParams.set("toast", message);
+          next.searchParams.set("toast_level", body.failed ? "warning" : "success");
+          window.location.assign(next.toString());
+        } catch (error) {
+          showToast(error?.message || "The bulk action failed.", "error");
+          button.classList.remove("btn-loading");
+          updateSelection();
+        }
+      });
+      updateSelection();
       async function copyText(value) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(value);
@@ -796,6 +889,7 @@ function renderResultCard(item, { highlightRequestId }) {
   return `<article class="card library-card${isHighlighted ? " highlight" : ""}" id="request-${item.requestId}" data-highlight="${isHighlighted ? "true" : "false"}">
     <div class="card-head">
       <div class="card-title">
+        <label class="select-link"><input type="checkbox" data-link-select value="${escapeAttribute(item.requestId)}" aria-label="Select ${escapeAttribute(item.clientDisplayName)} link"> Select link</label>
         <div class="eyebrow">Last saved ${escapeHtml(formatDate(item.lastCreatedAt))}</div>
         <h3>${escapeHtml(item.clientDisplayName)}</h3>
         <div class="card-sub">${escapeHtml(subtitleParts.join(" - "))}</div>
