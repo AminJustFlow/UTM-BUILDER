@@ -388,6 +388,7 @@ export class UtmLibraryEditorService {
       },
       sourceUserId: context.sourceUserId,
       sourceUserName: context.sourceUserName,
+      dictionaryApproved: context.actor?.role === "admin",
       createdAt: timestamp,
       updatedAt: timestamp
     }) ?? this.requestRepository.createIncoming({
@@ -416,6 +417,7 @@ export class UtmLibraryEditorService {
       },
       sourceUserId: context.sourceUserId,
       sourceUserName: context.sourceUserName,
+      dictionaryApproved: context.actor?.role === "admin",
       createdAt: timestamp,
       updatedAt: timestamp
     }));

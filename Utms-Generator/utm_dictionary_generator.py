@@ -301,7 +301,7 @@ def relationship(rows: Iterable[ApprovedRow], left: str, right: str) -> dict[str
 
 
 def build_dictionary(rows: list[ApprovedRow]) -> dict[str, object]:
-    return {
+    dictionary = {
         "value_counts": {field: count_entries(rows, field) for field in UTM_FIELDS},
         "campaign_to_sources": relationship(rows, "campaign", "source"),
         "campaign_to_mediums": relationship(rows, "campaign", "medium"),
@@ -309,6 +309,18 @@ def build_dictionary(rows: list[ApprovedRow]) -> dict[str, object]:
         "campaign_to_terms": relationship(rows, "campaign", "term"),
         "campaign_to_contents": relationship(rows, "campaign", "content"),
     }
+    dictionary["clients"] = {}
+    for client in sorted({row.normalized(row.client) for row in rows}):
+        client_rows = [row for row in rows if row.normalized(row.client) == client]
+        dictionary["clients"][client] = {
+            "value_counts": {field: count_entries(client_rows, field) for field in UTM_FIELDS},
+            "campaign_to_sources": relationship(client_rows, "campaign", "source"),
+            "campaign_to_mediums": relationship(client_rows, "campaign", "medium"),
+            "source_to_mediums": relationship(client_rows, "source", "medium"),
+            "campaign_to_terms": relationship(client_rows, "campaign", "term"),
+            "campaign_to_contents": relationship(client_rows, "campaign", "content"),
+        }
+    return dictionary
 
 
 def csv_text(columns: tuple[str, ...], rows: Iterable[dict[str, object]]) -> str:

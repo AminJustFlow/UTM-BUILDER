@@ -343,6 +343,7 @@ export class RequestRepository {
         clickup_thread_message_id,
         source_user_id,
         source_user_name,
+        dictionary_approved,
         created_at,
         updated_at
       ) VALUES (
@@ -357,6 +358,7 @@ export class RequestRepository {
         :clickup_thread_message_id,
         :source_user_id,
         :source_user_name,
+        :dictionary_approved,
         :created_at,
         :updated_at
       )
@@ -372,6 +374,7 @@ export class RequestRepository {
       clickup_thread_message_id: payload.clickupThreadMessageId ?? null,
       source_user_id: payload.sourceUserId ?? "anonymous",
       source_user_name: payload.sourceUserName ?? null,
+      dictionary_approved: this.database.client === "postgres" ? Boolean(payload.dictionaryApproved) : (payload.dictionaryApproved ? 1 : 0),
       created_at: payload.createdAt,
       updated_at: payload.updatedAt
     });
@@ -396,6 +399,7 @@ export class RequestRepository {
         clickup_thread_message_id,
         source_user_id,
         source_user_name,
+        dictionary_approved,
         created_at,
         updated_at
       ) VALUES (
@@ -410,6 +414,7 @@ export class RequestRepository {
         :clickup_thread_message_id,
         :source_user_id,
         :source_user_name,
+        :dictionary_approved,
         :created_at,
         :updated_at
       )${this.database.client === "postgres" ? "\n      RETURNING id" : ""}
@@ -425,6 +430,7 @@ export class RequestRepository {
       clickup_thread_message_id: payload.clickupThreadMessageId ?? null,
       source_user_id: payload.sourceUserId ?? "anonymous",
       source_user_name: payload.sourceUserName ?? null,
+      dictionary_approved: this.database.client === "postgres" ? Boolean(payload.dictionaryApproved) : (payload.dictionaryApproved ? 1 : 0),
       created_at: payload.createdAt,
       updated_at: payload.updatedAt
     });

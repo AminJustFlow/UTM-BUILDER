@@ -15,11 +15,6 @@ export class UtmIntelligenceService {
     this.requestRepository = requestRepository;
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
-    this.staticBaselineKnownValues = buildKnownValues(
-      this.staticData.uiDictionaries,
-      this.staticData.valueCounts,
-      this.staticData.masterRows
-    );
     this.runtimeRows = [];
     this.data = this.mergeRuntimeData(this.runtimeRows);
   }
@@ -27,6 +22,7 @@ export class UtmIntelligenceService {
   metadata({ client = null, channel = null } = {}) {
     this.refreshData();
     const scopedRows = this.scopeRows({ client, channel });
+    const approvedRows = this.scopeApprovedRows({ client: normalizeOptional(client), channel: normalizeOptional(channel) });
     const channelDefaults = channel ? this.rulesService.getSourceMedium(channel) ?? {} : {};
     const campaignSuggestions = this.suggestions({ field: "campaign", client, channel, limit: 12 }).items;
 
@@ -38,9 +34,9 @@ export class UtmIntelligenceService {
       }])),
       summary: {
         historical_rows: scopedRows.length,
-        known_campaigns: this.data.knownValues.campaign.length,
-        known_sources: this.data.knownValues.source.length,
-        known_mediums: this.data.knownValues.medium.length
+        known_campaigns: uniqueRowValues(approvedRows, "campaign").length,
+        known_sources: uniqueRowValues(approvedRows, "source").length,
+        known_mediums: uniqueRowValues(approvedRows, "medium").length
       },
       channel_defaults: {
         source: normalizeOptional(channelDefaults.source),
@@ -78,10 +74,12 @@ export class UtmIntelligenceService {
     const compactQuery = compactValue(query);
     const filters = this.normalizeSelection(input);
     const scopedRows = this.scopeRows(filters);
-    const candidateValues = this.collectCandidateValues(field, filters);
+    const approvedRows = this.scopeApprovedRows(filters);
+    const maps = buildMaps(approvedRows);
+    const candidateValues = this.collectCandidateValues(field, filters, approvedRows, maps);
 
     const ranked = candidateValues
-      .map((value) => this.buildSuggestion(field, value, scopedRows, filters))
+      .map((value) => this.buildSuggestion(field, value, scopedRows, approvedRows, filters, maps))
       .filter(Boolean)
       .filter((item) => !query || item.normalized_value.includes(query) || compactValue(item.normalized_value).includes(compactQuery))
       .sort(compareSuggestions)
@@ -182,7 +180,7 @@ export class UtmIntelligenceService {
       exact_match_count: exactCount,
       scoped_rows: scopedRows.length,
       campaign_summary: filters.campaign
-        ? this.data.campaignSummary.get(filters.campaign) ?? null
+        ? buildCampaignSummary(scopedRows).get(filters.campaign) ?? null
         : null,
       examples
     };
@@ -207,7 +205,7 @@ export class UtmIntelligenceService {
       policy_warnings: policyWarnings,
       consistency,
       duplicate_warnings: UTM_FIELDS
-        .map((field) => this.findNearDuplicate(field, filters[field]))
+        .map((field) => this.findNearDuplicate(field, filters[field], filters.client))
         .filter(Boolean)
     };
   }
@@ -217,7 +215,7 @@ export class UtmIntelligenceService {
     const filters = this.normalizeSelection(input);
     const client = filters.client;
     if (!client) return emptyConsistency();
-    const clientRows = this.data.masterRows.filter((row) => row.client === client);
+    const clientRows = this.data.approvedRows.filter((row) => row.client === client);
     const acknowledged = new Set((acknowledgedRows ?? []).map((row) => `${row.field}:${normalizeOptional(row.value)}`));
     const warnings = [];
     const newFields = new Set();
@@ -228,9 +226,9 @@ export class UtmIntelligenceService {
       const usageCount = countComparableRows(clientRows, field, value);
       if (usageCount > 0 || acknowledged.has(`${client}|${field}:${value}`)) continue;
       const near = this.findNearDuplicateForRows(field, value, clientRows)
-        ?? this.findNearDuplicateForRows(field, value, this.data.masterRows);
-      const recommendationRows = clientRows.length ? clientRows : this.data.masterRows;
-      const globalExactCount = countComparableRows(this.data.masterRows, field, value);
+        ?? this.findNearDuplicateForRows(field, value, this.data.approvedRows);
+      const recommendationRows = clientRows.length ? clientRows : this.data.approvedRows;
+      const globalExactCount = countComparableRows(this.data.approvedRows, field, value);
       const displayValue = formatUtmValue(value);
       const displayNear = formatUtmValue(near);
       const recommendations = near
@@ -344,10 +342,11 @@ export class UtmIntelligenceService {
   policyWarnings(input = {}, recommendations = null) {
     const filters = this.normalizeSelection(input);
     const nextRecommendations = recommendations ?? this.recommendations(filters);
+    const maps = buildMaps(this.scopeApprovedRows(filters));
     const warnings = [];
 
     if (filters.campaign && filters.source) {
-      const campaignSources = (this.data.maps.campaignSource.get(filters.campaign) ?? []).map((entry) => entry.value);
+      const campaignSources = (maps.campaignSource.get(filters.campaign) ?? []).map((entry) => entry.value);
       if (campaignSources.length && !campaignSources.includes(filters.source)) {
         warnings.push({
           field: "source",
@@ -357,7 +356,7 @@ export class UtmIntelligenceService {
     }
 
     if (filters.campaign && filters.medium) {
-      const campaignMediums = (this.data.maps.campaignMedium.get(filters.campaign) ?? []).map((entry) => entry.value);
+      const campaignMediums = (maps.campaignMedium.get(filters.campaign) ?? []).map((entry) => entry.value);
       if (campaignMediums.length && !campaignMediums.includes(filters.medium)) {
         warnings.push({
           field: "medium",
@@ -367,7 +366,7 @@ export class UtmIntelligenceService {
     }
 
     if (filters.source && filters.medium) {
-      const sourceMediums = (this.data.maps.sourceMedium.get(filters.source) ?? []).map((entry) => entry.value);
+      const sourceMediums = (maps.sourceMedium.get(filters.source) ?? []).map((entry) => entry.value);
       if (sourceMediums.length && !sourceMediums.includes(filters.medium)) {
         warnings.push({
           field: "medium",
@@ -393,23 +392,39 @@ export class UtmIntelligenceService {
     return warnings;
   }
 
-  isKnownValue(field, value) {
+  isKnownValue(field, value, client = null) {
     this.refreshData();
     const normalizedField = normalizeField(field);
     const normalizedValue = normalizeOptional(value);
     if (!normalizedField || !normalizedValue) {
       return false;
     }
-    return this.data.knownValues[normalizedField]?.includes(normalizedValue) ?? false;
+    return countComparableRows(this.scopeApprovedRows({ client: normalizeOptional(client) }), normalizedField, normalizedValue) > 0;
   }
 
-  isWorkbookBaselineValue(field, value) {
+  approvedClients() {
+    const configured = new Set(this.rulesService.clients());
+    const dictionaryClients = Object.keys(this.staticData.uiDictionaries?.clients ?? {});
+    const fallbackClients = [...new Set(this.staticData.masterRows.map((row) => row.client).filter(Boolean))];
+    return (dictionaryClients.length ? dictionaryClients : fallbackClients)
+      .map(normalizeOptional)
+      .filter((client) => client && configured.has(client))
+      .sort();
+  }
+
+  isApprovedClient(client) {
+    return this.approvedClients().includes(normalizeOptional(client));
+  }
+
+  isWorkbookBaselineValue(field, value, client = null) {
     const normalizedField = normalizeField(field);
     const normalizedValue = normalizeOptional(value);
     if (!normalizedField || !normalizedValue) {
       return false;
     }
-    return this.staticBaselineKnownValues[normalizedField]?.includes(normalizedValue) ?? false;
+    const normalizedClient = normalizeOptional(client);
+    const rows = this.staticData.masterRows.filter((row) => !normalizedClient || row.client === normalizedClient);
+    return countComparableRows(rows, normalizedField, normalizedValue) > 0;
   }
 
   previewFromNormalized(normalized, submitted = {}, acknowledgedRows = []) {
@@ -424,11 +439,11 @@ export class UtmIntelligenceService {
       content: normalizeOptional(normalized.utmContent)
     };
     const duplicateWarnings = [
-      this.findNearDuplicate("campaign", normalizeOptional(submitted.utm_campaign)),
-      this.findNearDuplicate("source", normalizeOptional(submitted.utm_source)),
-      this.findNearDuplicate("medium", normalizeOptional(submitted.utm_medium)),
-      this.findNearDuplicate("term", normalizeOptional(submitted.utm_term)),
-      this.findNearDuplicate("content", normalizeOptional(submitted.utm_content))
+      this.findNearDuplicate("campaign", normalizeOptional(submitted.utm_campaign), filters.client),
+      this.findNearDuplicate("source", normalizeOptional(submitted.utm_source), filters.client),
+      this.findNearDuplicate("medium", normalizeOptional(submitted.utm_medium), filters.client),
+      this.findNearDuplicate("term", normalizeOptional(submitted.utm_term), filters.client),
+      this.findNearDuplicate("content", normalizeOptional(submitted.utm_content), filters.client)
     ].filter(Boolean);
 
     return {
@@ -491,21 +506,17 @@ export class UtmIntelligenceService {
   mergeRuntimeData(runtimeRows = this.runtimeRows) {
     const masterRows = [...this.staticData.masterRows, ...runtimeRows];
     const valueCounts = buildValueCounts(masterRows);
+    const approvedRows = [...this.staticData.masterRows, ...runtimeRows.filter((row) => row.dictionaryApproved)];
+    const approvedValueCounts = buildValueCounts(approvedRows);
     return {
       ...this.staticData,
       masterRows,
+      approvedRows,
       valueCounts,
       valueCountLookup: new Map(valueCounts.map((row) => [`${row.field}:${row.value}`, row])),
-      knownValues: buildKnownValues(this.staticData.uiDictionaries, valueCounts, masterRows),
-      maps: {
-        campaignSource: buildMapFromRows(masterRows, "campaign", "source"),
-        campaignMedium: buildMapFromRows(masterRows, "campaign", "medium"),
-        sourceMedium: buildMapFromRows(masterRows, "source", "medium"),
-        campaignTerm: buildMapFromRows(masterRows, "campaign", "term"),
-        campaignContent: buildMapFromRows(masterRows, "campaign", "content")
-      },
-      comboExamples: buildComboExamples(masterRows),
-      campaignSummary: buildCampaignSummary(masterRows)
+      knownValues: buildKnownValues(this.staticData.uiDictionaries, approvedValueCounts, approvedRows),
+      maps: buildMaps(approvedRows),
+      comboExamples: buildComboExamples(masterRows)
     };
   }
 
@@ -570,7 +581,8 @@ export class UtmIntelligenceService {
       channel: normalizeOptional(row.channel),
       creationDate,
       creationYear,
-      bitly: normalizeOptional(row.short_url)
+      bitly: normalizeOptional(row.short_url),
+      dictionaryApproved: row.dictionary_approved === true || Number(row.dictionary_approved) === 1
     };
   }
 
@@ -588,7 +600,8 @@ export class UtmIntelligenceService {
       client: normalized.client,
       channel: normalized.channel,
       created_at: row.created_at,
-      short_url: row.short_url
+      short_url: row.short_url,
+      dictionary_approved: row.dictionary_approved
     });
   }
 
@@ -664,30 +677,38 @@ export class UtmIntelligenceService {
     });
   }
 
-  collectCandidateValues(field, filters) {
-    const candidates = new Set(this.data.knownValues[field] ?? []);
+  scopeApprovedRows(filters = {}) {
+    return this.data.approvedRows.filter((row) => {
+      if (filters.client && row.client !== filters.client) return false;
+      if (filters.channel && row.channel !== filters.channel) return false;
+      return true;
+    });
+  }
+
+  collectCandidateValues(field, filters, approvedRows, maps) {
+    const candidates = new Set(uniqueRowValues(approvedRows, field));
     if (field === "source" && filters.campaign) {
-      for (const row of this.data.maps.campaignSource.get(filters.campaign) ?? []) {
+      for (const row of maps.campaignSource.get(filters.campaign) ?? []) {
         candidates.add(row.value);
       }
     }
     if (field === "medium" && filters.campaign) {
-      for (const row of this.data.maps.campaignMedium.get(filters.campaign) ?? []) {
+      for (const row of maps.campaignMedium.get(filters.campaign) ?? []) {
         candidates.add(row.value);
       }
     }
     if (field === "medium" && filters.source) {
-      for (const row of this.data.maps.sourceMedium.get(filters.source) ?? []) {
+      for (const row of maps.sourceMedium.get(filters.source) ?? []) {
         candidates.add(row.value);
       }
     }
     if (field === "term" && filters.campaign) {
-      for (const row of this.data.maps.campaignTerm.get(filters.campaign) ?? []) {
+      for (const row of maps.campaignTerm.get(filters.campaign) ?? []) {
         candidates.add(row.value);
       }
     }
     if (field === "content" && filters.campaign) {
-      for (const row of this.data.maps.campaignContent.get(filters.campaign) ?? []) {
+      for (const row of maps.campaignContent.get(filters.campaign) ?? []) {
         candidates.add(row.value);
       }
     }
@@ -695,17 +716,17 @@ export class UtmIntelligenceService {
     return [...candidates];
   }
 
-  buildSuggestion(field, value, scopedRows, filters) {
+  buildSuggestion(field, value, scopedRows, approvedRows, filters, maps) {
     const normalized = normalizeOptional(value);
     if (!normalized) {
       return null;
     }
     const global = this.data.valueCountLookup.get(`${field}:${normalized}`)?.count ?? 0;
     const scoped = countRows(scopedRows, field, normalized, filters);
-    const relation = buildRelationLabel(field, normalized, filters, this.data.maps);
-    const known = this.data.knownValues[field]?.includes(normalized) ?? false;
+    const relation = buildRelationLabel(field, normalized, filters, maps);
+    const known = countComparableRows(approvedRows, field, normalized) > 0;
     const channelBoost = filters.channel ? this.channelValueBoost(field, normalized, filters.channel) : 0;
-    const recommended = this.isRecommended(field, normalized, filters);
+    const recommended = this.isRecommended(field, normalized, filters, maps);
 
     return {
       value: formatUtmValue(normalized),
@@ -721,18 +742,18 @@ export class UtmIntelligenceService {
     };
   }
 
-  isRecommended(field, value, filters) {
+  isRecommended(field, value, filters, maps = this.data.maps) {
     if (field === "source" && filters.campaign) {
-      return (this.data.maps.campaignSource.get(filters.campaign) ?? [])[0]?.value === value;
+      return (maps.campaignSource.get(filters.campaign) ?? [])[0]?.value === value;
     }
     if (field === "medium" && filters.campaign) {
-      return (this.data.maps.campaignMedium.get(filters.campaign) ?? [])[0]?.value === value;
+      return (maps.campaignMedium.get(filters.campaign) ?? [])[0]?.value === value;
     }
     if (field === "term" && filters.campaign) {
-      return (this.data.maps.campaignTerm.get(filters.campaign) ?? [])[0]?.value === value;
+      return (maps.campaignTerm.get(filters.campaign) ?? [])[0]?.value === value;
     }
     if (field === "content" && filters.campaign) {
-      return (this.data.maps.campaignContent.get(filters.campaign) ?? [])[0]?.value === value;
+      return (maps.campaignContent.get(filters.campaign) ?? [])[0]?.value === value;
     }
     return false;
   }
@@ -778,12 +799,12 @@ export class UtmIntelligenceService {
     };
   }
 
-  findNearDuplicate(field, value) {
+  findNearDuplicate(field, value, client = null) {
     const normalized = normalizeOptional(value);
     if (!normalized) {
       return null;
     }
-    const knownValues = this.data.knownValues[field] ?? [];
+    const knownValues = uniqueRowValues(this.scopeApprovedRows({ client }), field);
     if (knownValues.includes(normalized)) {
       return null;
     }
@@ -965,6 +986,20 @@ function buildMapFromRows(rows, keyField, valueField) {
       }))
       .sort((left, right) => Number(right.count) - Number(left.count) || left.value.localeCompare(right.value))
   ]));
+}
+
+function buildMaps(rows) {
+  return {
+    campaignSource: buildMapFromRows(rows, "campaign", "source"),
+    campaignMedium: buildMapFromRows(rows, "campaign", "medium"),
+    sourceMedium: buildMapFromRows(rows, "source", "medium"),
+    campaignTerm: buildMapFromRows(rows, "campaign", "term"),
+    campaignContent: buildMapFromRows(rows, "campaign", "content")
+  };
+}
+
+function uniqueRowValues(rows, field) {
+  return [...new Set(rows.map((row) => normalizeOptional(row[field])).filter(Boolean))].sort();
 }
 
 function buildComboExamples(rows) {

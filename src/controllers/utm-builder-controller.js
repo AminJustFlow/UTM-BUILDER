@@ -34,7 +34,12 @@ export class UtmBuilderController {
         "Content-Type": "text/plain; charset=utf-8"
       });
     }
-    const clients = await Promise.all(this.rulesService.clients()
+    if (duplicateItem && !this.utmIntelligenceService.isApprovedClient(duplicateItem.client)) {
+      return NodeResponse.text("This link's client is not yet available in the approved UTM dictionary.", 422, {
+        "Content-Type": "text/plain; charset=utf-8"
+      });
+    }
+    const clients = await Promise.all(this.utmIntelligenceService.approvedClients()
       .map(async (clientKey) => ({
           key: clientKey,
           displayName: this.rulesService.getClientDisplayName(clientKey),
@@ -68,6 +73,9 @@ export class UtmBuilderController {
     const parsedBody = request.parseJson();
     if (!parsedBody.ok) {
       return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
+    }
+    if (!this.isApprovedSubmission(parsedBody.value)) {
+      return this.unapprovedClientResponse();
     }
 
     const result = await this.utmLibraryEditorService.create(parsedBody.value, request.user);
@@ -168,6 +176,9 @@ export class UtmBuilderController {
     if (!parsedBody.ok) {
       return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
     }
+    if (!this.isApprovedSubmission(parsedBody.value)) {
+      return this.unapprovedClientResponse();
+    }
 
     const preview = this.buildPreview(parsedBody.value, await this.loadAcknowledgements());
     if (!preview.ok) {
@@ -235,6 +246,22 @@ export class UtmBuilderController {
       status: "error",
       error: { code, message }
     }, 400);
+  }
+
+  isApprovedSubmission(input = {}) {
+    if (!normalizeOptional(input.client)) return true;
+    const client = this.rulesService.normalizeClient(input.client, input.destination_url);
+    return Boolean(client) && this.utmIntelligenceService.isApprovedClient(client);
+  }
+
+  unapprovedClientResponse() {
+    return NodeResponse.json({
+      status: "error",
+      error: {
+        code: "unapproved_client",
+        message: "This client is not yet available in the approved UTM dictionary."
+      }
+    }, 422);
   }
 }
 

@@ -85,6 +85,11 @@ try {
   const builderHtml = await builderResponse.text();
   const usersPage = await af("/users");
   const usersHtml = await usersPage.text();
+  const createRegularUser = await af("/users", {
+    method: "POST", redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ display_name: "Smoke User", username: "smokeuser", password: "smoke-user-pass-123" }).toString()
+  });
   const notificationSettingsResponse = await af("/users/notification-settings", {
     method: "POST", redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -179,12 +184,13 @@ try {
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
   const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
   const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=ConstantContact")).json();
+  const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "jf",
+      client: "gas",
       destination_url: "https://example.com/existing-query-smoke?existing=1",
       utm_source: "facebook",
       utm_medium: "social",
@@ -195,7 +201,7 @@ try {
   });
   const existingQueryPreview = await existingQueryPreviewResponse.json();
   const createAttempt = await createWithConsistencyConfirmation({
-      client: "jf",
+      client: "gas",
       destination_url: "https://example.com/bitly-degradation-smoke",
       utm_source: "facebook",
       utm_medium: "social",
@@ -209,7 +215,7 @@ try {
   const familiarResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "jf", destination_url: "https://example.com/familiar-combination",
+      client: "gas", destination_url: "https://example.com/familiar-combination",
       utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
       utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
     })
@@ -217,19 +223,24 @@ try {
   const clientNewResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "castle", destination_url: "https://example.com/client-new-combination",
+      client: "studleys", destination_url: "https://example.com/client-new-combination",
       utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
       utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
     })
   });
   const clientNew = await clientNewResponse.json();
-  const typoContext = await (await af("/new/utm-intelligence/context.json?client=jf&campaign=websit&source=facebook&medium=social")).json();
-  const compactEquivalentContext = await (await af("/new/utm-intelligence/context.json?client=studleys&campaign=Plantfinder&source=Constantcontact&medium=email&term=Landingpage&content=Homepage")).json();
+  const unapprovedPreviewResponse = await af("/new/preview.json", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "studleys", destination_url: "https://studleys.com/", utm_source: "facebook", utm_medium: "social", utm_campaign: "website" })
+  });
+  const unapprovedPreview = await unapprovedPreviewResponse.json();
+  const typoContext = await (await af("/new/utm-intelligence/context.json?client=gas&campaign=websit&source=facebook&medium=social")).json();
+  const compactEquivalentContext = await (await af("/new/utm-intelligence/context.json?client=gas&campaign=About&source=ConstantContact&medium=Email&term=LandingPage&content=Explore")).json();
   const duplicateResponseExact = await af("/new", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "castle",
+      client: "gas",
       destination_url: "https://example.com/bitly-degradation-smoke",
       utm_source: "facebook",
       utm_medium: "social",
@@ -246,7 +257,7 @@ try {
   const staleConsistencyResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "jf", destination_url: "https://example.com/stale-consistency",
+      client: "gas", destination_url: "https://example.com/stale-consistency",
       utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
       utm_term: "jfclientspecificterm", utm_content: "changed_copy",
       consistency_warning_fingerprint: createAttempt.firstBody.error?.consistency_warning_fingerprint
@@ -254,7 +265,7 @@ try {
   });
   const staleConsistency = await staleConsistencyResponse.json();
   const changedCopyAttempt = await createWithConsistencyConfirmation({
-      client: "jf",
+      client: "gas",
       destination_url: "https://example.com/bitly-degradation-smoke",
       utm_source: "facebook",
       utm_medium: "social",
@@ -286,7 +297,7 @@ try {
   const supplementedHistory = await supplementedHistoryResponse.json();
   const supplementedLibraryHtml = await (await af("/utms")).text();
   const concurrentPayload = (destination_url) => ({
-    client: "jf",
+    client: "gas",
     destination_url,
     utm_source: "linkedin",
     utm_medium: "social",
@@ -303,7 +314,7 @@ try {
   const concurrentStatuses = concurrentResponses.map((response) => response.status).sort((left, right) => left - right);
   const csv = [
     "request_id,status,client,channel,asset_type,campaign_label,canonical_campaign,utm_source,utm_medium,utm_campaign,utm_term,utm_content,destination_url,final_long_url,short_url,qr_url,request_count,first_seen_at,last_seen_at,original_message",
-    '"1","completed","JF","Facebook","social","website","website","facebook","social","website","","","https://example.com","https://example.com/?utm_source=facebook&utm_medium=social&utm_campaign=website","https://bit.ly/example","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","Smoke import"'
+    '"1","completed","GAS","Facebook","social","website","website","facebook","social","website","","","https://example.com","https://example.com/?utm_source=facebook&utm_medium=social&utm_campaign=website","https://bit.ly/example","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","Smoke import"'
   ].join("\n");
   const importResponse = await af("/imports", {
     method: "POST",
@@ -321,7 +332,7 @@ try {
   const historyBody = await historyResponse.json();
 
   const govCreateAttempt = await createWithConsistencyConfirmation({
-      client: "jf",
+      client: "gas",
       destination_url: `https://example.com/governance-smoke-${Date.now()}`,
       utm_source: "facebook",
       utm_medium: "social",
@@ -338,9 +349,45 @@ try {
     method: "POST",
     redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
-    body: new URLSearchParams({ field: "campaign", value: govValue, client: "jf", warning_type: "new_value" }).toString()
+    body: new URLSearchParams({ field: "campaign", value: govValue, client: "gas", warning_type: "new_value" }).toString()
   });
   const libraryAfterAck = await (await af("/utms")).text();
+  const overlayAttempt = await createWithConsistencyConfirmation({
+    client: "gas", destination_url: "https://example.com/admin-overlay",
+    utm_source: "facebook", utm_medium: "social", utm_campaign: "adminoverlaycampaign",
+    utm_term: "", utm_content: ""
+  });
+  const overlayRequestId = overlayAttempt.body.result?.request_id;
+  const secondOverlayAttempt = await createWithConsistencyConfirmation({
+    client: "gas", destination_url: "https://example.com/admin-overlay-second",
+    utm_source: "facebook", utm_medium: "social", utm_campaign: "adminoverlaycampaign",
+    utm_term: "", utm_content: ""
+  });
+  const secondOverlayRequestId = secondOverlayAttempt.body.result?.request_id;
+  const overlayKnownBeforeDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const overlayDeleteResponse = await af("/utms/delete", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
+  });
+  const overlayKnownAfterFirstDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const secondOverlayDeleteResponse = await af("/utms/delete", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: secondOverlayRequestId })
+  });
+  const overlayKnownAfterDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+
+  const adminSessionCookie = sessionCookie;
+  const regularLogin = await fetch(`${base}/login`, {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ username: "smokeuser", password: "smoke-user-pass-123" }).toString()
+  });
+  sessionCookie = cookieValue(regularLogin, "jf_app_session");
+  const regularAttempt = await createWithConsistencyConfirmation({
+    client: "gas", destination_url: "https://example.com/regular-overlay",
+    utm_source: "facebook", utm_medium: "social", utm_campaign: "regularhistorycampaign",
+    utm_term: "", utm_content: ""
+  });
+  const regularSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=regularhistorycampaign")).json();
+  const regularHistory = await (await af("/new/utm-intelligence/history.json?client=gas&campaign=regularhistorycampaign")).json();
+  sessionCookie = adminSessionCookie;
   const passwordChange = await af("/account/password", {
     method: "POST",
     redirect: "manual",
@@ -414,6 +461,7 @@ try {
     || !setupCookieHeader.includes("SameSite=Lax")
     || setupCookieHeader.includes("; Secure")
     || createAdmin.status !== 302
+    || createRegularUser.status !== 302
     || adminLogin.status !== 302
     || !sessionCookie
     || !appCookieHeader.includes("SameSite=Lax")
@@ -428,10 +476,10 @@ try {
     || !builderHtml.includes('src="/assets/just-flow-logo.png"')
     || !builderHtml.includes('id="destination-query-notice"')
     || !builderHtml.includes('id="campaign-standards"')
+    || !builderHtml.includes('<option value="gas"')
+    || builderHtml.includes('<option value="studleys"')
     || !builderHtml.includes("Meta Ad campaign name")
-    || !builderHtml.includes("Use only for destinations under /links.")
     || !builderHtml.includes("activeCampaignProfile")
-    || !builderHtml.includes("Campaign Term — Publication Name")
     || !builderHtml.includes("This URL already has query parameters, so UTM values will be added with &amp; instead of another ?.")
     || builderHtml.indexOf("Consistency warnings") > builderHtml.indexOf("Resolved preview")
     || usersPage.status !== 200
@@ -481,9 +529,11 @@ try {
     || !createAttempt.firstBody.error?.consistency_warnings?.every((warning) => warning.type && warning.severity && Array.isArray(warning.fields) && Array.isArray(warning.recommendations))
     || created.result?.request_id !== 1
     || familiarResponse.status !== 200
-    || clientNewResponse.status !== 409
-    || clientNew.error?.code !== "consistency_confirmation_required"
-    || !clientNew.error?.consistency_warnings?.some((warning) => warning.type === "new_value")
+    || clientNewResponse.status !== 422
+    || clientNew.error?.code !== "unapproved_client"
+    || unapprovedPreviewResponse.status !== 422
+    || unapprovedPreview.error?.code !== "unapproved_client"
+    || unapprovedSuggestions.items?.length
     || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "Website"))
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo")
     || compactEquivalentContext.duplicate_warnings?.length
@@ -510,8 +560,6 @@ try {
     || staleConsistency.error?.code !== "consistency_confirmation_required"
     || changedCopyResponse.status !== 200
     || concurrentStatuses.join(",") !== "200,409"
-    || !builderHtml.includes("Campaign Term — Publication Name")
-    || !builderHtml.includes("Campaign Content — Issue Name")
     || imported.summary?.imported !== 1
     || duplicate.summary?.skipped !== 1
     || historyResponse.status !== 200
@@ -525,6 +573,17 @@ try {
     || libraryBeforeAck.includes("Last edited by")
     || ackResponse.status !== 302
     || libraryAfterAck.includes(govMarker)
+    || overlayAttempt.response.status !== 200
+    || secondOverlayAttempt.response.status !== 200
+    || !overlayKnownBeforeDelete.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
+    || overlayDeleteResponse.status !== 200
+    || !overlayKnownAfterFirstDelete.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
+    || secondOverlayDeleteResponse.status !== 200
+    || overlayKnownAfterDelete.items?.length
+    || regularLogin.status !== 302
+    || regularAttempt.response.status !== 200
+    || regularSuggestions.items?.length
+    || !regularHistory.items?.some((item) => item.campaign === "regularhistorycampaign")
     || passwordChange.status !== 302
     || oldSessionAfterPasswordChange.status !== 302
     || oldSessionAfterPasswordChange.headers.get("location")?.startsWith("/login") !== true

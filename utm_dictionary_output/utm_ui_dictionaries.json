@@ -558,5 +558,569 @@
         "unique_clients": 1
       }
     ]
+  },
+  "clients": {
+    "gas": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "about",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "services",
+            "count": 40,
+            "unique_clients": 1
+          },
+          {
+            "value": "careers",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "homepage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 34,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 34,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 34,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 34,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "social",
+            "count": 136,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "landingpage",
+            "count": 85,
+            "unique_clients": 1
+          },
+          {
+            "value": "caregiver",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "faqs",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "locations",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "team",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "explore",
+            "count": 40,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 35,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 35,
+            "unique_clients": 1
+          },
+          {
+            "value": "apply",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "about": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "constantcontact",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "constantcontact",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 2,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "constantcontact",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "shop": [
+          {
+            "value": "constantcontact",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "about": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "social",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "social",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 2,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "social",
+            "count": 32,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "shop": [
+          {
+            "value": "social",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "gmb": [
+          {
+            "value": "social",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 34,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "about": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "locations",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "team",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "caregiver",
+            "count": 25,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "landingpage",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "faqs",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "shop": [
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "about": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "apply",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "explore",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "shop": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      }
+    }
   }
 }
