@@ -476,6 +476,8 @@ try {
     || !builderHtml.includes('src="/assets/just-flow-logo.png"')
     || !builderHtml.includes('id="destination-query-notice"')
     || !builderHtml.includes('id="campaign-standards"')
+    || builderHtml.indexOf('id="campaign-standards"') > builderHtml.indexOf("<h3>Consistency warnings</h3>")
+    || builderHtml.indexOf("<h3>Consistency warnings</h3>") > builderHtml.indexOf('id="campaign-label"')
     || !builderHtml.includes('<option value="gas"')
     || builderHtml.includes('<option value="studleys"')
     || !builderHtml.includes("Meta Ad campaign name")
