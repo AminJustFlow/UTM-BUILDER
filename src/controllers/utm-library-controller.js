@@ -334,10 +334,11 @@ function renderHtml(view) {
     ${renderJustFlowShellStyles()}
     .library-flow{display:flex;flex-direction:column;gap:16px}.library-actions,.actions,.chips,.mini-actions,.page-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.meta,.muted,.empty{color:var(--text-2);line-height:1.5}.results-head,.panel-head,.card-head,.pagination{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}.results-head h2,.panel-head h2,.card-title h3,.section h4{margin:0}.results-head h2,.panel-head h2{font-size:15px;font-weight:600;letter-spacing:-.01em}.card-title h3{font-size:18px;font-weight:600;letter-spacing:-.02em}.badge,.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-2);font-size:12px;font-weight:500}.chip{background:var(--accent-soft);color:var(--accent);border-color:transparent}.chip.neutral{background:var(--surface-2);color:var(--text-2);border-color:var(--border)}.chip.warning{background:var(--warn-soft);color:var(--warn);border-color:transparent}.chip.error{background:var(--neg-soft);color:var(--neg);border-color:transparent}.library-kpis{margin-bottom:0}.library-filters{grid-template-columns:minmax(180px,1.4fr) repeat(4,minmax(120px,1fr)) auto auto}.library-filters .advanced-fields{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:10px}.button,.link-button,.mini-button,.subtle-link,.page-link,.danger-button{height:32px;padding:0 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-weight:500;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:all .12s;white-space:nowrap}.button{background:var(--accent);border-color:var(--accent);color:#fff}.button:hover,.link-button:hover,.mini-button:hover,.subtle-link:hover,.page-link:hover,.danger-button:hover{background:var(--surface-2);border-color:var(--text-3)}.button:hover{background:var(--accent);filter:brightness(1.1)}.mini-button,.subtle-link,.danger-button.mini,.page-link{height:28px;padding:0 9px;font-size:12px}.danger-button{background:var(--neg-soft);border-color:transparent;color:var(--neg)}.page-link.current{background:var(--accent);border-color:var(--accent);color:#fff}.grid{display:grid;gap:12px}.card{scroll-margin-top:76px}.library-card{padding:0;display:grid;gap:0}.card.highlight{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.card-head{padding:14px 16px;border-bottom:1px solid var(--border)}.eyebrow{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.card-title{display:grid;gap:4px}.card-sub{color:var(--text-2);font-size:12.5px}.banner{display:grid;gap:10px;margin:14px 16px 0;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--accent-soft);grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.banner-label{font-size:11px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;font-weight:600}.banner-main{display:grid;gap:2px;min-width:0}.banner-value{font-size:16px;font-weight:600;letter-spacing:-.02em;word-break:break-word}.banner-meta{color:var(--text-2);font-size:12px;line-height:1.4;word-break:break-word}.card-grid{display:grid;gap:16px;grid-template-columns:minmax(180px,1.05fr) minmax(240px,1.35fr) minmax(170px,.9fr);padding:16px}.section{display:grid;gap:10px;align-content:start;min-width:0}.section h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);font-weight:600}.utm-grid{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}.utm-tile{min-height:64px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2)}.utm-tile strong{display:block;margin-bottom:4px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}.utm-value{word-break:break-word;line-height:1.4;font-size:13px}.list{display:flex;flex-direction:column;gap:10px}.link-item,.usage-item{padding-bottom:10px;border-bottom:1px solid var(--border)}.link-item:last-child,.usage-item:last-child{padding-bottom:0;border-bottom:0}.link-label{margin-bottom:5px;color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}.link-target{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:flex-start}.link-value{min-width:0;display:block;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--accent);text-decoration:none;word-break:break-word;line-height:1.45;font-family:"IBM Plex Mono",monospace;font-size:12px}.link-value:hover{text-decoration:underline}.qr-frame{width:min(100%,148px);aspect-ratio:1;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2);overflow:hidden;display:grid;place-items:center}.qr-frame img{width:100%;height:100%;display:block;object-fit:cover;background:#fff}.qr-placeholder{padding:14px;text-align:center;color:var(--text-3);line-height:1.45;font-size:12px}.usage-item{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.usage-item strong{color:var(--text-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase}.usage-item span{text-align:right;line-height:1.4;font-size:12.5px}.warnings{display:flex;gap:6px;flex-wrap:wrap}details{border-top:1px solid var(--border);padding:12px 16px}details summary{cursor:pointer;color:var(--text-2);list-style:none;font-size:12.5px}details summary::-webkit-details-marker{display:none}details[open] summary{margin-bottom:10px}.request{margin:0;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);line-height:1.5;word-break:break-word;color:var(--text-2);font-size:13px}.empty{padding:28px;text-align:center;border:1px dashed var(--border-strong);border-radius:var(--radius);background:var(--surface-2)}.toast{position:fixed;right:16px;bottom:16px;max-width:22rem;padding:12px 14px;border-radius:var(--radius);background:var(--text);color:var(--surface);box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity 140ms ease,transform 140ms ease;z-index:80}.toast.warning{background:var(--warn);color:#fff}.toast.error{background:var(--neg);color:#fff}.toast.success{background:var(--pos);color:#fff}.toast.visible{opacity:1;transform:translateY(0)}
     .card-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface-2);font-size:12.5px;color:var(--text-2)}.card-foot .foot-meta strong{color:var(--text)}.history-panel{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2)}.history-list{display:flex;flex-direction:column;gap:8px}.history-event{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;font-size:12.5px}.history-event .h-action{font-weight:600;color:var(--text)}.history-event .h-actor{color:var(--text-2)}.history-event .h-when{color:var(--text-3);white-space:nowrap}.history-event .h-summary{grid-column:1/-1;color:var(--text-3);word-break:break-word}.bulk-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2)}.bulk-bar[hidden]{display:none}.select-link{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;cursor:pointer}.select-link input{width:17px;height:17px;accent-color:var(--accent)}.library-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+    .compact-head{align-items:center}.compact-identity{display:grid;gap:4px}.compact-copy{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.compact-utm{padding:14px 16px 16px}.compact-utm h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}.compact-utm .utm-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.compact-utm .utm-tile{min-height:0}.destination-path{font-family:"IBM Plex Mono",monospace;color:var(--accent)}.card-details{padding:0}.card-details>summary{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;font-weight:600}.card-details>summary:after{content:"+";font-size:18px;color:var(--text-3)}.card-details[open]>summary{margin-bottom:0;border-bottom:1px solid var(--border)}.card-details[open]>summary:after{content:"−"}.details-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface-2)}.details-grid{display:grid;gap:18px;grid-template-columns:minmax(280px,1.4fr) minmax(220px,.8fr);padding:16px}.request-details{margin:0}.request-details>summary{padding-left:16px;padding-right:16px}
     .gov-chip{padding-right:6px}.gov-ack{display:inline-flex;margin:0}.gov-ack button{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.65;transition:opacity .12s,background .12s}.gov-ack button:hover{opacity:1;background:color-mix(in srgb,currentColor 18%,transparent)}.gov-ack svg{width:13px;height:13px;stroke:currentColor;stroke-width:3;fill:none}
     ${renderLoadingStyles()}
-    @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}}
-    @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}}
+    @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}.compact-utm .utm-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid,.details-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}.compact-utm .utm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-copy{margin-top:8px}}
   </style>
 </head>
 <body>
@@ -506,6 +507,12 @@ function renderHtml(view) {
         }
       });
       updateSelection();
+      document.querySelectorAll(".card-details").forEach(function (details) {
+        details.addEventListener("toggle", function () {
+          const label = details.querySelector(":scope > summary [data-details-label]");
+          if (label) label.textContent = details.open ? "Hide details and actions" : "View details and actions";
+        });
+      });
       async function copyText(value) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(value);
@@ -883,25 +890,19 @@ function renderGovernanceChip(fieldKey, item, canManage) {
 function renderResultCard(item, { highlightRequestId }) {
   const campaignValue = item.utmCampaign || item.canonicalCampaign || "(none)";
   const campaignMeta = buildCampaignMeta(item, campaignValue);
-  const subtitleParts = [item.channelDisplayName, item.assetType ? humanize(item.assetType) : ""].filter(Boolean);
   const isHighlighted = highlightRequestId === item.requestId;
+  const trackedUrl = hideInternalTracking(item.finalLongUrl);
+  const destinationPath = displayDestinationPath(item.destinationUrl);
 
   return `<article class="card library-card${isHighlighted ? " highlight" : ""}" id="request-${item.requestId}" data-highlight="${isHighlighted ? "true" : "false"}">
-    <div class="card-head">
-      <div class="card-title">
+    <div class="card-head compact-head">
+      <div class="compact-identity">
         <label class="select-link"><input type="checkbox" data-link-select value="${escapeAttribute(item.requestId)}" aria-label="Select ${escapeAttribute(item.clientDisplayName)} link"> Select link</label>
-        <div class="eyebrow">Last saved ${escapeHtml(formatDate(item.lastCreatedAt))}</div>
         <h3>${escapeHtml(item.clientDisplayName)}</h3>
-        <div class="card-sub">${escapeHtml(subtitleParts.join(" - "))}</div>
       </div>
-      <div class="chips">
-        <a class="mini-button" href="/new?duplicate_request_id=${escapeAttribute(item.requestId)}">Duplicate</a>
-        <button type="button" class="danger-button mini" data-delete-request-id="${escapeAttribute(item.requestId)}">Delete Link</button>
-        ${renderChip(item.assetType)}
-        ${renderStatusChip(item.status)}
-        ${renderChip(item.hasShortUrl ? "Short link ready" : "No short link", item.hasShortUrl ? "default" : "warning")}
-        ${renderChip(item.hasQr ? "QR code ready" : "No QR code", item.hasQr ? "default" : "neutral")}
-        <span class="chip neutral">${item.requestCount} saved version${item.requestCount === 1 ? "" : "s"}</span>
+      <div class="compact-copy">
+        ${trackedUrl ? renderCopyButton(trackedUrl, "Copy tracked link") : ""}
+        ${item.shortUrl ? renderCopyButton(item.shortUrl, "Copy Bitly") : ""}
       </div>
     </div>
     <div class="banner">
@@ -909,11 +910,10 @@ function renderResultCard(item, { highlightRequestId }) {
       <div class="banner-main">
         <div class="banner-value">${escapeHtml(campaignValue)}</div>
         ${campaignMeta ? `<div class="banner-meta">${escapeHtml(campaignMeta)}</div>` : ""}
+        <div class="banner-meta destination-path">${escapeHtml(destinationPath)}</div>
       </div>
-      <span class="chip neutral">${item.hasShortUrl ? "Short link ready" : item.hasQr ? "QR code ready" : "Tracked link only"}</span>
     </div>
-    <div class="card-grid">
-      <section class="section">
+    <section class="compact-utm">
         <h4>UTM Values</h4>
         <div class="utm-grid">
           ${renderUtmTile("Source", item.utmSource)}
@@ -922,12 +922,28 @@ function renderResultCard(item, { highlightRequestId }) {
           ${renderUtmTile("Term", item.utmTerm)}
           ${renderUtmTile("Content", item.utmContent)}
         </div>
-      </section>
+    </section>
+    <details class="card-details">
+      <summary><span data-details-label>View details and actions</span></summary>
+      <div class="details-actions">
+        <div class="mini-actions">
+          <a class="mini-button" href="/new?duplicate_request_id=${escapeAttribute(item.requestId)}">Duplicate</a>
+          <button type="button" class="danger-button mini" data-delete-request-id="${escapeAttribute(item.requestId)}">Delete Link</button>
+        </div>
+        <div class="chips">
+          ${renderChip(item.assetType)}
+          ${renderStatusChip(item.status)}
+          ${renderChip(item.hasShortUrl ? "Short link ready" : "No short link", item.hasShortUrl ? "default" : "warning")}
+          ${renderChip(item.hasQr ? "QR code ready" : "No QR code", item.hasQr ? "default" : "neutral")}
+          <span class="chip neutral">${item.requestCount} saved version${item.requestCount === 1 ? "" : "s"}</span>
+        </div>
+      </div>
+      <div class="details-grid">
       <section class="section">
         <h4>Links</h4>
         <div class="list">
           ${renderLinkItem("Destination page", item.destinationUrl)}
-          ${renderLinkItem("Tracked link", hideInternalTracking(item.finalLongUrl))}
+          ${renderLinkItem("Tracked link", trackedUrl)}
           ${renderLinkItem("Short link", item.shortUrl, {
             requestId: item.requestId,
             asset: "short",
@@ -939,13 +955,14 @@ function renderResultCard(item, { highlightRequestId }) {
         <h4>QR Code And Details</h4>
         ${renderQrPanel(item)}
         <div class="list">
+          ${renderUsageItem("Last saved", formatDate(item.lastCreatedAt))}
           ${renderUsageItem("First saved", formatDate(item.firstCreatedAt))}
           ${renderUsageItem("Latest update", item.reusedExisting ? "Reused an existing short link" : "Created or refreshed this link")}
         </div>
         ${renderWarnings(item.warnings)}
       </section>
-    </div>
-    <details>
+      </div>
+    <details class="request-details">
       <summary>Show original request text</summary>
       <p class="request">${escapeHtml(item.originalMessage || "No original request text was saved.")}</p>
     </details>
@@ -954,6 +971,7 @@ function renderResultCard(item, { highlightRequestId }) {
       ${item.fingerprint ? `<button type="button" class="subtle-link" data-history-toggle data-fingerprint="${escapeAttribute(item.fingerprint)}" aria-expanded="false">View edit history</button>` : ""}
     </div>
     ${item.fingerprint ? `<div class="history-panel" data-history-panel="${escapeAttribute(item.fingerprint)}" hidden></div>` : ""}
+    </details>
   </article>`;
 }
 
@@ -1088,7 +1106,7 @@ function renderStatusChip(status) {
 }
 
 function renderUtmTile(label, value) {
-  const display = value === "" ? "(empty)" : value || "--";
+  const display = value ? value : "—";
   return `<div class="utm-tile"><strong>${escapeHtml(label)}</strong><div class="utm-value">${escapeHtml(display)}</div></div>`;
 }
 
@@ -1123,6 +1141,15 @@ function hideInternalTracking(url) {
     return parsed.toString();
   } catch {
     return url;
+  }
+}
+
+export function displayDestinationPath(url) {
+  if (!url) return "/";
+  try {
+    return new URL(url).pathname || "/";
+  } catch {
+    return String(url);
   }
 }
 
@@ -1161,8 +1188,8 @@ function renderWarnings(warnings) {
   return `<div class="warnings">${warnings.map((warning) => `<span class="chip warning">${escapeHtml(warning)}</span>`).join("")}</div>`;
 }
 
-function renderCopyButton(value) {
-  return `<button type="button" class="mini-button" data-copy="${escapeAttribute(value)}">Copy</button>`;
+function renderCopyButton(value, label = "Copy") {
+  return `<button type="button" class="mini-button" data-copy="${escapeAttribute(value)}">${escapeHtml(label)}</button>`;
 }
 
 function renderGenerateAssetButton({ requestId, asset, buttonLabel }) {

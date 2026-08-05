@@ -3,6 +3,15 @@ import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
+import { displayDestinationPath } from "../src/controllers/utm-library-controller.js";
+
+if (
+  displayDestinationPath("https://guardianangelseniorservices.com/contact/") !== "/contact/"
+  || displayDestinationPath("https://guardianangelseniorservices.com/?source=test#top") !== "/"
+  || displayDestinationPath("not-a-url") !== "not-a-url"
+) {
+  throw new Error("Destination pathname formatting smoke test failed.");
+}
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
 process.env.DATABASE_CLIENT = "sqlite";
@@ -436,6 +445,12 @@ try {
     || !supplementedHistory.events?.some((event) => event.action === "supplemented")
     || !supplementedLibraryHtml.includes('data-generate-asset="short"')
     || !supplementedLibraryHtml.includes('data-generate-asset="qr"')
+    || !supplementedLibraryHtml.includes('<details class="card-details">')
+    || supplementedLibraryHtml.includes('<details class="card-details" open')
+    || !supplementedLibraryHtml.includes("View details and actions")
+    || !supplementedLibraryHtml.includes('class="compact-utm"')
+    || !supplementedLibraryHtml.includes("Copy tracked link")
+    || !supplementedLibraryHtml.includes('class="banner-meta destination-path">/bitly-degradation-smoke</div>')
   ) {
     throw new Error(`Missing-asset supplementation smoke test failed: ${JSON.stringify({
       qrStatus: qrSupplementResponse.status,
