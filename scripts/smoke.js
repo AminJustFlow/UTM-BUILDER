@@ -397,6 +397,7 @@ try {
   });
   const overlayKnownAfterArchive = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
   const archivedLibrary = await (await af("/utms.json?view=archived")).json();
+  const archivedLibraryHtml = await (await af("/utms?view=archived")).text();
   const overlayRestoreResponse = await af("/utms/restore", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
   });
@@ -633,6 +634,7 @@ try {
     || overlayKnownAfterArchive.items?.length
     || archivedLibrary.filters?.view !== "archived"
     || !archivedLibrary.items?.some((item) => item.requestId === overlayRequestId)
+    || archivedLibraryHtml.includes("Consistency Warnings To Review")
     || overlayRestoreResponse.status !== 200
     || !overlayKnownAfterRestore.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
     || regularLogin.status !== 302

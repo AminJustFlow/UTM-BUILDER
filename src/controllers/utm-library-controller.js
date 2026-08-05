@@ -365,7 +365,7 @@ function renderHtml(view) {
       ${renderJustFlowTopbar({ section: "UTM Builder", title: "Link Library", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
       <div class="page">
         <div class="library-flow">
-          ${renderGovernancePanel(governance, { canManage: canManageGovernance })}
+          ${library.filters.view === "archived" ? "" : renderGovernancePanel(governance, { canManage: canManageGovernance })}
           <div class="page-header">
             <div class="page-title-block">
               <h1>Link Library</h1>
