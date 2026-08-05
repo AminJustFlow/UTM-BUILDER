@@ -287,13 +287,6 @@ export class UtmIntelligenceService {
         message: "This complete UTM combination has never been used for this client.",
         usage_count: 0, recommendations: [], requires_confirmation: true
       });
-    } else if (exactCount === 1) {
-      warnings.push({
-        type: "rare_combination", severity: "warning", fields: populatedFields,
-        values: Object.fromEntries(populatedFields.map((field) => [field, filters[field]])),
-        message: "Please check your UTM values. This combination has only been used once for this client.",
-        usage_count: 1, recommendations: [], requires_confirmation: false
-      });
     }
 
     const confirmationWarnings = warnings.filter((warning) => warning.requires_confirmation);
