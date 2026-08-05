@@ -14,7 +14,7 @@ export function renderUtmBuilderHtml(view) {
   const isDuplicate = view.mode === "duplicate";
   const defaults = view.formDefaults ?? {};
   const clientOptions = view.clients
-    .map((client) => `<option value="${escapeAttribute(client.key)}"${client.key === defaults.client ? " selected" : ""}>${escapeHtml(client.displayName)}</option>`)
+    .map((client) => `<option value="${escapeAttribute(client.key)}"${client.key === defaults.client ? " selected" : ""}>${escapeHtml(formatClientOptionLabel(client.displayName || client.key))}</option>`)
     .join("");
 
   return `<!doctype html>
@@ -220,6 +220,10 @@ export function renderUtmBuilderHtml(view) {
   <script>${renderClientScript(view.clients)}</script>
 </body>
 </html>`;
+}
+
+function formatClientOptionLabel(value) {
+  return String(value ?? "").trim().toUpperCase();
 }
 
 function renderGuideCard(field) {

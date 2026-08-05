@@ -401,7 +401,7 @@ function renderHtml(view) {
             <div class="card-body">
               <form method="get" action="/utms" class="control-bar library-filters" id="library-filter-form">
                 <div class="field"><label>Search</label><input type="search" name="search" value="${escapeHtml(library.filters.search)}" placeholder="Client, campaign, URL, or message"></div>
-                <div class="field"><label>Client</label><select name="client">${renderOptions("All clients", "", library.available.clients, library.filters.client)}</select></div>
+                <div class="field"><label>Client</label><select name="client">${renderOptions("All clients", "", library.available.clients, library.filters.client, formatClientOptionLabel)}</select></div>
                 <div class="field"><label>Source</label><select name="source">${renderTextOptions("All sources", "", library.available.sources, library.filters.source)}</select></div>
                 <div class="field"><label>Medium</label><select name="medium">${renderTextOptions("All mediums", "", library.available.mediums, library.filters.medium)}</select></div>
                 <div class="field"><label>Campaign name</label><input type="text" name="campaign" value="${escapeHtml(library.filters.campaign)}" placeholder="spring_sale"></div>
@@ -774,7 +774,7 @@ function renderHtml(view) {
           const body = await response.json();
           if (!body || !body.available || requestToken !== facetRequestToken) return;
 
-          updateSelectOptions("client", body.available.clients || [], "All clients", "", humanizeLabel);
+          updateSelectOptions("client", body.available.clients || [], "All clients", "", function(value){return String(value||"").trim().toUpperCase()});
           updateSelectOptions("source", body.available.sources || [], "All sources", "", (value) => value);
           updateSelectOptions("medium", body.available.mediums || [], "All mediums", "", (value) => value);
           updateSelectOptions("status", (body.available.statuses || []).filter((value) => value !== "all"), "All statuses", "all", humanizeLabel);
@@ -1068,12 +1068,16 @@ function buildCampaignMeta(item, campaignValue) {
   return "";
 }
 
-function renderOptions(defaultLabel, defaultValue, values, selected) {
+function renderOptions(defaultLabel, defaultValue, values, selected, labelFormatter = humanize) {
   const options = [`<option value="${escapeHtml(defaultValue)}"${selected === defaultValue ? " selected" : ""}>${escapeHtml(defaultLabel)}</option>`];
   values.forEach((value) => {
-    options.push(`<option value="${escapeHtml(value)}"${selected === value ? " selected" : ""}>${escapeHtml(humanize(value))}</option>`);
+    options.push(`<option value="${escapeHtml(value)}"${selected === value ? " selected" : ""}>${escapeHtml(labelFormatter(value))}</option>`);
   });
   return options.join("");
+}
+
+function formatClientOptionLabel(value) {
+  return String(value ?? "").trim().toUpperCase();
 }
 
 function renderTextOptions(defaultLabel, defaultValue, values, selected) {

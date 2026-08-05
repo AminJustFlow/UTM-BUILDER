@@ -98,7 +98,7 @@ function renderPage(view) {
           <div class="page-actions"><a class="btn" href="/new">${renderIcon("link")} Open builder</a></div>
         </div>
         <section class="card"><div class="card-header"><div><h3>Choose client</h3><div class="meta">Changes appear the next time the builder page is loaded.</div></div></div><div class="card-body">
-          <form method="get" action="/standards" class="selector"><div class="field"><label>Client</label><select name="client">${view.clients.map((client) => `<option value="${escapeAttribute(client.key)}"${client.key === standards.clientKey ? " selected" : ""}>${escapeHtml(client.displayName)}</option>`).join("")}</select></div><button class="btn btn-primary" type="submit">Manage standards</button></form>
+          <form method="get" action="/standards" class="selector"><div class="field"><label>Client</label><select name="client">${view.clients.map((client) => `<option value="${escapeAttribute(client.key)}"${client.key === standards.clientKey ? " selected" : ""}>${escapeHtml(formatClientOptionLabel(client.displayName || client.key))}</option>`).join("")}</select></div><button class="btn btn-primary" type="submit">Manage standards</button></form>
         </div></section>
         <section class="card"><div class="card-header"><div><h3>${escapeHtml(standards.clientDisplayName)} guidance</h3><div class="meta">This summary appears before the campaign-specific rules.</div></div></div><div class="card-body">
           <form method="post" action="/standards/settings" class="form-grid"><input type="hidden" name="client_key" value="${escapeAttribute(standards.clientKey)}"><div class="field full"><label>Client guidance summary</label><textarea name="summary">${escapeHtml(standards.summary)}</textarea></div><div class="field"><button class="btn btn-primary" type="submit">Save summary</button></div></form>
@@ -117,6 +117,10 @@ function renderPage(view) {
   <script>(function(){var toast=document.getElementById("toast");if(toast&&toast.textContent.trim()){toast.classList.add("visible");setTimeout(function(){toast.classList.remove("visible")},3000)}})()</script>
 </body>
 </html>`;
+}
+
+function formatClientOptionLabel(value) {
+  return String(value ?? "").trim().toUpperCase();
 }
 
 function renderProfile(profile) {
