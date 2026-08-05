@@ -8,12 +8,12 @@ import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 
 const dictionaryOnlyRules = new RulesService(rules);
-if (
-  dictionaryOnlyRules.getClientTaxonomy("gas").campaigns.length !== 0
-  || dictionaryOnlyRules.matchTaxonomyValue("campaign", "ServicesAd", { client: "gas" }) !== null
-  || dictionaryOnlyRules.normalizeUtmField("campaign", "Services Add", { client: "gas" }) !== "Services Add"
-) {
-  throw new Error("Dictionary-only GAS rules smoke test failed.");
+if (dictionaryOnlyRules.clients().some((client) =>
+  dictionaryOnlyRules.getClientTaxonomy(client).campaigns.length !== 0
+  || dictionaryOnlyRules.matchTaxonomyValue("campaign", "ServicesAd", { client }) !== null
+  || dictionaryOnlyRules.normalizeUtmField("campaign", "Services Add", { client }) !== "Services Add"
+)) {
+  throw new Error("Dictionary-only client rules smoke test failed.");
 }
 
 if (

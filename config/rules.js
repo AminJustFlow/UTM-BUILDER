@@ -132,7 +132,6 @@ const manualClients = {
   },
   gas: {
     displayName: "GAS",
-    dictionaryOnlyUtms: true,
     aliases: ["gas", "guardian angel", "guardian angel senior services"],
     domains: ["guardianangelseniorservices.com"],
     taxonomyKey: "gas",
@@ -500,22 +499,9 @@ export default {
 function attachTaxonomy(clientsByKey) {
   return Object.fromEntries(
     Object.entries(clientsByKey).map(([key, client]) => {
-      const taxonomy = client.dictionaryOnlyUtms
-        ? null
-        : workbookTaxonomy.clients?.[client.taxonomyKey ?? key] ?? null;
       return [key, {
         ...client,
-        taxonomy: taxonomy ? {
-          code: taxonomy.code,
-          displayName: taxonomy.displayName,
-          sources: taxonomy.sources ?? [],
-          mediums: taxonomy.mediums ?? [],
-          campaigns: taxonomy.campaigns ?? [],
-          terms: taxonomy.terms ?? [],
-          contents: taxonomy.contents ?? [],
-          hashtags: taxonomy.hashtags ?? [],
-          combinations: taxonomy.combinations ?? []
-        } : null
+        taxonomy: null
       }];
     })
   );

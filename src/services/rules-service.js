@@ -518,7 +518,7 @@ export class RulesService {
 
   usesDictionaryOnlyUtms(client) {
     const key = String(client ?? "").trim().toLowerCase();
-    return Boolean(key && this.rules.clients?.[key]?.dictionaryOnlyUtms);
+    return Boolean(key && this.rules.clients?.[key]);
   }
 
   selectTaxonomyCombination({
