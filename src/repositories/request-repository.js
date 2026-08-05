@@ -78,6 +78,7 @@ export class RequestRepository {
       SELECT *
       FROM requests
       WHERE status IN ('normalized', 'completed', 'completed_without_short_link')
+        AND archived_at IS NULL
         AND COALESCE(${destinationExpr}, '') = :destination
         AND ${comparableSourceExpr} = :source
         AND ${comparableMediumExpr} = :medium
@@ -102,6 +103,42 @@ export class RequestRepository {
       return Number(result.changes ?? 0);
     }
     const result = await this.database.runAsync("DELETE FROM requests WHERE id = :id", { id });
+    return Number(result.changes ?? 0);
+  }
+
+  async setArchivedByFingerprintAsync(fingerprint, archived, actor = {}) {
+    const archivedAt = archived ? new Date().toISOString() : null;
+    const params = {
+      fingerprint,
+      archived_at: archivedAt,
+      archived_by_user_id: archived ? (actor.id ?? null) : null,
+      archived_by_name: archived ? (actor.displayName ?? actor.name ?? null) : null,
+      updated_at: new Date().toISOString()
+    };
+    const sql = `UPDATE requests SET archived_at = :archived_at,
+      archived_by_user_id = :archived_by_user_id, archived_by_name = :archived_by_name,
+      updated_at = :updated_at WHERE fingerprint = :fingerprint`;
+    const result = typeof this.database.runAsync === "function"
+      ? await this.database.runAsync(sql, params)
+      : syncRun(this.database, sql, params);
+    return Number(result.changes ?? 0);
+  }
+
+  async setArchivedByRequestUuidAsync(requestUuid, archived, actor = {}) {
+    const archivedAt = archived ? new Date().toISOString() : null;
+    const params = {
+      request_uuid: requestUuid,
+      archived_at: archivedAt,
+      archived_by_user_id: archived ? (actor.id ?? null) : null,
+      archived_by_name: archived ? (actor.displayName ?? actor.name ?? null) : null,
+      updated_at: new Date().toISOString()
+    };
+    const sql = `UPDATE requests SET archived_at = :archived_at,
+      archived_by_user_id = :archived_by_user_id, archived_by_name = :archived_by_name,
+      updated_at = :updated_at WHERE request_uuid = :request_uuid`;
+    const result = typeof this.database.runAsync === "function"
+      ? await this.database.runAsync(sql, params)
+      : syncRun(this.database, sql, params);
     return Number(result.changes ?? 0);
   }
 
@@ -558,7 +595,8 @@ export class RequestRepository {
     shortLink = "all",
     sort = "recent",
     limit = 50,
-    offset = 0
+    offset = 0,
+    archived = false
   } = {}) {
     const context = this.buildTrackedRequestLibraryContext({
       statuses,
@@ -572,7 +610,8 @@ export class RequestRepository {
       status,
       search,
       qr,
-      shortLink
+      shortLink,
+      archived
     });
     const orderBy = resolveTrackedRequestLibraryOrderBy(sort, this.database.client);
     const rows = syncAll(this.database, `
@@ -647,7 +686,8 @@ export class RequestRepository {
     shortLink = "all",
     sort = "recent",
     limit = 50,
-    offset = 0
+    offset = 0,
+    archived = false
   } = {}) {
     if (typeof this.database.allAsync !== "function" || typeof this.database.getAsync !== "function") {
       return this.listTrackedRequestLibrary({
@@ -656,6 +696,8 @@ export class RequestRepository {
         channel,
         source,
         medium,
+        term,
+        content,
         campaign,
         status,
         search,
@@ -663,7 +705,8 @@ export class RequestRepository {
         shortLink,
         sort,
         limit,
-        offset
+        offset,
+        archived
       });
     }
     const context = this.buildTrackedRequestLibraryContext({
@@ -678,7 +721,8 @@ export class RequestRepository {
       status,
       search,
       qr,
-      shortLink
+      shortLink,
+      archived
     });
     const orderBy = resolveTrackedRequestLibraryOrderBy(sort, this.database.client);
     const rows = await this.database.allAsync(`
@@ -750,7 +794,8 @@ export class RequestRepository {
     status = "all",
     search = "",
     qr = "all",
-    shortLink = "all"
+    shortLink = "all",
+    archived = false
   } = {}) {
     const normalizedStatuses = Array.isArray(statuses)
       ? statuses.map((value) => String(value ?? "").trim()).filter(Boolean)
@@ -913,6 +958,7 @@ export class RequestRepository {
               MAX(created_at) AS last_created_at
             FROM requests
             WHERE final_long_url IS NOT NULL
+              AND ${archived ? "archived_at IS NOT NULL" : "archived_at IS NULL"}
               ${statusScopeClause}
             GROUP BY COALESCE(NULLIF(fingerprint, ''), request_uuid)
           ) grouped ON grouped.latest_id = r.id
@@ -931,6 +977,7 @@ export class RequestRepository {
       SELECT * FROM requests
       WHERE status IN ('completed', 'completed_without_short_link', 'imported')
         AND normalized_payload IS NOT NULL
+        AND archived_at IS NULL
       ORDER BY created_at ASC, id ASC
     `);
   }
@@ -941,6 +988,7 @@ export class RequestRepository {
       SELECT * FROM requests
       WHERE status IN ('completed', 'completed_without_short_link', 'imported')
         AND normalized_payload IS NOT NULL
+        AND archived_at IS NULL
       ORDER BY created_at ASC, id ASC
     `);
   }

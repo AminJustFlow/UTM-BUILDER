@@ -207,14 +207,14 @@ export class UtmLibraryEditorService {
     };
   }
 
-  async deleteEntry(input = {}, actor = null) {
+  async archiveEntry(input = {}, actor = null) {
     const requestId = positiveInteger(input.request_id ?? input.original_request_id, null);
     if (!requestId) {
       return {
         ok: false,
         statusCode: 422,
         code: "missing_request_id",
-        message: "Select a valid UTM entry to remove."
+        message: "Select a valid UTM entry to archive."
       };
     }
 
@@ -230,33 +230,39 @@ export class UtmLibraryEditorService {
     }
 
     const fingerprint = normalizeOptional(existing.fingerprint);
-    const deletedRequests = fingerprint
-      ? await (this.requestRepository.deleteByFingerprintAsync?.(fingerprint)
-        ?? this.requestRepository.deleteByFingerprint(fingerprint))
-      : await (this.requestRepository.deleteByRequestUuidAsync?.(existing.request_uuid)
-        ?? this.requestRepository.deleteByRequestUuid(existing.request_uuid));
-
-    if (fingerprint && (await (this.requestRepository.countByFingerprintAsync?.(fingerprint)
-      ?? this.requestRepository.countByFingerprint(fingerprint))) === 0) {
-      await (this.generatedLinkRepository.deleteByFingerprintAsync?.(fingerprint)
-        ?? this.generatedLinkRepository.deleteByFingerprint(fingerprint));
-    }
+    const archivedRequests = fingerprint
+      ? await this.requestRepository.setArchivedByFingerprintAsync(fingerprint, true, actor)
+      : await this.requestRepository.setArchivedByRequestUuidAsync(existing.request_uuid, true, actor);
 
     await this.recordAudit({
       fingerprint,
       requestId,
-      action: "deleted",
+      action: "archived",
       actor,
       sourceUserId: actorSourceId(actor, "utm_library"),
       sourceUserName: actorSourceName(actor, "UTM Library"),
-      summary: `Deleted saved link (${deletedRequests} version${deletedRequests === 1 ? "" : "s"} removed).`
+      summary: `Archived saved link (${archivedRequests} version${archivedRequests === 1 ? "" : "s"} preserved).`
     });
 
     return {
       ok: true,
       requestId,
-      deletedRequests
+      archivedRequests
     };
+  }
+
+  async restoreEntry(input = {}, actor = null) {
+    const requestId = positiveInteger(input.request_id, null);
+    const existing = requestId ? await (this.requestRepository.findByIdAsync?.(requestId) ?? this.requestRepository.findById(requestId)) : null;
+    if (!existing) return { ok: false, statusCode: 404, code: "request_not_found", message: "That archived UTM entry no longer exists." };
+    const fingerprint = normalizeOptional(existing.fingerprint);
+    const restoredRequests = fingerprint
+      ? await this.requestRepository.setArchivedByFingerprintAsync(fingerprint, false, actor)
+      : await this.requestRepository.setArchivedByRequestUuidAsync(existing.request_uuid, false, actor);
+    await this.recordAudit({ fingerprint, requestId, action: "restored", actor,
+      sourceUserId: actorSourceId(actor, "utm_library"), sourceUserName: actorSourceName(actor, "UTM Library"),
+      summary: `Restored saved link (${restoredRequests} version${restoredRequests === 1 ? "" : "s"}).` });
+    return { ok: true, requestId, restoredRequests };
   }
 
   async recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings = []) {

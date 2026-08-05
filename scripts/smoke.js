@@ -373,15 +373,20 @@ try {
     utm_term: "", utm_content: ""
   });
   const secondOverlayRequestId = secondOverlayAttempt.body.result?.request_id;
-  const overlayKnownBeforeDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
-  const overlayDeleteResponse = await af("/utms/delete", {
+  const overlayKnownBeforeArchive = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const overlayArchiveResponse = await af("/utms/archive", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
   });
-  const overlayKnownAfterFirstDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
-  const secondOverlayDeleteResponse = await af("/utms/delete", {
+  const overlayKnownAfterFirstArchive = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const secondOverlayArchiveResponse = await af("/utms/archive", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: secondOverlayRequestId })
   });
-  const overlayKnownAfterDelete = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const overlayKnownAfterArchive = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const archivedLibrary = await (await af("/utms.json?view=archived")).json();
+  const overlayRestoreResponse = await af("/utms/restore", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
+  });
+  const overlayKnownAfterRestore = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
 
   const adminSessionCookie = sessionCookie;
   const regularLogin = await fetch(`${base}/login`, {
@@ -592,11 +597,15 @@ try {
     || libraryAfterAck.includes(govMarker)
     || overlayAttempt.response.status !== 200
     || secondOverlayAttempt.response.status !== 200
-    || !overlayKnownBeforeDelete.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
-    || overlayDeleteResponse.status !== 200
-    || !overlayKnownAfterFirstDelete.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
-    || secondOverlayDeleteResponse.status !== 200
-    || overlayKnownAfterDelete.items?.length
+    || !overlayKnownBeforeArchive.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
+    || overlayArchiveResponse.status !== 200
+    || !overlayKnownAfterFirstArchive.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
+    || secondOverlayArchiveResponse.status !== 200
+    || overlayKnownAfterArchive.items?.length
+    || archivedLibrary.filters?.view !== "archived"
+    || !archivedLibrary.items?.some((item) => item.requestId === overlayRequestId)
+    || overlayRestoreResponse.status !== 200
+    || !overlayKnownAfterRestore.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
     || regularLogin.status !== 302
     || regularAttempt.response.status !== 200
     || regularSuggestions.items?.length

@@ -268,7 +268,8 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/utms/supplement", protect((request) => utmLibraryController.handleSupplement(request)));
   router.add("POST", "/utms/bulk", protect((request) => utmLibraryController.handleBulk(request)));
   router.add("POST", "/utms/governance/acknowledge", requireAdmin((request) => utmLibraryController.handleAcknowledge(request)));
-  router.add("POST", "/utms/delete", requireAdmin((request) => utmLibraryController.handleDelete(request)));
+  router.add("POST", "/utms/archive", requireAdmin((request) => utmLibraryController.handleArchive(request)));
+  router.add("POST", "/utms/restore", requireAdmin((request) => utmLibraryController.handleRestore(request)));
   router.add("GET", "/imports", requireAdmin((request) => utmImportController.handleHtml(request)));
   router.add("POST", "/imports", requireAdmin((request) => utmImportController.handleImport(request)));
 

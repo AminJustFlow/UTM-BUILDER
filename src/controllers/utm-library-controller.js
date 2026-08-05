@@ -15,7 +15,8 @@ const AUDIT_ACTION_LABELS = {
   duplicated: "Duplicated",
   imported: "Imported",
   supplemented: "Generated missing asset",
-  deleted: "Deleted",
+  archived: "Archived",
+  restored: "Restored",
   consistency_override: "Consistency override"
 };
 
@@ -175,7 +176,7 @@ export class UtmLibraryController {
     })}`);
   }
 
-  async handleDelete(request) {
+  async handleArchive(request) {
     const parsedBody = request.parseJson();
     if (!parsedBody.ok) {
       return NodeResponse.json({
@@ -187,7 +188,7 @@ export class UtmLibraryController {
       }, 400);
     }
 
-    const result = await this.utmLibraryEditorService.deleteEntry(parsedBody.value, request.user);
+    const result = await this.utmLibraryEditorService.archiveEntry(parsedBody.value, request.user);
     if (!result.ok) {
       return NodeResponse.json({
         status: "error",
@@ -200,14 +201,23 @@ export class UtmLibraryController {
 
     return NodeResponse.json({
       status: "ok",
-      deleted_requests: result.deletedRequests,
+      archived_requests: result.archivedRequests,
       redirect_url: `/utms?${buildQueryString({
-        toast: result.deletedRequests > 1
-          ? "Saved link deleted. Matching history rows were deleted too."
-          : "Saved link deleted.",
+        toast: result.archivedRequests > 1
+          ? "Saved link and its matching versions archived."
+          : "Saved link archived.",
         toast_level: "success"
       })}`
     });
+  }
+
+  async handleRestore(request) {
+    const parsedBody = request.parseJson();
+    if (!parsedBody.ok) return NodeResponse.json({ status: "error", error: { code: parsedBody.errorCode, message: parsedBody.errorMessage } }, 400);
+    const result = await this.utmLibraryEditorService.restoreEntry(parsedBody.value, request.user);
+    if (!result.ok) return NodeResponse.json({ status: "error", error: { code: result.code, message: result.message } }, result.statusCode ?? 500);
+    return NodeResponse.json({ status: "ok", restored_requests: result.restoredRequests,
+      redirect_url: `/utms?${buildQueryString({ toast: "Saved link restored.", toast_level: "success" })}` });
   }
 
   async handleSupplement(request) {
@@ -261,17 +271,19 @@ export class UtmLibraryController {
     const action = normalizeTextValue(parsedBody.value.action).toLowerCase();
     const requestIds = [...new Set((Array.isArray(parsedBody.value.request_ids) ? parsedBody.value.request_ids : [])
       .map((value) => positiveInteger(value, null)).filter(Boolean))].slice(0, 100);
-    if (!requestIds.length || !["short", "qr", "delete"].includes(action)) {
+    if (!requestIds.length || !["short", "qr", "archive", "restore"].includes(action)) {
       return NodeResponse.json({ status: "error", error: { code: "invalid_bulk_request", message: "Select at least one link and a valid bulk action." } }, 422);
     }
-    if (action === "delete" && request.user?.role !== "admin") {
-      return NodeResponse.json({ status: "error", error: { code: "forbidden", message: "Administrator access is required to delete links." } }, 403);
+    if (["archive", "restore"].includes(action) && request.user?.role !== "admin") {
+      return NodeResponse.json({ status: "error", error: { code: "forbidden", message: "Administrator access is required to archive or restore links." } }, 403);
     }
 
     const results = [];
     for (const requestId of requestIds) {
-      const result = action === "delete"
-        ? await this.utmLibraryEditorService.deleteEntry({ request_id: requestId }, request.user)
+      const result = action === "archive"
+        ? await this.utmLibraryEditorService.archiveEntry({ request_id: requestId }, request.user)
+        : action === "restore"
+          ? await this.utmLibraryEditorService.restoreEntry({ request_id: requestId }, request.user)
         : await this.utmLibraryEditorService.supplementAssets({
           request_id: requestId,
           generate_short: action === "short",
@@ -306,6 +318,7 @@ function renderHtml(view) {
     short_link: library.filters.shortLink,
     sort: library.filters.sort,
     per_page: library.filters.perPage
+    ,view: library.filters.view
   };
   const csvHref = `/utms.csv?${buildQueryString({ ...queryBase, page: 1 })}`;
   const jsonHref = `/utms.json?${buildQueryString({ ...queryBase, page: library.pagination.page })}`;
@@ -339,6 +352,7 @@ function renderHtml(view) {
     ${renderLoadingStyles()}
     .compact-head{display:grid;grid-template-columns:auto minmax(220px,1fr) auto;gap:18px;padding:8px 12px}.compact-head .banner{display:flex;align-items:center;gap:10px;margin:0;padding:0;border:0;border-radius:0;background:transparent}.compact-head .banner-label{flex:0 0 auto}.compact-head .banner-main{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.compact-head .banner-value{font-size:14px}.compact-head .banner-meta{font-size:11.5px}.compact-head .destination-path{padding-left:10px;border-left:1px solid var(--border)}
     .compact-utm h4{color:var(--text-2)}.compact-utm .utm-tile{background:var(--surface)}.compact-utm .utm-tile strong{color:var(--text-2);font-weight:700}.compact-utm .utm-value{color:var(--text)}
+    .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border)}.tab{padding:9px 14px;color:var(--text-2);text-decoration:none;font-weight:600;border-bottom:2px solid transparent}.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}.compact-utm .utm-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid,.details-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}.compact-head{grid-template-columns:1fr}.compact-utm .utm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-copy{margin:0}}
   </style>
@@ -365,6 +379,10 @@ function renderHtml(view) {
               <a class="btn" href="${jsonHref}">${renderIcon("download")} Download JSON</a>
             </div>
           </div>
+          <nav class="tabs" aria-label="Link library views">
+            <a class="tab${library.filters.view === "active" ? " active" : ""}" href="/utms">Active</a>
+            <a class="tab${library.filters.view === "archived" ? " active" : ""}" href="/utms?view=archived">Archived</a>
+          </nav>
           <div class="kpi-grid library-kpis">
             <div class="kpi"><div class="kpi-label">Total links</div><div class="kpi-value num">${library.summary.totalUniqueLinks}</div><div class="kpi-sub">Saved tracked links</div></div>
             <div class="kpi"><div class="kpi-label">Links shown</div><div class="kpi-value num">${library.summary.filteredLinks}</div><div class="kpi-sub">Current filter result</div></div>
@@ -388,7 +406,7 @@ function renderHtml(view) {
                 <div class="field"><label>Medium</label><select name="medium">${renderTextOptions("All mediums", "", library.available.mediums, library.filters.medium)}</select></div>
                 <div class="field"><label>Campaign name</label><input type="text" name="campaign" value="${escapeHtml(library.filters.campaign)}" placeholder="spring_sale"></div>
                 <button class="button" type="submit">${renderIcon("search")} Show Links</button>
-                <a class="link-button" href="/utms">Clear Filters</a>
+                <a class="link-button" href="/utms${library.filters.view === "archived" ? "?view=archived" : ""}">Clear Filters</a>
                 <div class="advanced-fields">
                   <div class="field"><label>Term</label><input type="search" name="term" value="${escapeHtml(library.filters.term)}" placeholder="Filter term"></div>
                   <div class="field"><label>Content</label><input type="search" name="content" value="${escapeHtml(library.filters.content)}" placeholder="Filter content"></div>
@@ -399,6 +417,7 @@ function renderHtml(view) {
                   <div class="field"><label>Links per page</label><select name="per_page">${renderPerPageOptions(library.filters.perPage)}</select></div>
                 </div>
                 <input type="hidden" name="page" value="1">
+                <input type="hidden" name="view" value="${escapeAttribute(library.filters.view)}">
               </form>
             </div>
           </section>
@@ -420,16 +439,18 @@ function renderHtml(view) {
                 <span class="meta" id="selected-count">0 selected</span>
                 <button type="button" class="button mini-button" data-bulk-action="short">Generate Bitlys</button>
                 <button type="button" class="mini-button" data-bulk-action="qr">Generate QR codes</button>
-                ${canManageGovernance ? `<button type="button" class="danger-button mini" data-bulk-action="delete">Delete selected</button>` : ""}
+                ${canManageGovernance ? library.filters.view === "archived"
+                  ? `<button type="button" class="button mini-button" data-bulk-action="restore">Restore selected</button>`
+                  : `<button type="button" class="danger-button mini" data-bulk-action="archive">Archive selected</button>` : ""}
               </div>
               ${highlightRequestId ? (() => { const hi = library.items.find((i) => i.requestId === highlightRequestId); return `<div class="meta" style="margin-bottom:12px"><a class="link" href="/utms">Link Library</a> / ${escapeHtml(hi ? (hi.utmCampaign || `Link ${hi.requestId}`) : "Link")}</div>`; })() : ""}
               <div class="grid">
                 ${library.items.length > 0
-                    ? library.items.map((item) => renderResultCard(item, { highlightRequestId })).join("")
+                    ? library.items.map((item) => renderResultCard(item, { highlightRequestId, archived: library.filters.view === "archived", canManage: canManageGovernance })).join("")
                     : `<div class="empty">${library.pending ? "Preparing the cached link library snapshot. This page will refresh automatically." : "No saved links matched your filters."}</div>`}
               </div>
               <div class="pagination" style="margin-top:14px">
-                <div class="meta">Open any card to review saved values, jump into the full-page editor, or remove it from the library.</div>
+                <div class="meta">Open any card to review saved values and actions.</div>
                 <div class="page-links">${renderPaginationLinks(library.pagination, queryBase)}</div>
               </div>
             </div>
@@ -489,14 +510,14 @@ function renderHtml(view) {
         const ids = selectedIds();
         const action = button.dataset.bulkAction;
         if (!ids.length) return;
-        if (action === "delete" && !window.confirm("Delete " + ids.length + " selected links? Their matching saved history will also be removed.")) return;
+        if (action === "archive" && !window.confirm("Archive " + ids.length + " selected links? Nothing will be deleted.")) return;
         document.querySelectorAll("[data-bulk-action]").forEach((item) => { item.disabled = true; });
         button.classList.add("btn-loading");
         try {
           const response = await fetch("/utms/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, request_ids: ids }) });
           const body = await response.json();
           if (!body.succeeded) throw new Error(body?.error?.message || body?.results?.[0]?.message || "The bulk action failed.");
-          const label = action === "short" ? "Bitly generation" : action === "qr" ? "QR generation" : "Deletion";
+          const label = action === "short" ? "Bitly generation" : action === "qr" ? "QR generation" : action === "restore" ? "Restore" : "Archive";
           const message = label + " completed for " + body.succeeded + " of " + body.selected + " selected links.";
           const next = new URL(window.location.href);
           next.searchParams.set("toast", message);
@@ -543,31 +564,32 @@ function renderHtml(view) {
         }
       });
       document.addEventListener("click", async (event) => {
-        const button = event.target.closest("[data-delete-request-id]");
+        const button = event.target.closest("[data-archive-request-id],[data-restore-request-id]");
         if (!button) return;
         event.preventDefault();
-        const requestId = button.getAttribute("data-delete-request-id");
+        const restoring = button.hasAttribute("data-restore-request-id");
+        const requestId = button.getAttribute(restoring ? "data-restore-request-id" : "data-archive-request-id");
         if (!requestId) return;
-        if (!window.confirm("Delete this saved link? This removes the saved history for this tracked link.")) {
+        if (!restoring && !window.confirm("Archive this saved link? All history will be preserved.")) {
           return;
         }
         button.classList.add("btn-loading");
         button.disabled = true;
         try {
-          const response = await fetch("/utms/delete", {
+          const response = await fetch(restoring ? "/utms/restore" : "/utms/archive", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ request_id: requestId })
           });
           const body = await response.json();
           if (!response.ok || body.status !== "ok") {
-            const message = body && body.error && body.error.message ? body.error.message : "Unable to delete this saved link right now.";
+            const message = body && body.error && body.error.message ? body.error.message : "Unable to update this saved link right now.";
             showToast(message, "error");
             return;
           }
           window.location.assign(body.redirect_url || "/utms");
         } catch (error) {
-          const message = error && error.message ? error.message : "Unable to delete this saved link right now.";
+          const message = error && error.message ? error.message : "Unable to update this saved link right now.";
           showToast(message, "error");
         } finally {
           button.classList.remove("btn-loading");
@@ -889,7 +911,7 @@ function renderGovernanceChip(fieldKey, item, canManage) {
   return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(item.value)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
 }
 
-function renderResultCard(item, { highlightRequestId }) {
+function renderResultCard(item, { highlightRequestId, archived = false, canManage = false }) {
   const campaignValue = item.utmCampaign || item.canonicalCampaign || "(none)";
   const campaignMeta = buildCampaignMeta(item, campaignValue);
   const isHighlighted = highlightRequestId === item.requestId;
@@ -930,7 +952,9 @@ function renderResultCard(item, { highlightRequestId }) {
       <div class="details-actions">
         <div class="mini-actions">
           <a class="mini-button" href="/new?duplicate_request_id=${escapeAttribute(item.requestId)}">Duplicate</a>
-          <button type="button" class="danger-button mini" data-delete-request-id="${escapeAttribute(item.requestId)}">Delete Link</button>
+          ${!canManage ? "" : archived
+            ? `<button type="button" class="button mini-button" data-restore-request-id="${escapeAttribute(item.requestId)}">Restore Link</button>`
+            : `<button type="button" class="danger-button mini" data-archive-request-id="${escapeAttribute(item.requestId)}">Archive Link</button>`}
         </div>
         <div class="chips">
           ${renderChip(item.assetType)}

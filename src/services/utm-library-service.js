@@ -34,7 +34,8 @@ export class UtmLibraryService {
       shortLink: normalizedQuery.shortLink,
       sort: normalizedQuery.sort,
       limit: perPage,
-      offset
+      offset,
+      archived: normalizedQuery.view === "archived"
     });
     const items = (library.rows ?? []).map((row) => this.mapRow(row));
     const available = this.buildFacetAvailability(normalizedQuery);
@@ -61,7 +62,8 @@ export class UtmLibraryService {
         qr: normalizedQuery.qr,
         shortLink: normalizedQuery.shortLink,
         sort: normalizedQuery.sort,
-        perPage
+        perPage,
+        view: normalizedQuery.view
       },
       pagination: {
         page: currentPage,
@@ -103,7 +105,8 @@ export class UtmLibraryService {
       shortLink: normalizedQuery.shortLink,
       sort: normalizedQuery.sort,
       limit: perPage,
-      offset
+      offset,
+      archived: normalizedQuery.view === "archived"
     }) ?? this.requestRepository.listTrackedRequestLibrary({
       statuses,
       client: normalizedQuery.client,
@@ -119,7 +122,8 @@ export class UtmLibraryService {
       shortLink: normalizedQuery.shortLink,
       sort: normalizedQuery.sort,
       limit: perPage,
-      offset
+      offset,
+      archived: normalizedQuery.view === "archived"
     }));
     const items = (library.rows ?? []).map((row) => this.mapRow(row));
     const available = await this.buildFacetAvailabilityAsync(normalizedQuery);
@@ -146,7 +150,8 @@ export class UtmLibraryService {
         qr: normalizedQuery.qr,
         shortLink: normalizedQuery.shortLink,
         sort: normalizedQuery.sort,
-        perPage
+        perPage,
+        view: normalizedQuery.view
       },
       pagination: {
         page: currentPage,
@@ -227,7 +232,8 @@ export class UtmLibraryService {
       search: normalizedQuery.search,
       qr: normalizedQuery.qr,
       short_link: normalizedQuery.shortLink,
-      sort: normalizedQuery.sort
+      sort: normalizedQuery.sort,
+      view: normalizedQuery.view
     };
     return `utm_library:${JSON.stringify(normalized)}`;
   }
@@ -293,7 +299,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     });
     return library.available?.[resultKey] ?? [];
   }
@@ -315,7 +322,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     }) ?? this.requestRepository.listTrackedRequestLibrary({
       statuses: resolveStatuses(facetQuery.status),
       client: facetQuery.client,
@@ -331,7 +339,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     }));
     return library.available?.[resultKey] ?? [];
   }
@@ -367,7 +376,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     });
     return Number(library.summary?.filtered_links ?? 0) > 0;
   }
@@ -392,7 +402,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     }) ?? this.requestRepository.listTrackedRequestLibrary({
       statuses: resolveStatuses(facetQuery.status),
       client: facetQuery.client,
@@ -408,7 +419,8 @@ export class UtmLibraryService {
       shortLink: facetQuery.shortLink,
       sort: facetQuery.sort,
       limit: 1,
-      offset: 0
+      offset: 0,
+      archived: facetQuery.view === "archived"
     }));
     return Number(library.summary?.filtered_links ?? 0) > 0;
   }
@@ -586,7 +598,8 @@ function normalizeLibraryQuery(query = {}) {
     search: normalizeTextValue(query.search),
     qr: normalizeToggleValue(query.qr, "all"),
     shortLink: normalizeToggleValue(query.short_link, "all"),
-    sort: normalizeSortValue(query.sort)
+    sort: normalizeSortValue(query.sort),
+    view: normalizeFilterValue(query.view) === "archived" ? "archived" : "active"
   };
 }
 
@@ -675,7 +688,8 @@ function buildPendingLibrary(query = {}) {
       qr: normalizeToggleValue(query.qr, "all"),
       shortLink: normalizeToggleValue(query.short_link, "all"),
       sort: normalizeSortValue(query.sort),
-      perPage
+      perPage,
+      view: normalizeFilterValue(query.view) === "archived" ? "archived" : "active"
     },
     pagination: {
       page,
