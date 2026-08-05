@@ -514,6 +514,7 @@ export class UtmIntelligenceService {
       approvedRows,
       valueCounts,
       valueCountLookup: new Map(valueCounts.map((row) => [`${row.field}:${row.value}`, row])),
+      displayValueLookup: buildDisplayValueLookup(approvedRows),
       knownValues: buildKnownValues(this.staticData.uiDictionaries, approvedValueCounts, approvedRows),
       maps: buildMaps(approvedRows),
       comboExamples: buildComboExamples(masterRows)
@@ -577,6 +578,11 @@ export class UtmIntelligenceService {
       campaign,
       term,
       content,
+      sourceDisplay: formatUtmValue(row.utm_source),
+      mediumDisplay: formatUtmValue(row.utm_medium),
+      campaignDisplay: formatUtmValue(row.utm_campaign || row.canonical_campaign),
+      termDisplay: formatUtmValue(row.utm_term),
+      contentDisplay: formatUtmValue(row.utm_content),
       client: normalizeOptional(row.client),
       channel: normalizeOptional(row.channel),
       creationDate,
@@ -631,6 +637,11 @@ export class UtmIntelligenceService {
       campaign,
       term,
       content,
+      sourceDisplay: formatUtmValue(row.source),
+      mediumDisplay: formatUtmValue(row.medium),
+      campaignDisplay: formatUtmValue(row.campaign),
+      termDisplay: formatUtmValue(row.term),
+      contentDisplay: formatUtmValue(row.content),
       client,
       channel,
       creationDate,
@@ -719,13 +730,13 @@ export class UtmIntelligenceService {
       ? (maps.sourceMedium.get(filters.source) ?? []).find((entry) => entry.value === normalized)
       : null;
     const scoped = sourceMediumMatch?.count ?? countRows(scopedRows, field, normalized, filters);
-    const relation = buildRelationLabel(field, normalized, filters, maps);
+    const relation = buildRelationLabel(field, normalized, filters, maps, this.data.displayValueLookup);
     const known = countComparableRows(approvedRows, field, normalized) > 0;
     const channelBoost = filters.channel ? this.channelValueBoost(field, normalized, filters.channel) : 0;
     const recommended = this.isRecommended(field, normalized, filters, maps);
 
     return {
-      value: formatUtmValue(normalized),
+      value: displayUtmValue(field, normalized, this.data.displayValueLookup),
       normalized_value: normalized,
       count: scoped || global,
       global_count: global,
@@ -1165,6 +1176,24 @@ function normalizeOptional(value) {
   return normalized;
 }
 
+function buildDisplayValueLookup(rows) {
+  const lookup = new Map();
+  for (const row of rows) {
+    for (const field of UTM_FIELDS) {
+      const normalized = row[field];
+      if (!normalized) continue;
+      const display = row[`${field}Display`] || formatUtmValue(normalized);
+      if (!lookup.has(`${field}:${normalized}`)) lookup.set(`${field}:${normalized}`, display);
+    }
+  }
+  return lookup;
+}
+
+function displayUtmValue(field, value, lookup) {
+  const normalized = normalizeOptional(value);
+  return lookup?.get(`${field}:${normalized}`) || formatUtmValue(value);
+}
+
 function normalizeField(value) {
   const normalized = normalizeOptional(value);
   return UTM_FIELDS.includes(normalized) ? normalized : "";
@@ -1216,29 +1245,29 @@ function compareSuggestions(left, right) {
     || left.normalized_value.localeCompare(right.normalized_value);
 }
 
-function buildRelationLabel(field, value, filters, maps) {
+function buildRelationLabel(field, value, filters, maps, displayValueLookup = new Map()) {
   if (field === "source" && filters.campaign) {
     const match = (maps.campaignSource.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Used with ${formatUtmValue(filters.campaign)} ${match.count} times`;
+      return `Used with ${displayUtmValue("campaign", filters.campaign, displayValueLookup)} ${match.count} times`;
     }
   }
   if (field === "medium" && filters.source) {
     const match = (maps.sourceMedium.get(filters.source) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Used with ${formatUtmValue(filters.source)} ${match.count} times`;
+      return `Used with ${displayUtmValue("source", filters.source, displayValueLookup)} ${match.count} times`;
     }
   }
   if (field === "term" && filters.campaign) {
     const match = (maps.campaignTerm.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Common for ${formatUtmValue(filters.campaign)}`;
+      return `Common for ${displayUtmValue("campaign", filters.campaign, displayValueLookup)}`;
     }
   }
   if (field === "content" && filters.campaign) {
     const match = (maps.campaignContent.get(filters.campaign) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Common for ${formatUtmValue(filters.campaign)}`;
+      return `Common for ${displayUtmValue("campaign", filters.campaign, displayValueLookup)}`;
     }
   }
   return "";

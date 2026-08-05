@@ -1,3 +1,5 @@
+import { formatUtmValue } from "./utm-value-format.js";
+
 const DEFAULT_STATUSES = ["completed", "completed_without_short_link"];
 const DEFAULT_SORT = "recent";
 const SORT_OPTIONS = ["recent", "oldest", "client", "campaign", "requests"];
@@ -485,12 +487,12 @@ export class UtmLibraryService {
       channelDisplayName: normalized.channel_display_name ?? humanizeLabel(channel),
       assetType: normalized.asset_type ?? null,
       campaignLabel: normalized.campaign_label ?? null,
-      canonicalCampaign: normalized.canonical_campaign ?? extractedUtms.utm_campaign ?? "",
-      utmSource: normalized.utm_source ?? extractedUtms.utm_source ?? "",
-      utmMedium: normalized.utm_medium ?? extractedUtms.utm_medium ?? "",
-      utmCampaign: normalized.utm_campaign ?? extractedUtms.utm_campaign ?? "",
-      utmTerm: normalized.utm_term ?? extractedUtms.utm_term ?? "",
-      utmContent: normalized.utm_content ?? extractedUtms.utm_content ?? "",
+      canonicalCampaign: formatUtmValue(normalized.canonical_campaign ?? extractedUtms.utm_campaign ?? ""),
+      utmSource: formatUtmValue(normalized.utm_source ?? extractedUtms.utm_source ?? ""),
+      utmMedium: formatUtmValue(normalized.utm_medium ?? extractedUtms.utm_medium ?? ""),
+      utmCampaign: formatUtmValue(normalized.utm_campaign ?? extractedUtms.utm_campaign ?? ""),
+      utmTerm: formatUtmValue(normalized.utm_term ?? extractedUtms.utm_term ?? ""),
+      utmContent: formatUtmValue(normalized.utm_content ?? extractedUtms.utm_content ?? ""),
       destinationUrl: normalized.destination_url ?? normalized.normalized_destination_url ?? "",
       normalizedDestinationUrl: normalized.normalized_destination_url ?? "",
       finalLongUrl,
