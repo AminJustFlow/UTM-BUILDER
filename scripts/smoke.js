@@ -618,6 +618,9 @@ try {
     || !libraryBeforeAck.includes(govMarker)
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
+    || !libraryBeforeAck.includes('class="grid library-results-grid"')
+    || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(odd){background:var(--surface)}")
+    || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(even){background:var(--surface-2)}")
     || libraryBeforeAck.includes("Last edited by")
     || ackResponse.status !== 302
     || libraryAfterAck.includes(govMarker)
