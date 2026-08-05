@@ -686,19 +686,12 @@ export class UtmIntelligenceService {
   }
 
   collectCandidateValues(field, filters, approvedRows, maps) {
+    if (field === "medium" && filters.source) {
+      return (maps.sourceMedium.get(filters.source) ?? []).map((row) => row.value);
+    }
     const candidates = new Set(uniqueRowValues(approvedRows, field));
     if (field === "source" && filters.campaign) {
       for (const row of maps.campaignSource.get(filters.campaign) ?? []) {
-        candidates.add(row.value);
-      }
-    }
-    if (field === "medium" && filters.campaign) {
-      for (const row of maps.campaignMedium.get(filters.campaign) ?? []) {
-        candidates.add(row.value);
-      }
-    }
-    if (field === "medium" && filters.source) {
-      for (const row of maps.sourceMedium.get(filters.source) ?? []) {
         candidates.add(row.value);
       }
     }
@@ -722,7 +715,10 @@ export class UtmIntelligenceService {
       return null;
     }
     const global = this.data.valueCountLookup.get(`${field}:${normalized}`)?.count ?? 0;
-    const scoped = countRows(scopedRows, field, normalized, filters);
+    const sourceMediumMatch = field === "medium" && filters.source
+      ? (maps.sourceMedium.get(filters.source) ?? []).find((entry) => entry.value === normalized)
+      : null;
+    const scoped = sourceMediumMatch?.count ?? countRows(scopedRows, field, normalized, filters);
     const relation = buildRelationLabel(field, normalized, filters, maps);
     const known = countComparableRows(approvedRows, field, normalized) > 0;
     const channelBoost = filters.channel ? this.channelValueBoost(field, normalized, filters.channel) : 0;
@@ -746,8 +742,8 @@ export class UtmIntelligenceService {
     if (field === "source" && filters.campaign) {
       return (maps.campaignSource.get(filters.campaign) ?? [])[0]?.value === value;
     }
-    if (field === "medium" && filters.campaign) {
-      return (maps.campaignMedium.get(filters.campaign) ?? [])[0]?.value === value;
+    if (field === "medium" && filters.source) {
+      return (maps.sourceMedium.get(filters.source) ?? [])[0]?.value === value;
     }
     if (field === "term" && filters.campaign) {
       return (maps.campaignTerm.get(filters.campaign) ?? [])[0]?.value === value;
@@ -1227,16 +1223,10 @@ function buildRelationLabel(field, value, filters, maps) {
       return `Used with ${formatUtmValue(filters.campaign)} ${match.count} times`;
     }
   }
-  if (field === "medium" && filters.campaign) {
-    const match = (maps.campaignMedium.get(filters.campaign) ?? []).find((entry) => entry.value === value);
-    if (match) {
-      return `Used with ${formatUtmValue(filters.campaign)} ${match.count} times`;
-    }
-  }
   if (field === "medium" && filters.source) {
     const match = (maps.sourceMedium.get(filters.source) ?? []).find((entry) => entry.value === value);
     if (match) {
-      return `Used with ${filters.source} ${match.count} times`;
+      return `Used with ${formatUtmValue(filters.source)} ${match.count} times`;
     }
   }
   if (field === "term" && filters.campaign) {

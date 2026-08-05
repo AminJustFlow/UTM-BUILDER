@@ -193,6 +193,8 @@ try {
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
   const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
   const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=ConstantContact")).json();
+  const sourceScopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about&source=constantcontact")).json();
+  const unscopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about")).json();
   const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
@@ -537,6 +539,13 @@ try {
     || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
     || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || !constantContactSuggestions.items?.some((item) => item.value === "Constantcontact" && item.normalized_value === "constantcontact" && item.known)
+    || sourceScopedMediums.items?.length !== 1
+    || sourceScopedMediums.items?.[0]?.normalized_value !== "email"
+    || sourceScopedMediums.items?.[0]?.relation !== "Used with Constantcontact 34 times"
+    || sourceScopedMediums.items?.[0]?.recommended !== true
+    || sourceScopedMediums.items?.some((item) => item.normalized_value === "social")
+    || !unscopedMediums.items?.some((item) => item.normalized_value === "email")
+    || !unscopedMediums.items?.some((item) => item.normalized_value === "social")
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
     || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"
