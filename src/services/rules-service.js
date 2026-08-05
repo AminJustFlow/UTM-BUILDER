@@ -158,16 +158,12 @@ export class RulesService {
   }
 
   getClientTaxonomy(client) {
+    if (this.usesDictionaryOnlyUtms(client)) {
+      return emptyTaxonomy();
+    }
     const taxonomy = this.rules.clients?.[client]?.taxonomy ?? null;
     if (!taxonomy) {
-      return {
-        sources: [],
-        mediums: [],
-        campaigns: [],
-        terms: [],
-        contents: [],
-        combinations: []
-      };
+      return emptyTaxonomy();
     }
 
     return {
@@ -284,6 +280,10 @@ export class RulesService {
     const trimmed = String(value).trim();
     if (trimmed === "") {
       return "";
+    }
+
+    if (this.usesDictionaryOnlyUtms(context.client)) {
+      return trimmed;
     }
 
     const matched = this.matchTaxonomyValue(field, trimmed, context);
@@ -475,6 +475,9 @@ export class RulesService {
     if (!normalized) {
       return null;
     }
+    if (this.usesDictionaryOnlyUtms(context.client)) {
+      return null;
+    }
 
     const candidates = this.taxonomyValues(field, context);
     if (candidates.length === 0) {
@@ -511,6 +514,11 @@ export class RulesService {
     }
 
     return [...new Set(values.filter(Boolean))];
+  }
+
+  usesDictionaryOnlyUtms(client) {
+    const key = String(client ?? "").trim().toLowerCase();
+    return Boolean(key && this.rules.clients?.[key]?.dictionaryOnlyUtms);
   }
 
   selectTaxonomyCombination({
@@ -840,6 +848,17 @@ function registerCanonical(map, value) {
   }
 
   map.set(normalizeComparable(trimmed), trimmed);
+}
+
+function emptyTaxonomy() {
+  return {
+    sources: [],
+    mediums: [],
+    campaigns: [],
+    terms: [],
+    contents: [],
+    combinations: []
+  };
 }
 
 function buildSourceAliases(source) {

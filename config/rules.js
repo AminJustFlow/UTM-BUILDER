@@ -132,6 +132,7 @@ const manualClients = {
   },
   gas: {
     displayName: "GAS",
+    dictionaryOnlyUtms: true,
     aliases: ["gas", "guardian angel", "guardian angel senior services"],
     domains: ["guardianangelseniorservices.com"],
     taxonomyKey: "gas",
@@ -499,7 +500,9 @@ export default {
 function attachTaxonomy(clientsByKey) {
   return Object.fromEntries(
     Object.entries(clientsByKey).map(([key, client]) => {
-      const taxonomy = workbookTaxonomy.clients?.[client.taxonomyKey ?? key] ?? null;
+      const taxonomy = client.dictionaryOnlyUtms
+        ? null
+        : workbookTaxonomy.clients?.[client.taxonomyKey ?? key] ?? null;
       return [key, {
         ...client,
         taxonomy: taxonomy ? {

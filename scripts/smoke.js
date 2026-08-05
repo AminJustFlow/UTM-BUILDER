@@ -4,6 +4,17 @@ import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
 import { displayDestinationPath } from "../src/controllers/utm-library-controller.js";
+import rules from "../config/rules.js";
+import { RulesService } from "../src/services/rules-service.js";
+
+const dictionaryOnlyRules = new RulesService(rules);
+if (
+  dictionaryOnlyRules.getClientTaxonomy("gas").campaigns.length !== 0
+  || dictionaryOnlyRules.matchTaxonomyValue("campaign", "ServicesAd", { client: "gas" }) !== null
+  || dictionaryOnlyRules.normalizeUtmField("campaign", "Services Add", { client: "gas" }) !== "Services Add"
+) {
+  throw new Error("Dictionary-only GAS rules smoke test failed.");
+}
 
 if (
   displayDestinationPath("https://guardianangelseniorservices.com/contact/") !== "/contact/"
