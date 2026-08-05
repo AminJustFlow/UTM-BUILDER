@@ -337,8 +337,9 @@ function renderHtml(view) {
     .compact-head{align-items:center;padding:8px 12px}.compact-identity{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.compact-identity h3{margin:0;font-size:14px;line-height:1.2}.compact-copy{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto}.compact-copy .mini-button{height:26px}.banner{margin:8px 12px 0;padding:7px 10px;gap:8px}.banner-value{font-size:14px}.banner-meta{font-size:11.5px;line-height:1.25}.compact-utm{padding:8px 12px 10px}.compact-utm h4{margin:0 0 5px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}.compact-utm .utm-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.compact-utm .utm-tile{min-height:0;padding:6px 8px}.compact-utm .utm-tile strong{margin-bottom:2px;font-size:9.5px}.compact-utm .utm-value{font-size:12px;line-height:1.25}.destination-path{font-family:"IBM Plex Mono",monospace;color:var(--accent)}.card-details{padding:0}.card-details>summary{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;font-weight:600}.card-details>summary:after{content:"+";font-size:16px;color:var(--text-3)}.card-details[open]>summary{margin-bottom:0;border-bottom:1px solid var(--border)}.card-details[open]>summary:after{content:"−"}.details-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface-2)}.details-grid{display:grid;gap:18px;grid-template-columns:minmax(280px,1.4fr) minmax(220px,.8fr);padding:16px}.request-details{margin:0}.request-details>summary{padding-left:16px;padding-right:16px}
     .gov-chip{padding-right:6px}.gov-ack{display:inline-flex;margin:0}.gov-ack button{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.65;transition:opacity .12s,background .12s}.gov-ack button:hover{opacity:1;background:color-mix(in srgb,currentColor 18%,transparent)}.gov-ack svg{width:13px;height:13px;stroke:currentColor;stroke-width:3;fill:none}
     ${renderLoadingStyles()}
+    .compact-head{display:grid;grid-template-columns:auto minmax(220px,1fr) auto;gap:12px;padding:7px 12px}.compact-head .banner{margin:0;padding:6px 10px;gap:8px}
     @media (max-width:1280px){.library-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.library-filters .advanced-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section.details-rail{grid-column:span 2}.banner{grid-template-columns:auto minmax(0,1fr)}.compact-utm .utm-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid,.details-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}.compact-utm .utm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-copy{margin-top:8px}}
+    @media (max-width:860px){.library-filters,.library-filters .advanced-fields,.card-grid,.utm-grid,.details-grid{grid-template-columns:1fr}.section.details-rail{grid-column:auto}.banner{grid-template-columns:1fr}.results-head,.panel-head,.card-head,.pagination,.usage-item,.link-target{display:grid}.usage-item span{text-align:left}.compact-head{grid-template-columns:1fr}.compact-utm .utm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-copy{margin:0}}
   </style>
 </head>
 <body>
@@ -900,17 +901,17 @@ function renderResultCard(item, { highlightRequestId }) {
         <label class="select-link"><input type="checkbox" data-link-select value="${escapeAttribute(item.requestId)}" aria-label="Select ${escapeAttribute(item.clientDisplayName)} link"> Select link</label>
         <h3>${escapeHtml(item.clientDisplayName)}</h3>
       </div>
+      <div class="banner">
+        <div class="banner-label">Campaign</div>
+        <div class="banner-main">
+          <div class="banner-value">${escapeHtml(campaignValue)}</div>
+          ${campaignMeta ? `<div class="banner-meta">${escapeHtml(campaignMeta)}</div>` : ""}
+          <div class="banner-meta destination-path">${escapeHtml(destinationPath)}</div>
+        </div>
+      </div>
       <div class="compact-copy">
         ${trackedUrl ? renderCopyButton(trackedUrl, "Copy tracked link") : ""}
         ${item.shortUrl ? renderCopyButton(item.shortUrl, "Copy Bitly") : ""}
-      </div>
-    </div>
-    <div class="banner">
-      <div class="banner-label">Campaign</div>
-      <div class="banner-main">
-        <div class="banner-value">${escapeHtml(campaignValue)}</div>
-        ${campaignMeta ? `<div class="banner-meta">${escapeHtml(campaignMeta)}</div>` : ""}
-        <div class="banner-meta destination-path">${escapeHtml(destinationPath)}</div>
       </div>
     </div>
     <section class="compact-utm">
