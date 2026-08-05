@@ -569,6 +569,10 @@ try {
     || unapprovedSuggestions.items?.length
     || !typoContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo" && warning.recommendations?.some((item) => item.value === "Website"))
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo")
+    || !compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "rare_combination"
+      && warning.severity === "warning"
+      && warning.message === "Please check your UTM values. This combination has only been used once for this client."
+      && warning.requires_confirmation === false)
     || compactEquivalentContext.duplicate_warnings?.length
     || created.result?.utm_source !== "Facebook"
     || created.result?.utm_medium !== "Social"
