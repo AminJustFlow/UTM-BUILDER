@@ -30,6 +30,7 @@ export class LinkGenerationService {
           longUrl: refreshed.final_long_url || trackedLongUrl,
           shortUrl: refreshed.short_url,
           qrUrl: refreshed.qr_url ?? null,
+          qrPreviewUrl: refreshed.qr_preview_url ?? null,
           reusedExisting: true,
           bitlyMetadata: safeJsonParse(refreshed.bitly_payload)
         }),
@@ -41,8 +42,9 @@ export class LinkGenerationService {
 
     try {
       const bitly = await this.bitlyService.shorten(trackedLongUrl);
-      const qrUrl = normalized.needsQr ? this.qrCodeService.generateUrl(bitly.link || trackedLongUrl) : null;
       const timestamp = new Date().toISOString();
+      const qr = normalized.needsQr ? await this.generateQr(bitly.link || trackedLongUrl, normalized, fingerprint, timestamp) : {};
+      const qrUrl = qr.qrUrl ?? null;
 
       try {
         await (this.generatedLinkRepository.createAsync?.({
@@ -60,6 +62,7 @@ export class LinkGenerationService {
           finalLongUrl: trackedLongUrl,
           shortUrl: bitly.link,
           qrUrl,
+          qrPreviewUrl: qr.qrPreviewUrl,
           bitlyId: bitly.id,
           bitlyPayload: bitly.payload,
           createdAt: timestamp,
@@ -79,6 +82,7 @@ export class LinkGenerationService {
           finalLongUrl: trackedLongUrl,
           shortUrl: bitly.link,
           qrUrl,
+          qrPreviewUrl: qr.qrPreviewUrl,
           bitlyId: bitly.id,
           bitlyPayload: bitly.payload,
           createdAt: timestamp,
@@ -99,6 +103,7 @@ export class LinkGenerationService {
             longUrl: refreshed.final_long_url || trackedLongUrl,
             shortUrl: refreshed.short_url,
             qrUrl: refreshed.qr_url ?? null,
+            qrPreviewUrl: refreshed.qr_preview_url ?? null,
             reusedExisting: true,
             bitlyMetadata: safeJsonParse(refreshed.bitly_payload)
           }),
@@ -115,12 +120,14 @@ export class LinkGenerationService {
           longUrl: trackedLongUrl,
           shortUrl: bitly.link,
           qrUrl,
+          qrPreviewUrl: qr.qrPreviewUrl,
           reusedExisting: false,
           bitlyMetadata: bitly.payload
         }),
         bitlyId: bitly.id ?? null,
         bitlyPayload: bitly.payload,
-        degraded: false
+        degraded: false,
+        qrWarning: qr.error ? "The link was saved, but QR Stuff could not generate the QR files. Retry from the Link Library." : null
       };
     } catch (error) {
       const degradation = this.classifyBitlyFailure(error);
@@ -138,7 +145,8 @@ export class LinkGenerationService {
         cause_message: error?.cause?.message ?? null
       });
 
-      const qrUrl = normalized.needsQr ? this.qrCodeService.generateUrl(trackedLongUrl) : null;
+      const qr = normalized.needsQr ? await this.generateQr(trackedLongUrl, normalized, fingerprint) : {};
+      const qrUrl = qr.qrUrl ?? null;
       return {
         fingerprint,
         result: new LinkGenerationResult({
@@ -146,6 +154,7 @@ export class LinkGenerationService {
           longUrl: trackedLongUrl,
           shortUrl: null,
           qrUrl,
+          qrPreviewUrl: qr.qrPreviewUrl,
           reusedExisting: false,
           bitlyMetadata: error.responseBody ?? {},
           shortLinkAvailable: false
@@ -154,7 +163,8 @@ export class LinkGenerationService {
         bitlyPayload: error.responseBody ?? {},
         degraded: true,
         degradedReason: degradation.reason,
-        degradedMessage: degradation.message
+        degradedMessage: degradation.message,
+        qrWarning: qr.error ? "The link was saved, but QR Stuff could not generate the QR files. Retry from the Link Library." : null
       };
     }
   }
@@ -196,9 +206,21 @@ export class LinkGenerationService {
       }
     }
 
-    if (generateQr && !qrUrl) {
-      qrUrl = this.qrCodeService.generateUrl(shortUrl || finalLongUrl);
-      fields.qr_url = qrUrl;
+    let qrPreviewUrl = String(existing.qr_preview_url ?? "").trim();
+    const legacyQr = qrUrl && !(this.qrCodeService.isManagedUrl?.(qrUrl) ?? false);
+    let qrFailure = false;
+    if (generateQr && (!qrUrl || legacyQr)) {
+      const qr = await this.generateQr(shortUrl || finalLongUrl, {
+        client: existing.client,
+        utmCampaign: existing.utm_campaign || existing.canonical_campaign
+      }, fingerprint, existing.created_at);
+      qrUrl = qr.qrUrl ?? "";
+      qrPreviewUrl = qr.qrPreviewUrl ?? "";
+      qrFailure = Boolean(qr.error);
+      if (qrUrl) {
+        fields.qr_url = qrUrl;
+        fields.qr_preview_url = qrPreviewUrl;
+      }
     }
 
     if (Object.keys(fields).length > 0) {
@@ -209,14 +231,15 @@ export class LinkGenerationService {
     return {
       shortUrl: shortUrl || null,
       qrUrl: qrUrl || null,
+      qrPreviewUrl: qrPreviewUrl || null,
       bitlyId,
       bitlyPayload,
       finalLongUrl,
       generatedShort: Boolean(fields.short_url),
       generatedQr: Boolean(fields.qr_url),
-      degraded: Boolean(degradation),
-      degradedReason: degradation?.reason ?? null,
-      degradedMessage: degradation?.message ?? null
+      degraded: Boolean(degradation || qrFailure),
+      degradedReason: degradation?.reason ?? (qrFailure ? "qr_stuff_unavailable" : null),
+      degradedMessage: degradation?.message ?? (qrFailure ? "QR Stuff could not generate the QR files. Please retry." : null)
     };
   }
 
@@ -257,20 +280,22 @@ export class LinkGenerationService {
   }
 
   async ensureQr(existing, normalized) {
-    if (!normalized.needsQr || existing.qr_url) {
+    if (!normalized.needsQr || (existing.qr_url && (this.qrCodeService.isManagedUrl?.(existing.qr_url) ?? false))) {
       return existing;
     }
 
-    const qrUrl = this.qrCodeService.generateUrl(existing.short_url || existing.final_long_url || normalized.finalLongUrl);
+    const qr = await this.generateQr(existing.short_url || existing.final_long_url || normalized.finalLongUrl, normalized, existing.fingerprint, existing.created_at);
+    if (!qr.qrUrl) return existing;
     await (this.generatedLinkRepository.updateByFingerprintAsync?.(existing.fingerprint, {
-      qr_url: qrUrl
+      qr_url: qr.qrUrl, qr_preview_url: qr.qrPreviewUrl
     }) ?? this.generatedLinkRepository.updateByFingerprint(existing.fingerprint, {
-      qr_url: qrUrl
+      qr_url: qr.qrUrl, qr_preview_url: qr.qrPreviewUrl
     }));
 
     return {
       ...existing,
-      qr_url: qrUrl
+      qr_url: qr.qrUrl,
+      qr_preview_url: qr.qrPreviewUrl
     };
   }
 
@@ -294,6 +319,27 @@ export class LinkGenerationService {
 
   withFingerprint(longUrl, fingerprint) {
     return this.urlService.appendInternalTrackingParams(longUrl, { jf_fp: fingerprint });
+  }
+
+  async generateQr(targetUrl, normalized, fingerprint, createdAt = new Date()) {
+    try {
+      if (typeof this.qrCodeService.generate !== "function" && typeof this.qrCodeService.generateUrl === "function") {
+        const qrUrl = this.qrCodeService.generateUrl(targetUrl);
+        return { qrUrl, qrPreviewUrl: qrUrl };
+      }
+      return await this.qrCodeService.generate(targetUrl, {
+        fingerprint,
+        client: normalized.client,
+        campaign: normalized.utmCampaign || normalized.canonicalCampaign,
+        createdAt
+      });
+    } catch (error) {
+      this.logger?.warning?.("QR Stuff asset generation failed.", {
+        error_name: error?.name ?? "Error", error_code: error?.code ?? null,
+        status_code: error?.statusCode ?? null, error_message: error?.message ?? "Unknown QR failure"
+      });
+      return { error: true };
+    }
   }
 }
 

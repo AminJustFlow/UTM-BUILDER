@@ -108,6 +108,7 @@ export class UtmLibraryEditorService {
         finalLongUrl,
         shortUrl: normalizeOptional(existing.short_url) ?? "",
         qrUrl: normalizeOptional(existing.qr_url),
+        qrPreviewUrl: normalizeOptional(existing.qr_preview_url),
         bitlyId: normalizeOptional(existing.bitly_id),
         bitlyPayload: safeJsonObject(existing.bitly_payload),
         createdAt: existing.created_at ?? timestamp,
@@ -121,6 +122,7 @@ export class UtmLibraryEditorService {
           final_long_url: seed.finalLongUrl,
           short_url: seed.shortUrl,
           qr_url: seed.qrUrl,
+          qr_preview_url: seed.qrPreviewUrl,
           bitly_id: seed.bitlyId,
           bitly_payload: seed.bitlyPayload
         };
@@ -166,6 +168,7 @@ export class UtmLibraryEditorService {
     }
     if (supplement.generatedQr) {
       requestFields.qr_url = supplement.qrUrl;
+      requestFields.qr_preview_url = supplement.qrPreviewUrl;
     }
 
     if (Object.keys(requestFields).length > 0) {
@@ -200,6 +203,7 @@ export class UtmLibraryEditorService {
       requestId,
       shortUrl: supplement.shortUrl,
       qrUrl: supplement.qrUrl,
+      qrPreviewUrl: supplement.qrPreviewUrl,
       generatedShort: supplement.generatedShort,
       generatedQr: supplement.generatedQr,
       alreadyPresent: !supplement.generatedShort && !supplement.generatedQr,
@@ -470,15 +474,17 @@ export class UtmLibraryEditorService {
         const warnings = [
           ...new Set([
             ...normalized.warnings,
-            generation.degradedMessage
+            generation.degradedMessage,
+            generation.qrWarning
           ])
-        ];
+        ].filter(Boolean);
         normalized.warnings = warnings;
 
         await (this.requestRepository.updateAsync?.(requestId, {
           status: "completed_without_short_link",
           normalized_payload: normalized.toJSON(),
           qr_url: generation.result.qrUrl,
+          qr_preview_url: generation.result.qrPreviewUrl,
           warnings,
           reused_existing: generation.result.reusedExisting ? 1 : 0,
           error_code: generation.degradedReason,
@@ -487,6 +493,7 @@ export class UtmLibraryEditorService {
           status: "completed_without_short_link",
           normalized_payload: normalized.toJSON(),
           qr_url: generation.result.qrUrl,
+          qr_preview_url: generation.result.qrPreviewUrl,
           warnings,
           reused_existing: generation.result.reusedExisting ? 1 : 0,
           error_code: generation.degradedReason,
@@ -503,7 +510,8 @@ export class UtmLibraryEditorService {
           normalized,
           result: generation.result,
           degradedReason: generation.degradedReason,
-          degradedMessage: generation.degradedMessage
+          degradedMessage: generation.degradedMessage,
+          qrWarning: generation.qrWarning
         };
       }
 
@@ -514,6 +522,7 @@ export class UtmLibraryEditorService {
         bitly_id: generation.bitlyId,
         bitly_payload: generation.bitlyPayload,
         qr_url: generation.result.qrUrl,
+        qr_preview_url: generation.result.qrPreviewUrl,
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }) ?? this.requestRepository.update(requestId, {
         status: "completed",
@@ -522,6 +531,7 @@ export class UtmLibraryEditorService {
         bitly_id: generation.bitlyId,
         bitly_payload: generation.bitlyPayload,
         qr_url: generation.result.qrUrl,
+        qr_preview_url: generation.result.qrPreviewUrl,
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }));
 
@@ -533,7 +543,8 @@ export class UtmLibraryEditorService {
         fingerprint,
         status: "completed",
         normalized,
-        result: generation.result
+        result: generation.result,
+        qrWarning: generation.qrWarning
       };
     } catch (error) {
       await (this.requestRepository.updateAsync?.(requestId, {

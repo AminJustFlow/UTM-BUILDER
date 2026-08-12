@@ -24,8 +24,13 @@ export default {
     timeoutMs: 8000
   },
   qr: {
-    baseUrl: "https://api.qrserver.com/v1/create-qr-code/",
-    size: "300x300"
+    apiKey: "",
+    apiBase: "https://api.qrstuff.com/api",
+    timeoutMs: 15000,
+    size: 512,
+    resolution: 300,
+    errorCorrectionLevel: "M",
+    storagePath: "storage/qr"
   },
   auth: {
     sessionTtlSeconds: 60 * 60 * 12

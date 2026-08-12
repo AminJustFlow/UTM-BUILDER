@@ -87,10 +87,11 @@ export async function createUtmBuilderApplication(projectRoot) {
     urlService,
     config.app.confidenceThreshold
   );
+  const qrCodeService = new QrCodeService(new HttpClient(), config.qr);
   const linkGenerationService = new LinkGenerationService({
     generatedLinkRepository,
     bitlyService: new BitlyService(new HttpClient(), config.bitly),
-    qrCodeService: new QrCodeService(config.qr),
+    qrCodeService,
     logger
   });
   const utmIntelligenceService = new UtmIntelligenceService({
@@ -262,6 +263,17 @@ export async function createUtmBuilderApplication(projectRoot) {
     router.add("GET", `/new/utm-intelligence/${route}.json`, protect((request) => utmBuilderController[handler](request)));
   }
   router.add("GET", "/utms", protect((request) => utmLibraryController.handleHtml(request)));
+  router.add("GET", "/qr-assets/:fingerprint/:format", protect(async (request) => {
+    const format = String(request.params.format ?? "").toLowerCase();
+    const asset = await qrCodeService.readAsset(request.params.fingerprint, format);
+    if (!asset) return NodeResponse.text("QR asset not found.", 404);
+    return NodeResponse.binary(asset.body, 200, {
+      "Content-Type": format === "pdf" ? "application/pdf" : "image/png",
+      "Content-Disposition": `${format === "pdf" && request.query.inline !== "1" ? "attachment" : "inline"}; filename="${asset.filename}"`,
+      "Cache-Control": "private, max-age=3600",
+      "X-Content-Type-Options": "nosniff"
+    });
+  }));
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));
@@ -312,7 +324,16 @@ function resolveConfig(projectRoot) {
       apiBase: baseConfig.bitly.apiBase,
       timeoutMs: Number(process.env.BITLY_TIMEOUT_MS ?? baseConfig.bitly.timeoutMs)
     },
-    qr: { baseUrl: process.env.QR_BASE_URL ?? baseConfig.qr.baseUrl, size: process.env.QR_SIZE ?? baseConfig.qr.size },
+    qr: {
+      apiKey: process.env.QR_STUFF_API_KEY ?? "",
+      apiBase: process.env.QR_STUFF_API_BASE ?? baseConfig.qr.apiBase,
+      timeoutMs: Number(process.env.QR_STUFF_TIMEOUT_MS ?? baseConfig.qr.timeoutMs),
+      size: Number(process.env.QR_SIZE ?? baseConfig.qr.size),
+      resolution: Number(process.env.QR_RESOLUTION ?? baseConfig.qr.resolution),
+      errorCorrectionLevel: process.env.QR_ERROR_CORRECTION_LEVEL ?? baseConfig.qr.errorCorrectionLevel,
+      storagePath: path.resolve(projectRoot, process.env.QR_STORAGE_PATH ?? baseConfig.qr.storagePath),
+      timezone: process.env.DEFAULT_TIMEZONE ?? baseConfig.app.timezone
+    },
     auth: {
       cookieSecret: process.env.TRACKING_SECRET_ENCRYPTION_KEY ?? "",
       sessionTtlSeconds: Number(process.env.SESSION_TTL_SECONDS ?? baseConfig.auth.sessionTtlSeconds)

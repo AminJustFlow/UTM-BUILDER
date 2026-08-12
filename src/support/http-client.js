@@ -6,7 +6,8 @@ export class HttpClient {
       body,
       timeoutMs = 10000,
       retries = 0,
-      retryOnStatus = [429, 500, 502, 503, 504]
+      retryOnStatus = [429, 500, 502, 503, 504],
+      responseType = "text"
     } = options;
 
     const requestHeaders = { ...headers };
@@ -29,7 +30,9 @@ export class HttpClient {
           signal: controller.signal
         });
 
-        const responseBody = await response.text();
+        const responseBody = responseType === "buffer"
+          ? Buffer.from(await response.arrayBuffer())
+          : await response.text();
         clearTimeout(timeout);
 
         if (retryOnStatus.includes(response.status) && attempt < retries) {
@@ -42,6 +45,7 @@ export class HttpClient {
           headers: Object.fromEntries(response.headers.entries()),
           body: responseBody,
           json() {
+            if (Buffer.isBuffer(responseBody)) return {};
             try {
               return JSON.parse(responseBody);
             } catch {

@@ -498,6 +498,7 @@ export class UtmLibraryService {
       finalLongUrl,
       shortUrl: row.short_url ?? "",
       qrUrl: row.qr_url ?? "",
+      qrPreviewUrl: row.generated_qr_preview_url ?? row.qr_preview_url ?? "",
       hasShortUrl: Boolean(String(row.short_url ?? "").trim()),
       hasQr: Boolean(String(row.qr_url ?? "").trim()),
       originalMessage: row.original_message ?? "",

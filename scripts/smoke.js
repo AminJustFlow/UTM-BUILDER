@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
@@ -6,6 +8,39 @@ import { ConsistencyNotificationService } from "../src/services/consistency-noti
 import { displayDestinationPath } from "../src/controllers/utm-library-controller.js";
 import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
+import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
+
+const qrTestStorage = fs.mkdtempSync(path.join(os.tmpdir(), "jf-qr-smoke-"));
+const qrCalls = [];
+const qrService = new QrCodeService({
+  async request(method, url, options) {
+    qrCalls.push({ method, url, options });
+    return { statusCode: 201, headers: {}, body: Buffer.from(options.json.format === "pdf" ? "%PDF-smoke" : "PNG-smoke") };
+  }
+}, {
+  apiKey: "test-api-key", apiBase: "https://api.qrstuff.test/api", timeoutMs: 1000,
+  size: 512, resolution: 300, errorCorrectionLevel: "M", storagePath: qrTestStorage,
+  timezone: "America/New_York"
+});
+const qrGenerated = await qrService.generate("https://example.com/tracked", {
+  fingerprint: "smoke-fingerprint", client: "gas", campaign: "Spring Sale!", createdAt: "2026-08-12T12:00:00Z"
+});
+const [qrPdf, qrPng] = await Promise.all([
+  qrService.readAsset("smoke-fingerprint", "pdf"), qrService.readAsset("smoke-fingerprint", "png")
+]);
+if (
+  buildQrFilename("2026-08-12T12:00:00Z", "gas", "Spring Sale!", "America/New_York") !== "260812-GAS-SpringSale"
+  || qrGenerated.qrUrl !== "/qr-assets/smoke-fingerprint/pdf"
+  || qrPdf?.filename !== "260812-GAS-SpringSale.pdf"
+  || qrPng?.filename !== "260812-GAS-SpringSale.png"
+  || qrCalls.length !== 2
+  || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
+    || call.options.json.type !== "URL" || call.options.json.dynamic !== false || call.options.json.colors.transparent !== true
+    || !["pdf", "png"].includes(call.options.json.format))
+) {
+  throw new Error("QR Stuff generation smoke test failed.");
+}
+fs.rmSync(qrTestStorage, { recursive: true, force: true });
 
 const dictionaryOnlyRules = new RulesService(rules);
 if (dictionaryOnlyRules.clients().some((client) =>
@@ -456,13 +491,11 @@ try {
   }
 
   if (
-    qrSupplementResponse.status !== 200
-    || !qrSupplement.qr_url
-    || repeatedQrSupplementResponse.status !== 200
-    || repeatedQrSupplement.qr_url !== qrSupplement.qr_url
+    qrSupplementResponse.status !== 503
+    || qrSupplement.error?.code !== "qr_stuff_unavailable"
+    || repeatedQrSupplementResponse.status !== 503
     || shortSupplementResponse.status !== 503
     || shortSupplement.error?.code !== "bitly_not_configured"
-    || !supplementedHistory.events?.some((event) => event.action === "supplemented")
     || !supplementedLibraryHtml.includes('data-generate-asset="short"')
     || !supplementedLibraryHtml.includes('data-generate-asset="qr"')
     || !supplementedLibraryHtml.includes('<details class="card-details">')
@@ -597,7 +630,7 @@ try {
     || created.result?.degradation_reason !== "bitly_not_configured"
     || !created.result?.tracked_url
     || created.result?.short_url
-    || !created.result?.qr_url
+    || created.result?.qr_url
     || duplicateResponseExact.status !== 409
     || exactDuplicate.error?.code !== "duplicate_utm"
     || !exactDuplicate.error?.existing?.library_url

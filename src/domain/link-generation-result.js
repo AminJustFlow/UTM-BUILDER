@@ -4,6 +4,7 @@ export class LinkGenerationResult {
     longUrl,
     shortUrl = null,
     qrUrl = null,
+    qrPreviewUrl = null,
     reusedExisting = false,
     bitlyMetadata = {},
     shortLinkAvailable = true
@@ -12,6 +13,7 @@ export class LinkGenerationResult {
     this.longUrl = longUrl;
     this.shortUrl = shortUrl;
     this.qrUrl = qrUrl;
+    this.qrPreviewUrl = qrPreviewUrl;
     this.reusedExisting = reusedExisting;
     this.bitlyMetadata = bitlyMetadata;
     this.shortLinkAvailable = shortLinkAvailable;
