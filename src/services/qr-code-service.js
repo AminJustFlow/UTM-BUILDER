@@ -51,7 +51,7 @@ export class QrCodeService {
       response = await this.httpClient.request("POST", `${this.config.apiBase.replace(/\/$/u, "")}/generate`, {
         headers: { Authorization: `Bearer ${this.config.apiKey}` },
         json: {
-          name, data: { url: targetUrl }, type: "URL", dynamic: false, format: "pdf",
+          name, data: { url: targetUrl }, type: "URL", dynamic: true, format: "pdf",
           size: this.config.size, resolution: this.config.resolution,
           error_correction_level: this.config.errorCorrectionLevel,
           colors: { bg: "#FFFFFF", fg: "#000000", finder: "#000000", finder_eye: "#000000", alignment_inner: "#000000", alignment_outer: "#000000", center_text: "#000000", transparent: true }

@@ -34,8 +34,8 @@ if (
   || qrPdf?.filename !== "260812-GAS-SpringSale.pdf"
   || qrPng !== null
   || qrCalls.length !== 1
-  || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
-    || call.options.json.type !== "URL" || call.options.json.dynamic !== false || call.options.json.colors.transparent !== true
+    || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
+    || call.options.json.type !== "URL" || call.options.json.dynamic !== true || call.options.json.colors.transparent !== true
     || call.options.json.format !== "pdf" || call.options.json.name !== "260812-GAS-SpringSale")
 ) {
   throw new Error("QR Stuff generation smoke test failed.");
