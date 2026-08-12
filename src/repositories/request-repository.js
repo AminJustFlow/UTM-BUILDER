@@ -929,7 +929,6 @@ export class RequestRepository {
             g.final_long_url AS generated_final_long_url,
             g.short_url AS generated_short_url,
             g.qr_url AS generated_qr_url,
-            g.qr_preview_url AS generated_qr_preview_url,
             grouped.request_count,
             grouped.first_created_at,
             grouped.last_created_at,

@@ -11,7 +11,8 @@ export class UtmLibraryEditorService {
     generatedLinkRepository,
     linkAuditRepository = null,
     utmIntelligenceService = null,
-    utmValueAcknowledgementRepository = null
+    utmValueAcknowledgementRepository = null,
+    logger = null
   }) {
     this.requestRepository = requestRepository;
     this.requestNormalizer = requestNormalizer;
@@ -21,6 +22,7 @@ export class UtmLibraryEditorService {
     this.linkAuditRepository = linkAuditRepository;
     this.utmIntelligenceService = utmIntelligenceService;
     this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
+    this.logger = logger;
   }
 
   async regenerate(input = {}, actor = null) {
@@ -108,7 +110,6 @@ export class UtmLibraryEditorService {
         finalLongUrl,
         shortUrl: normalizeOptional(existing.short_url) ?? "",
         qrUrl: normalizeOptional(existing.qr_url),
-        qrPreviewUrl: normalizeOptional(existing.qr_preview_url),
         bitlyId: normalizeOptional(existing.bitly_id),
         bitlyPayload: safeJsonObject(existing.bitly_payload),
         createdAt: existing.created_at ?? timestamp,
@@ -122,7 +123,6 @@ export class UtmLibraryEditorService {
           final_long_url: seed.finalLongUrl,
           short_url: seed.shortUrl,
           qr_url: seed.qrUrl,
-          qr_preview_url: seed.qrPreviewUrl,
           bitly_id: seed.bitlyId,
           bitly_payload: seed.bitlyPayload
         };
@@ -168,7 +168,6 @@ export class UtmLibraryEditorService {
     }
     if (supplement.generatedQr) {
       requestFields.qr_url = supplement.qrUrl;
-      requestFields.qr_preview_url = supplement.qrPreviewUrl;
     }
 
     if (Object.keys(requestFields).length > 0) {
@@ -203,7 +202,6 @@ export class UtmLibraryEditorService {
       requestId,
       shortUrl: supplement.shortUrl,
       qrUrl: supplement.qrUrl,
-      qrPreviewUrl: supplement.qrPreviewUrl,
       generatedShort: supplement.generatedShort,
       generatedQr: supplement.generatedQr,
       alreadyPresent: !supplement.generatedShort && !supplement.generatedQr,
@@ -484,7 +482,6 @@ export class UtmLibraryEditorService {
           status: "completed_without_short_link",
           normalized_payload: normalized.toJSON(),
           qr_url: generation.result.qrUrl,
-          qr_preview_url: generation.result.qrPreviewUrl,
           warnings,
           reused_existing: generation.result.reusedExisting ? 1 : 0,
           error_code: generation.degradedReason,
@@ -493,7 +490,6 @@ export class UtmLibraryEditorService {
           status: "completed_without_short_link",
           normalized_payload: normalized.toJSON(),
           qr_url: generation.result.qrUrl,
-          qr_preview_url: generation.result.qrPreviewUrl,
           warnings,
           reused_existing: generation.result.reusedExisting ? 1 : 0,
           error_code: generation.degradedReason,
@@ -522,7 +518,6 @@ export class UtmLibraryEditorService {
         bitly_id: generation.bitlyId,
         bitly_payload: generation.bitlyPayload,
         qr_url: generation.result.qrUrl,
-        qr_preview_url: generation.result.qrPreviewUrl,
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }) ?? this.requestRepository.update(requestId, {
         status: "completed",
@@ -531,7 +526,6 @@ export class UtmLibraryEditorService {
         bitly_id: generation.bitlyId,
         bitly_payload: generation.bitlyPayload,
         qr_url: generation.result.qrUrl,
-        qr_preview_url: generation.result.qrPreviewUrl,
         reused_existing: generation.result.reusedExisting ? 1 : 0
       }));
 
@@ -547,6 +541,12 @@ export class UtmLibraryEditorService {
         qrWarning: generation.qrWarning
       };
     } catch (error) {
+      this.logger?.error?.("UTM link generation failed.", {
+        request_id: requestId,
+        error_name: error?.name ?? "Error",
+        error_code: error?.code ?? null,
+        error_message: error?.message ?? "Unknown generation failure"
+      });
       await (this.requestRepository.updateAsync?.(requestId, {
         status: "failed",
         error_code: "utm_library_regeneration_failed",

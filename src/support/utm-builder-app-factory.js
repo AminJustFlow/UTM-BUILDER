@@ -108,7 +108,8 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository,
     linkAuditRepository,
     utmIntelligenceService,
-    utmValueAcknowledgementRepository
+    utmValueAcknowledgementRepository,
+    logger
   });
   const utmLibraryService = new UtmLibraryService(requestRepository, { logger });
   const utmCsvImportService = new UtmCsvImportService({

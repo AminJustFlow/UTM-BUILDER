@@ -280,7 +280,6 @@ function serializeResult(result) {
     tracked_url: normalized.finalLongUrl,
     short_url: result.result.shortUrl,
     qr_url: result.result.qrUrl,
-    qr_preview_url: result.result.qrPreviewUrl,
     destination_url: normalized.destinationUrl,
     utm_source: normalized.utmSource,
     utm_medium: normalized.utmMedium,

@@ -206,7 +206,6 @@ export class LinkGenerationService {
       }
     }
 
-    let qrPreviewUrl = String(existing.qr_preview_url ?? "").trim();
     const legacyQr = qrUrl && !(this.qrCodeService.isManagedUrl?.(qrUrl) ?? false);
     let qrFailure = false;
     if (generateQr && (!qrUrl || legacyQr)) {
@@ -215,11 +214,9 @@ export class LinkGenerationService {
         utmCampaign: existing.utm_campaign || existing.canonical_campaign
       }, fingerprint, existing.created_at);
       qrUrl = qr.qrUrl ?? "";
-      qrPreviewUrl = "";
       qrFailure = Boolean(qr.error);
       if (qrUrl) {
         fields.qr_url = qrUrl;
-        fields.qr_preview_url = null;
       }
     }
 
@@ -231,7 +228,7 @@ export class LinkGenerationService {
     return {
       shortUrl: shortUrl || null,
       qrUrl: qrUrl || null,
-      qrPreviewUrl: qrPreviewUrl || null,
+      qrPreviewUrl: null,
       bitlyId,
       bitlyPayload,
       finalLongUrl,
@@ -287,15 +284,14 @@ export class LinkGenerationService {
     const qr = await this.generateQr(existing.short_url || existing.final_long_url || normalized.finalLongUrl, normalized, existing.fingerprint, existing.created_at);
     if (!qr.qrUrl) return existing;
     await (this.generatedLinkRepository.updateByFingerprintAsync?.(existing.fingerprint, {
-      qr_url: qr.qrUrl, qr_preview_url: null
+      qr_url: qr.qrUrl
     }) ?? this.generatedLinkRepository.updateByFingerprint(existing.fingerprint, {
-      qr_url: qr.qrUrl, qr_preview_url: null
+      qr_url: qr.qrUrl
     }));
 
     return {
       ...existing,
-      qr_url: qr.qrUrl,
-      qr_preview_url: null
+      qr_url: qr.qrUrl
     };
   }
 
