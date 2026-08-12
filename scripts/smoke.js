@@ -437,6 +437,15 @@ try {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
   });
   const overlayKnownAfterRestore = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
+  const archiveBeforeRecreateResponse = await af("/utms/archive", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
+  });
+  const recreateArchivedAttempt = await createWithConsistencyConfirmation({
+    client: "gas", destination_url: "https://example.com/admin-overlay",
+    utm_source: "facebook", utm_medium: "social", utm_campaign: "adminoverlaycampaign",
+    utm_term: "", utm_content: ""
+  });
+  const recreateArchivedRequestId = recreateArchivedAttempt.body.result?.request_id;
 
   const adminSessionCookie = sessionCookie;
   const regularLogin = await fetch(`${base}/login`, {
@@ -664,6 +673,9 @@ try {
     || overlayArchiveResponse.status !== 200
     || !overlayKnownAfterFirstArchive.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
     || secondOverlayArchiveResponse.status !== 200
+    || recreateArchivedAttempt.response.status !== 200
+    || !recreateArchivedRequestId
+    || archiveBeforeRecreateResponse.status !== 200
     || overlayKnownAfterArchive.items?.length
     || archivedLibrary.filters?.view !== "archived"
     || !archivedLibrary.items?.some((item) => item.requestId === overlayRequestId)
@@ -678,7 +690,12 @@ try {
     || oldSessionAfterPasswordChange.status !== 302
     || oldSessionAfterPasswordChange.headers.get("location")?.startsWith("/login") !== true
   ) {
-    throw new Error("Standalone UTM Builder smoke test failed.");
+    throw new Error(`Standalone UTM Builder smoke test failed. ${JSON.stringify({
+      recreateArchivedStatus: recreateArchivedAttempt.response.status,
+      recreateArchivedRequestId,
+      archiveBeforeRecreateStatus: archiveBeforeRecreateResponse.status,
+      restoreStatus: overlayRestoreResponse.status
+    })}`);
   }
   process.stdout.write("Standalone UTM Builder smoke test passed.\n");
 } finally {
