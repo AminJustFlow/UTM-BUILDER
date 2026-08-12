@@ -64,7 +64,7 @@ Campaign standards are advisory. They change labels, helper copy, examples, and 
 - Health check path: `/health`
 - Node version: 22
 
-The example configuration uses SQLite locally. For production, set the database configuration, `BITLY_ACCESS_TOKEN`, `QR_STUFF_API_KEY`, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`. QR Stuff creates static transparent PDF assets and PNG previews; both are stored under `QR_STORAGE_PATH` and served only to authenticated users. The application refuses to start without the signing secret. Generate one with `openssl rand -hex 32`.
+The example configuration uses SQLite locally. For production, set the database configuration, `BITLY_ACCESS_TOKEN`, `QR_STUFF_API_KEY`, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`. QR Stuff creates one named static transparent PDF per requested QR; files are stored under `QR_STORAGE_PATH` and served only to authenticated users. The application refuses to start without the signing secret. Generate one with `openssl rand -hex 32`.
 
 To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, campaign standards, governance acknowledgement, and user management require an administrator account.
 

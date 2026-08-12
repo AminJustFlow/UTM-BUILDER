@@ -15,7 +15,7 @@ const qrCalls = [];
 const qrService = new QrCodeService({
   async request(method, url, options) {
     qrCalls.push({ method, url, options });
-    return { statusCode: 201, headers: {}, body: Buffer.from(options.json.format === "pdf" ? "%PDF-smoke" : "PNG-smoke") };
+    return { statusCode: 201, headers: {}, body: Buffer.from("%PDF-smoke") };
   }
 }, {
   apiKey: "test-api-key", apiBase: "https://api.qrstuff.test/api", timeoutMs: 1000,
@@ -25,18 +25,18 @@ const qrService = new QrCodeService({
 const qrGenerated = await qrService.generate("https://example.com/tracked", {
   fingerprint: "smoke-fingerprint", client: "gas", campaign: "Spring Sale!", createdAt: "2026-08-12T12:00:00Z"
 });
-const [qrPdf, qrPng] = await Promise.all([
-  qrService.readAsset("smoke-fingerprint", "pdf"), qrService.readAsset("smoke-fingerprint", "png")
-]);
+const qrPdf = await qrService.readAsset("smoke-fingerprint", "pdf");
+const qrPng = await qrService.readAsset("smoke-fingerprint", "png");
 if (
   buildQrFilename("2026-08-12T12:00:00Z", "gas", "Spring Sale!", "America/New_York") !== "260812-GAS-SpringSale"
   || qrGenerated.qrUrl !== "/qr-assets/smoke-fingerprint/pdf"
+  || qrGenerated.qrPreviewUrl !== null
   || qrPdf?.filename !== "260812-GAS-SpringSale.pdf"
-  || qrPng?.filename !== "260812-GAS-SpringSale.png"
-  || qrCalls.length !== 2
+  || qrPng !== null
+  || qrCalls.length !== 1
   || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
     || call.options.json.type !== "URL" || call.options.json.dynamic !== false || call.options.json.colors.transparent !== true
-    || !["pdf", "png"].includes(call.options.json.format))
+    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-GAS-SpringSale")
 ) {
   throw new Error("QR Stuff generation smoke test failed.");
 }

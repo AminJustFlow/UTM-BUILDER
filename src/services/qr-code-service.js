@@ -18,7 +18,7 @@ export class QrCodeService {
   }
 
   isManagedUrl(value) {
-    return /^\/qr-assets\/[^/]+\/(pdf|png)$/u.test(String(value ?? ""));
+    return /^\/qr-assets\/[^/]+\/pdf$/u.test(String(value ?? ""));
   }
 
   async generate(targetUrl, { fingerprint, client, campaign, createdAt = new Date() }) {
@@ -26,18 +26,15 @@ export class QrCodeService {
     const safeFingerprint = String(fingerprint ?? "").replace(/[^a-zA-Z0-9_-]/gu, "");
     if (!safeFingerprint) throw new QrCodeError("A valid fingerprint is required.", { code: "QR_INVALID_FINGERPRINT" });
 
-    const [pdf, png] = await Promise.all([
-      this.requestFormat(targetUrl, "pdf"),
-      this.requestFormat(targetUrl, "png")
-    ]);
+    const filename = buildQrFilename(createdAt, client, campaign, this.config.timezone);
+    const pdf = await this.requestPdf(targetUrl, filename);
     const directory = path.join(this.config.storagePath, safeFingerprint);
     const temporary = `${directory}.tmp-${process.pid}-${Date.now()}`;
     await fs.mkdir(temporary, { recursive: true });
     try {
       await Promise.all([
         fs.writeFile(path.join(temporary, "qr.pdf"), pdf),
-        fs.writeFile(path.join(temporary, "qr.png"), png),
-        fs.writeFile(path.join(temporary, "metadata.json"), JSON.stringify({ filename: buildQrFilename(createdAt, client, campaign, this.config.timezone) }))
+        fs.writeFile(path.join(temporary, "metadata.json"), JSON.stringify({ filename }))
       ]);
       await fs.rm(directory, { recursive: true, force: true });
       await fs.rename(temporary, directory);
@@ -45,16 +42,16 @@ export class QrCodeService {
       await fs.rm(temporary, { recursive: true, force: true });
       throw error;
     }
-    return { qrUrl: `/qr-assets/${safeFingerprint}/pdf`, qrPreviewUrl: `/qr-assets/${safeFingerprint}/png` };
+    return { qrUrl: `/qr-assets/${safeFingerprint}/pdf`, qrPreviewUrl: null };
   }
 
-  async requestFormat(targetUrl, format) {
+  async requestPdf(targetUrl, name) {
     let response;
     try {
       response = await this.httpClient.request("POST", `${this.config.apiBase.replace(/\/$/u, "")}/generate`, {
         headers: { Authorization: `Bearer ${this.config.apiKey}` },
         json: {
-          data: { url: targetUrl }, type: "URL", dynamic: false, format,
+          name, data: { url: targetUrl }, type: "URL", dynamic: false, format: "pdf",
           size: this.config.size, resolution: this.config.resolution,
           error_correction_level: this.config.errorCorrectionLevel,
           colors: { bg: "#FFFFFF", fg: "#000000", finder: "#000000", finder_eye: "#000000", alignment_inner: "#000000", alignment_outer: "#000000", center_text: "#000000", transparent: true }
@@ -71,7 +68,7 @@ export class QrCodeService {
 
   async readAsset(fingerprint, format) {
     const safeFingerprint = String(fingerprint ?? "").replace(/[^a-zA-Z0-9_-]/gu, "");
-    if (!safeFingerprint || !["pdf", "png"].includes(format)) return null;
+    if (!safeFingerprint || format !== "pdf") return null;
     try {
       const [body, metadata] = await Promise.all([
         fs.readFile(path.join(this.config.storagePath, safeFingerprint, `qr.${format}`)),

@@ -1197,9 +1197,7 @@ function renderQrPanel(item) {
 
   const managed = item.qrUrl.startsWith("/qr-assets/");
   return `<div class="section">
-    ${item.qrPreviewUrl ? `<a class="qr-frame" href="${escapeAttribute(item.qrUrl)}">
-      <img src="${escapeAttribute(item.qrPreviewUrl)}" alt="QR preview for ${escapeAttribute(item.clientDisplayName)} ${escapeAttribute(item.utmCampaign || item.canonicalCampaign || "link")}">
-    </a>` : `<div class="qr-frame"><div class="qr-placeholder">${managed ? "QR PDF is ready." : "Legacy QR code. Regenerate it to create a transparent PDF."}</div></div>`}
+    <div class="qr-frame"><div class="qr-placeholder">${managed ? "QR PDF is ready." : "Legacy QR code. Regenerate it to create a transparent PDF."}</div></div>
     <div class="mini-actions">
       <a class="subtle-link" href="${escapeAttribute(item.qrUrl)}">${managed ? "Download QR PDF" : "Open legacy QR"}</a>
       ${managed ? `<a class="subtle-link" href="${escapeAttribute(`${item.qrUrl}?inline=1`)}" target="_blank" rel="noreferrer">Open QR PDF</a>` : ""}
