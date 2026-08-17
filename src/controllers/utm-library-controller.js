@@ -287,7 +287,8 @@ export class UtmLibraryController {
         : await this.utmLibraryEditorService.supplementAssets({
           request_id: requestId,
           generate_short: action === "short",
-          generate_qr: action === "qr"
+          generate_qr: action === "qr",
+          qr_project_id: parsedBody.value.qr_project_id
         }, request.user);
       results.push({ request_id: requestId, ok: result.ok, code: result.code ?? null, message: result.message ?? result.warning ?? "" });
     }
@@ -504,6 +505,30 @@ function renderHtml(view) {
       document.addEventListener("change", function (event) {
         if (event.target.matches("[data-link-select]")) updateSelection();
       });
+      async function chooseQrProject() {
+        const response = await fetch("/new/qr-projects.json", { headers: { "Accept": "application/json" } });
+        const body = await response.json();
+        if (!response.ok || body.status !== "ok") throw new Error(body?.error?.message || "QR Stuff projects could not be loaded.");
+        const projects = Array.isArray(body.projects) ? body.projects : [];
+        if (!projects.length) throw new Error("No QR Stuff projects are available.");
+        const dialog = document.createElement("dialog");
+        dialog.style.cssText = "border:0;border-radius:16px;padding:0;max-width:520px;width:calc(100% - 32px);box-shadow:0 24px 70px rgba(0,0,0,.28)";
+        dialog.innerHTML = '<form method="dialog" style="padding:22px;display:grid;gap:14px"><h3 style="margin:0">Choose QR Stuff project</h3><div class="meta">Select where this QR code should be created.</div><label class="field"><span>Search projects</span><input type="search" data-qr-project-search placeholder="Search project names" autocomplete="off"></label><label class="field"><span>Project</span><select data-qr-project-select required></select></label><div class="actions"><button type="button" class="mini-button" data-qr-project-cancel>Cancel</button><button type="submit" class="btn btn-primary">Continue</button></div></form>';
+        document.body.appendChild(dialog);
+        const search = dialog.querySelector("[data-qr-project-search]");
+        const select = dialog.querySelector("[data-qr-project-select]");
+        function render() { const query = search.value.trim().toLowerCase(); const filtered = projects.filter((project) => String(project.name).toLowerCase().includes(query)); select.innerHTML = '<option value="">Select a project</option>' + filtered.map((project) => '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.name) + '</option>').join(""); }
+        render();
+        search.addEventListener("input", render);
+        return await new Promise((resolve) => {
+          let completed = false;
+          function finish(value) { if (completed) return; completed = true; dialog.close(); dialog.remove(); resolve(value); }
+          dialog.querySelector("[data-qr-project-cancel]").addEventListener("click", () => finish(null));
+          dialog.querySelector("form").addEventListener("submit", (event) => { event.preventDefault(); if (select.value) finish(Number(select.value)); });
+          dialog.addEventListener("cancel", (event) => { event.preventDefault(); finish(null); });
+          dialog.showModal(); search.focus();
+        });
+      }
       document.addEventListener("click", async function (event) {
         const button = event.target.closest("[data-bulk-action]");
         if (!button) return;
@@ -511,10 +536,12 @@ function renderHtml(view) {
         const action = button.dataset.bulkAction;
         if (!ids.length) return;
         if (action === "archive" && !window.confirm("Archive " + ids.length + " selected links? Nothing will be deleted.")) return;
+        let qrProjectId = null;
+        if (action === "qr") { try { qrProjectId = await chooseQrProject(); } catch (error) { showToast(error?.message || "QR Stuff projects could not be loaded.", "error"); return; } if (!qrProjectId) return; }
         document.querySelectorAll("[data-bulk-action]").forEach((item) => { item.disabled = true; });
         button.classList.add("btn-loading");
         try {
-          const response = await fetch("/utms/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, request_ids: ids }) });
+          const response = await fetch("/utms/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, request_ids: ids, qr_project_id: qrProjectId }) });
           const body = await response.json();
           if (!body.succeeded) throw new Error(body?.error?.message || body?.results?.[0]?.message || "The bulk action failed.");
           const label = action === "short" ? "Bitly generation" : action === "qr" ? "QR generation" : action === "restore" ? "Restore" : "Archive";
@@ -607,13 +634,16 @@ function renderHtml(view) {
         button.disabled = true;
         button.setAttribute("aria-busy", "true");
         try {
+          const qrProjectId = asset === "qr" ? await chooseQrProject() : null;
+          if (asset === "qr" && !qrProjectId) return;
           const response = await fetch("/utms/supplement", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               request_id: requestId,
               generate_short: asset === "short",
-              generate_qr: asset === "qr"
+              generate_qr: asset === "qr",
+              qr_project_id: qrProjectId
             })
           });
           const body = await response.json();

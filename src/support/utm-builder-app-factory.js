@@ -109,6 +109,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     linkAuditRepository,
     utmIntelligenceService,
     utmValueAcknowledgementRepository,
+    qrCodeService,
     logger
   });
   const utmLibraryService = new UtmLibraryService(requestRepository, { logger });
@@ -127,6 +128,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     requestNormalizer,
     utmIntelligenceService,
     utmValueAcknowledgementRepository,
+    qrCodeService,
     standalone: true
   });
   const utmLibraryController = new UtmLibraryController({
@@ -254,6 +256,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/account/password", protect((request) => accountController.handlePassword(request)));
   router.add("GET", "/new", protect((request) => utmBuilderController.handleHtml(request)));
   router.add("POST", "/new", protect((request) => utmBuilderController.handleCreate(request)));
+  router.add("GET", "/new/qr-projects.json", protect((request) => utmBuilderController.handleQrProjects(request)));
   router.add("POST", "/new/preview.json", protect((request) => utmBuilderController.handlePreview(request)));
   for (const [route, handler] of [
     ["metadata", "handleMetadata"], ["suggestions", "handleSuggestions"],
@@ -333,6 +336,7 @@ function resolveConfig(projectRoot) {
       resolution: Number(process.env.QR_RESOLUTION ?? baseConfig.qr.resolution),
       errorCorrectionLevel: process.env.QR_ERROR_CORRECTION_LEVEL ?? baseConfig.qr.errorCorrectionLevel,
       storagePath: path.resolve(projectRoot, process.env.QR_STORAGE_PATH ?? baseConfig.qr.storagePath),
+      projectsCacheMs: Number(process.env.QR_PROJECTS_CACHE_MS ?? baseConfig.qr.projectsCacheMs),
       timezone: process.env.DEFAULT_TIMEZONE ?? baseConfig.app.timezone
     },
     auth: {

@@ -12,6 +12,7 @@ export class UtmBuilderController {
     requestNormalizer,
     utmIntelligenceService,
     utmValueAcknowledgementRepository = null,
+    qrCodeService = null,
     standalone = false
   }) {
     this.utmLibraryEditorService = utmLibraryEditorService;
@@ -21,6 +22,7 @@ export class UtmBuilderController {
     this.requestNormalizer = requestNormalizer;
     this.utmIntelligenceService = utmIntelligenceService;
     this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
+    this.qrCodeService = qrCodeService;
     this.standalone = standalone;
   }
 
@@ -109,6 +111,17 @@ export class UtmBuilderController {
       })}`,
       result: serializeResult(result)
     });
+  }
+
+  async handleQrProjects(request = {}) {
+    try {
+      return NodeResponse.json({ status: "ok", projects: await this.qrCodeService.listProjects({ force: request.query?.refresh === "1" }) });
+    } catch (error) {
+      return NodeResponse.json({
+        status: "error",
+        error: { code: "qr_projects_unavailable", message: "QR Stuff projects could not be loaded. Please retry." }
+      }, 502);
+    }
   }
 
   async handleMetadata(request) {

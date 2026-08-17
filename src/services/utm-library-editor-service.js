@@ -12,6 +12,7 @@ export class UtmLibraryEditorService {
     linkAuditRepository = null,
     utmIntelligenceService = null,
     utmValueAcknowledgementRepository = null,
+    qrCodeService = null,
     logger = null
   }) {
     this.requestRepository = requestRepository;
@@ -22,11 +23,14 @@ export class UtmLibraryEditorService {
     this.linkAuditRepository = linkAuditRepository;
     this.utmIntelligenceService = utmIntelligenceService;
     this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
+    this.qrCodeService = qrCodeService;
     this.logger = logger;
   }
 
   async regenerate(input = {}, actor = null) {
-    return this.submit(input, {
+    const validated = await this.validateQrProjectInput(input);
+    if (!validated.ok) return validated;
+    return this.submit(validated.input, {
       requestSource: "utm_library_editor",
       sourceUserId: actorSourceId(actor, "utm_library"),
       sourceUserName: actorSourceName(actor, "UTM Library"),
@@ -36,7 +40,9 @@ export class UtmLibraryEditorService {
   }
 
   async create(input = {}, actor = null) {
-    return this.submit(input, {
+    const validated = await this.validateQrProjectInput(input);
+    if (!validated.ok) return validated;
+    return this.submit(validated.input, {
       requestSource: "utm_builder",
       sourceUserId: actorSourceId(actor, "utm_builder"),
       sourceUserName: actorSourceName(actor, "UTM Builder"),
@@ -57,6 +63,8 @@ export class UtmLibraryEditorService {
         message: "Select a saved link and an asset to generate."
       };
     }
+    const validated = await this.validateQrProjectInput({ ...input, needs_qr: generateQr });
+    if (!validated.ok) return validated;
 
     const existing = await (this.requestRepository.findByIdAsync?.(requestId)
       ?? this.requestRepository.findById(requestId));
@@ -144,7 +152,9 @@ export class UtmLibraryEditorService {
     try {
       supplement = await this.linkGenerationService.supplement(generatedLink, {
         generateShort,
-        generateQr
+        generateQr,
+        qrProjectId: validated.input.qr_project_id,
+        qrProjectName: validated.input.qr_project_name
       });
     } catch {
       return {
@@ -391,7 +401,9 @@ export class UtmLibraryEditorService {
           utm_term: input.utm_term ?? null,
           utm_content: input.utm_content ?? null,
           destination_url: input.destination_url ?? null,
-          needs_qr: Boolean(input.needs_qr)
+          needs_qr: Boolean(input.needs_qr),
+          qr_project_id: input.qr_project_id ?? null,
+          qr_project_name: input.qr_project_name ?? null
         }
       },
       sourceUserId: context.sourceUserId,
@@ -420,7 +432,9 @@ export class UtmLibraryEditorService {
           utm_term: input.utm_term ?? null,
           utm_content: input.utm_content ?? null,
           destination_url: input.destination_url ?? null,
-          needs_qr: Boolean(input.needs_qr)
+          needs_qr: Boolean(input.needs_qr),
+          qr_project_id: input.qr_project_id ?? null,
+          qr_project_name: input.qr_project_name ?? null
         }
       },
       sourceUserId: context.sourceUserId,
@@ -466,7 +480,10 @@ export class UtmLibraryEditorService {
     }
 
     try {
-      const generation = await this.linkGenerationService.generate(normalized, fingerprint);
+      const generation = await this.linkGenerationService.generate(normalized, fingerprint, {
+        qrProjectId: input.qr_project_id,
+        qrProjectName: input.qr_project_name
+      });
 
       if (generation.degraded) {
         const warnings = [
@@ -582,6 +599,20 @@ export class UtmLibraryEditorService {
       term: normalized.utmTerm,
       content: normalized.utmContent
     }, acknowledgements);
+  }
+
+  async validateQrProjectInput(input = {}) {
+    if (!Boolean(input.needs_qr)) return { ok: true, input: { ...input, qr_project_id: null, qr_project_name: null } };
+    const projectId = positiveInteger(input.qr_project_id, null);
+    if (!projectId) return { ok: false, statusCode: 422, code: "qr_project_required", message: "Select a QR Stuff project before creating the QR code." };
+    try {
+      const project = await this.qrCodeService?.validateProject(projectId);
+      if (!project) return { ok: false, statusCode: 422, code: "qr_project_invalid", message: "The selected QR Stuff project is no longer available." };
+      return { ok: true, input: { ...input, qr_project_id: project.id, qr_project_name: project.name } };
+    } catch (error) {
+      this.logger?.warning?.("QR Stuff projects could not be verified.", { error_code: error?.code ?? null, status_code: error?.statusCode ?? null });
+      return { ok: false, statusCode: 502, code: "qr_projects_unavailable", message: "QR Stuff projects could not be loaded. Retry, or uncheck QR code to save only the UTM." };
+    }
   }
 }
 

@@ -66,6 +66,8 @@ Campaign standards are advisory. They change labels, helper copy, examples, and 
 
 The example configuration uses SQLite locally. For production, set the database configuration, `BITLY_ACCESS_TOKEN`, `QR_STUFF_API_KEY`, and a long random `TRACKING_SECRET_ENCRYPTION_KEY`. QR Stuff creates one named dynamic transparent PDF per requested QR, allowing its destination to be edited later in the QR Stuff dashboard. Files are stored under `QR_STORAGE_PATH` and served only to authenticated users. The application refuses to start without the signing secret. Generate one with `openssl rand -hex 32`.
 
+When QR generation is selected, the builder loads every project accessible to the configured QR Stuff API key and requires the user to choose one. The project catalog is cached for `QR_PROJECTS_CACHE_MS` (five minutes by default); users can retry from the picker to refresh it immediately.
+
 To bootstrap the first administrator, temporarily set `SETUP_ADMIN_USERNAME` and `SETUP_ADMIN_PASSWORD`, restart the application, and use `/setup`. Clear both values and restart immediately after the administrator exists. Link deletion, CSV import, campaign standards, governance acknowledgement, and user management require an administrator account.
 
 The builder compares populated UTM values and combinations against the selected client's workbook, imported, and saved-link history. Unfamiliar selections return `409 consistency_confirmation_required`; the UI requires an explicit **Create Anyway** confirmation using the returned `consistency_warning_fingerprint`. Confirmed standards remain available for administrator review in the Link Library.

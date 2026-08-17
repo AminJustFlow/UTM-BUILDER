@@ -30,7 +30,8 @@ export default {
     size: 512,
     resolution: 300,
     errorCorrectionLevel: "M",
-    storagePath: "storage/qr"
+    storagePath: "storage/qr",
+    projectsCacheMs: 300000
   },
   auth: {
     sessionTtlSeconds: 60 * 60 * 12

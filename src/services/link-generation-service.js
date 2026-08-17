@@ -17,12 +17,12 @@ export class LinkGenerationService {
     this.logger = logger;
   }
 
-  async generate(normalized, fingerprint) {
+  async generate(normalized, fingerprint, { qrProjectId = null, qrProjectName = null } = {}) {
     const trackedLongUrl = this.withFingerprint(normalized.finalLongUrl, fingerprint);
     const existing = await (this.generatedLinkRepository.findByFingerprintAsync?.(fingerprint)
       ?? this.generatedLinkRepository.findByFingerprint(fingerprint));
     if (existing) {
-      const refreshed = await this.ensureTrackedUrl(await this.ensureQr(existing, normalized), normalized, fingerprint);
+      const refreshed = await this.ensureTrackedUrl(await this.ensureQr(existing, normalized, { qrProjectId, qrProjectName }), normalized, fingerprint);
       return {
         fingerprint,
         result: new LinkGenerationResult({
@@ -43,7 +43,7 @@ export class LinkGenerationService {
     try {
       const bitly = await this.bitlyService.shorten(trackedLongUrl);
       const timestamp = new Date().toISOString();
-      const qr = normalized.needsQr ? await this.generateQr(bitly.link || trackedLongUrl, normalized, fingerprint, timestamp) : {};
+      const qr = normalized.needsQr ? await this.generateQr(bitly.link || trackedLongUrl, normalized, fingerprint, timestamp, { qrProjectId, qrProjectName }) : {};
       const qrUrl = qr.qrUrl ?? null;
 
       try {
@@ -95,7 +95,7 @@ export class LinkGenerationService {
           throw error;
         }
 
-        const refreshed = await this.ensureTrackedUrl(await this.ensureQr(raceExisting, normalized), normalized, fingerprint);
+        const refreshed = await this.ensureTrackedUrl(await this.ensureQr(raceExisting, normalized, { qrProjectId, qrProjectName }), normalized, fingerprint);
         return {
           fingerprint,
           result: new LinkGenerationResult({
@@ -145,7 +145,7 @@ export class LinkGenerationService {
         cause_message: error?.cause?.message ?? null
       });
 
-      const qr = normalized.needsQr ? await this.generateQr(trackedLongUrl, normalized, fingerprint) : {};
+      const qr = normalized.needsQr ? await this.generateQr(trackedLongUrl, normalized, fingerprint, new Date(), { qrProjectId, qrProjectName }) : {};
       const qrUrl = qr.qrUrl ?? null;
       return {
         fingerprint,
@@ -169,7 +169,7 @@ export class LinkGenerationService {
     }
   }
 
-  async supplement(existing, { generateShort = false, generateQr = false } = {}) {
+  async supplement(existing, { generateShort = false, generateQr = false, qrProjectId = null, qrProjectName = null } = {}) {
     const fingerprint = String(existing?.fingerprint ?? "").trim();
     const finalLongUrl = String(existing?.final_long_url ?? "").trim();
     if (!fingerprint || !finalLongUrl) {
@@ -212,7 +212,7 @@ export class LinkGenerationService {
       const qr = await this.generateQr(shortUrl || finalLongUrl, {
         client: existing.client,
         utmCampaign: existing.utm_campaign || existing.canonical_campaign
-      }, fingerprint, existing.created_at);
+      }, fingerprint, existing.created_at, { qrProjectId, qrProjectName });
       qrUrl = qr.qrUrl ?? "";
       qrFailure = Boolean(qr.error);
       if (qrUrl) {
@@ -276,12 +276,12 @@ export class LinkGenerationService {
     return null;
   }
 
-  async ensureQr(existing, normalized) {
+  async ensureQr(existing, normalized, { qrProjectId = null, qrProjectName = null } = {}) {
     if (!normalized.needsQr || (existing.qr_url && (this.qrCodeService.isManagedUrl?.(existing.qr_url) ?? false))) {
       return existing;
     }
 
-    const qr = await this.generateQr(existing.short_url || existing.final_long_url || normalized.finalLongUrl, normalized, existing.fingerprint, existing.created_at);
+    const qr = await this.generateQr(existing.short_url || existing.final_long_url || normalized.finalLongUrl, normalized, existing.fingerprint, existing.created_at, { qrProjectId, qrProjectName });
     if (!qr.qrUrl) return existing;
     await (this.generatedLinkRepository.updateByFingerprintAsync?.(existing.fingerprint, {
       qr_url: qr.qrUrl
@@ -317,7 +317,7 @@ export class LinkGenerationService {
     return this.urlService.appendInternalTrackingParams(longUrl, { jf_fp: fingerprint });
   }
 
-  async generateQr(targetUrl, normalized, fingerprint, createdAt = new Date()) {
+  async generateQr(targetUrl, normalized, fingerprint, createdAt = new Date(), { qrProjectId = null, qrProjectName = null } = {}) {
     try {
       if (typeof this.qrCodeService.generate !== "function" && typeof this.qrCodeService.generateUrl === "function") {
         const qrUrl = this.qrCodeService.generateUrl(targetUrl);
@@ -327,6 +327,8 @@ export class LinkGenerationService {
         fingerprint,
         client: normalized.client,
         campaign: normalized.utmCampaign || normalized.canonicalCampaign,
+        projectId: qrProjectId,
+        projectName: qrProjectName,
         createdAt
       });
     } catch (error) {

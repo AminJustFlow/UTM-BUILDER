@@ -23,7 +23,7 @@ const qrService = new QrCodeService({
   timezone: "America/New_York"
 });
 const qrGenerated = await qrService.generate("https://example.com/tracked", {
-  fingerprint: "smoke-fingerprint", client: "gas", campaign: "Spring Sale!", createdAt: "2026-08-12T12:00:00Z"
+  fingerprint: "smoke-fingerprint", client: "gas", campaign: "Spring Sale!", projectId: 7, projectName: "GAS Campaigns", createdAt: "2026-08-12T12:00:00Z"
 });
 const qrPdf = await qrService.readAsset("smoke-fingerprint", "pdf");
 const qrPng = await qrService.readAsset("smoke-fingerprint", "png");
@@ -36,11 +36,35 @@ if (
   || qrCalls.length !== 1
     || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
     || call.options.json.type !== "URL" || call.options.json.dynamic !== true || call.options.json.colors.transparent !== true
-    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-GAS-SpringSale")
+    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-GAS-SpringSale" || call.options.json.idproject !== 7)
 ) {
   throw new Error("QR Stuff generation smoke test failed.");
 }
 fs.rmSync(qrTestStorage, { recursive: true, force: true });
+
+const projectCalls = [];
+const projectService = new QrCodeService({
+  async request(method, url, options) {
+    projectCalls.push({ method, url, options });
+    const page = Number(new URL(url).searchParams.get("page"));
+    const payload = page === 1
+      ? { data: [{ id: 2, name: "Zulu" }, { id: 1, name: "Alpha" }], meta: { last_page: 2 } }
+      : { data: [{ id: 3, name: "Marketing" }], meta: { last_page: 2 } };
+    return { statusCode: 200, headers: {}, body: JSON.stringify(payload), json() { return payload; } };
+  }
+}, { apiKey: "test-api-key", apiBase: "https://api.qrstuff.test/api", timeoutMs: 1000, projectsCacheMs: 300000 });
+const projects = await projectService.listProjects();
+const cachedProjects = await projectService.listProjects();
+if (
+  projectCalls.length !== 2
+  || projectCalls.some((call) => call.method !== "GET" || call.options.headers.Authorization !== "Bearer test-api-key")
+  || projects.map((project) => project.name).join(",") !== "Alpha,Marketing,Zulu"
+  || cachedProjects !== projects
+  || (await projectService.validateProject(3))?.name !== "Marketing"
+  || await projectService.validateProject(999) !== null
+) {
+  throw new Error("QR Stuff project catalog smoke test failed.");
+}
 
 const dictionaryOnlyRules = new RulesService(rules);
 if (dictionaryOnlyRules.clients().some((client) =>
@@ -126,6 +150,7 @@ try {
   sessionCookie = cookieValue(adminLogin, "jf_app_session");
   const appCookieHeader = adminLogin.headers.get("set-cookie") ?? "";
   const unauthenticated = await fetch(`${base}/utms.json`, { redirect: "manual" });
+  const unauthenticatedQrProjects = await fetch(`${base}/new/qr-projects.json`, { redirect: "manual" });
   const unauthenticatedStandards = await fetch(`${base}/standards`, { redirect: "manual" });
   const crossSitePost = await fetch(`${base}/login`, {
     method: "POST",
@@ -138,6 +163,13 @@ try {
   const faviconAsset = await fetch(`${base}/assets/jf-drop.png`);
   const builderResponse = await af("/new");
   const builderHtml = await builderResponse.text();
+  const qrProjectsUnavailableResponse = await af("/new/qr-projects.json");
+  const qrProjectsUnavailable = await qrProjectsUnavailableResponse.json();
+  const missingQrProjectResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "gas", destination_url: "https://example.com/missing-qr-project", needs_qr: true, utm_source: "facebook", utm_medium: "social", utm_campaign: "website", utm_term: "", utm_content: "" })
+  });
+  const missingQrProject = await missingQrProjectResponse.json();
   const usersPage = await af("/users");
   const usersHtml = await usersPage.text();
   const createRegularUser = await af("/users", {
@@ -266,7 +298,7 @@ try {
       utm_campaign: "website",
       utm_term: "jfclientspecificterm",
       utm_content: "jfclientspecificcontent",
-      needs_qr: true
+      needs_qr: false
   });
   const createResponse = createAttempt.response;
   const created = createAttempt.body;
@@ -500,9 +532,9 @@ try {
   }
 
   if (
-    qrSupplementResponse.status !== 503
-    || qrSupplement.error?.code !== "qr_stuff_unavailable"
-    || repeatedQrSupplementResponse.status !== 503
+    qrSupplementResponse.status !== 422
+    || qrSupplement.error?.code !== "qr_project_required"
+    || repeatedQrSupplementResponse.status !== 422
     || shortSupplementResponse.status !== 503
     || shortSupplement.error?.code !== "bitly_not_configured"
     || !supplementedLibraryHtml.includes('data-generate-asset="short"')
@@ -561,6 +593,13 @@ try {
     || !builderHtml.includes('<option value="gas"')
     || builderHtml.includes('<option value="studleys"')
     || !builderHtml.includes("Meta Ad campaign name")
+    || !builderHtml.includes('id="qr-project-picker"')
+    || !builderHtml.includes('id="qr-project-search"')
+    || missingQrProjectResponse.status !== 422
+    || missingQrProject.error?.code !== "qr_project_required"
+    || unauthenticatedQrProjects.status !== 401
+    || qrProjectsUnavailableResponse.status !== 502
+    || qrProjectsUnavailable.error?.code !== "qr_projects_unavailable"
     || !builderHtml.includes("activeCampaignProfile")
     || !builderHtml.includes("This URL already has query parameters, so UTM values will be added with &amp; instead of another ?.")
     || builderHtml.indexOf("Consistency warnings") > builderHtml.indexOf("Resolved preview")
@@ -694,7 +733,12 @@ try {
       recreateArchivedStatus: recreateArchivedAttempt.response.status,
       recreateArchivedRequestId,
       archiveBeforeRecreateStatus: archiveBeforeRecreateResponse.status,
-      restoreStatus: overlayRestoreResponse.status
+      restoreStatus: overlayRestoreResponse.status,
+      unauthenticatedQrProjectsStatus: unauthenticatedQrProjects.status,
+      qrProjectsUnavailableStatus: qrProjectsUnavailableResponse.status,
+      qrProjectsUnavailableCode: qrProjectsUnavailable.error?.code,
+      missingQrProjectStatus: missingQrProjectResponse.status,
+      missingQrProjectCode: missingQrProject.error?.code
     })}`);
   }
   process.stdout.write("Standalone UTM Builder smoke test passed.\n");
