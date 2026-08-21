@@ -4,6 +4,11 @@ import { parseFormBody } from "./auth-page.js";
 import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
 const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content", "pair", "combination"];
+const LEGACY_GOVERNANCE_DISPLAY_VALUES = new Map([
+  ["gas|caregiver", "Caregiver"],
+  ["gas|follow", "Follow"],
+  ["gas|massachusetts", "Massachusetts"]
+]);
 
 function acknowledgementKey(field, value) {
   return `${String(field ?? "").trim().toLowerCase()}:${String(value ?? "").trim().toLowerCase()}`;
@@ -929,16 +934,23 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
 }
 
 function renderGovernanceChip(fieldKey, item, canManage) {
+  const displayValue = displayGovernanceValue(item.client, item.value);
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
         <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
         <input type="hidden" name="value" value="${escapeAttribute(item.value)}">
         <input type="hidden" name="client" value="${escapeAttribute(item.client)}">
         <input type="hidden" name="warning_type" value="${escapeAttribute(item.type)}">
-        <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(item.value)}">${renderIcon("check")}</button>
+        <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(displayValue)}">${renderIcon("check")}</button>
       </form>`
     : "";
-  return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(item.value)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
+  return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(displayValue)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
+}
+
+export function displayGovernanceValue(client, value) {
+  const rawValue = String(value ?? "");
+  const key = `${String(client ?? "").trim().toLowerCase()}|${rawValue.trim().toLowerCase()}`;
+  return LEGACY_GOVERNANCE_DISPLAY_VALUES.get(key) ?? rawValue;
 }
 
 function renderResultCard(item, { highlightRequestId, archived = false, canManage = false }) {

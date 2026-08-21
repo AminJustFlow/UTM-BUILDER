@@ -5,7 +5,7 @@ import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
-import { displayDestinationPath } from "../src/controllers/utm-library-controller.js";
+import { displayDestinationPath, displayGovernanceValue } from "../src/controllers/utm-library-controller.js";
 import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
@@ -81,6 +81,16 @@ if (
   || displayDestinationPath("not-a-url") !== "not-a-url"
 ) {
   throw new Error("Destination pathname formatting smoke test failed.");
+}
+
+if (
+  displayGovernanceValue("gas", "caregiver") !== "Caregiver"
+  || displayGovernanceValue("GAS", "follow") !== "Follow"
+  || displayGovernanceValue("gas", "massachusetts") !== "Massachusetts"
+  || displayGovernanceValue("gas", "unrelatedvalue") !== "unrelatedvalue"
+  || displayGovernanceValue("studleys", "caregiver") !== "caregiver"
+) {
+  throw new Error("Legacy governance warning display smoke test failed.");
 }
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
@@ -440,7 +450,7 @@ try {
       destination_url: `https://example.com/governance-smoke-${Date.now()}`,
       utm_source: "facebook",
       utm_medium: "social",
-      utm_campaign: "smokegovcampaign",
+      utm_campaign: "caregiver",
       utm_term: "",
       utm_content: ""
   });
@@ -723,6 +733,8 @@ try {
     || govCreateResponse.status !== 200
     || !govValue
     || !libraryBeforeAck.includes(govMarker)
+    || !libraryBeforeAck.includes("gas: Caregiver (1)")
+    || !libraryBeforeAck.includes('name="value" value="caregiver"')
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
     || !libraryBeforeAck.includes('class="grid library-results-grid"')
