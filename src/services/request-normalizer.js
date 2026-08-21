@@ -100,11 +100,11 @@ export class RequestNormalizer {
     }
     const finalWarnings = [...new Set(sanitizedWarnings)];
     const formattedUtm = {
-      source: formatUtmValue(utm.source),
-      medium: formatUtmValue(utm.medium),
-      campaign: formatUtmValue(utm.campaign),
-      term: formatUtmValue(sanitizedTerm),
-      content: formatUtmValue(sanitizedContent)
+      source: formatResolvedUtmValue(utm.source, parsed.utmSource),
+      medium: formatResolvedUtmValue(utm.medium, parsed.utmMedium),
+      campaign: formatResolvedUtmValue(utm.campaign, parsed.utmCampaign),
+      term: formatResolvedUtmValue(sanitizedTerm, parsed.utmTerm),
+      content: formatResolvedUtmValue(sanitizedContent, parsed.utmContent)
     };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
@@ -206,4 +206,12 @@ export class RequestNormalizer {
 
     return missingFields.filter((field) => !resolved.has(field));
   }
+}
+
+function formatResolvedUtmValue(resolvedValue, explicitValue) {
+  if (explicitValue !== undefined && explicitValue !== null && String(explicitValue).trim() !== "") {
+    return String(resolvedValue ?? "").trim();
+  }
+
+  return formatUtmValue(resolvedValue);
 }

@@ -302,10 +302,6 @@ export class RulesService {
       return knownValues.get(fuzzyMatch) ?? trimmed;
     }
 
-    if (field === "campaign") {
-      return slug(this.normalizeCampaignLabel(trimmed, context.client) ?? trimmed);
-    }
-
     return trimmed;
   }
 

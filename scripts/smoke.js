@@ -290,6 +290,20 @@ try {
     })
   });
   const existingQueryPreview = await existingQueryPreviewResponse.json();
+  const preservedCasePreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "gas",
+      destination_url: "https://example.com/preserved-case",
+      utm_source: " MetaAd ",
+      utm_medium: " Social ",
+      utm_campaign: " Caregiver ",
+      utm_term: " MA ",
+      utm_content: " Springfield "
+    })
+  });
+  const preservedCasePreview = await preservedCasePreviewResponse.json();
   const createAttempt = await createWithConsistencyConfirmation({
       client: "gas",
       destination_url: "https://example.com/bitly-degradation-smoke",
@@ -595,6 +609,10 @@ try {
     || !builderHtml.includes("Meta Ad campaign name")
     || !builderHtml.includes('id="qr-project-picker"')
     || !builderHtml.includes('id="qr-project-search"')
+    || !builderHtml.includes("PrintFlyer")
+    || builderHtml.includes("CicRackCard")
+    || builderHtml.includes("formatUtmInput")
+    || builderHtml.includes('String(typedValue||"").trim().toLowerCase()')
     || missingQrProjectResponse.status !== 422
     || missingQrProject.error?.code !== "qr_project_required"
     || unauthenticatedQrProjects.status !== 401
@@ -646,11 +664,18 @@ try {
     || !unscopedMediums.items?.some((item) => item.normalized_value === "social")
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
-    || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"
-    || existingQueryPreview.preview?.resolved?.utm_medium !== "Social"
-    || existingQueryPreview.preview?.resolved?.utm_campaign !== "Website"
-    || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=Facebook")
+    || existingQueryPreview.preview?.resolved?.utm_source !== "facebook"
+    || existingQueryPreview.preview?.resolved?.utm_medium !== "social"
+    || existingQueryPreview.preview?.resolved?.utm_campaign !== "website"
+    || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=facebook")
     || existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1?utm_source=")
+    || preservedCasePreviewResponse.status !== 200
+    || preservedCasePreview.preview?.resolved?.utm_source !== "MetaAd"
+    || preservedCasePreview.preview?.resolved?.utm_medium !== "Social"
+    || preservedCasePreview.preview?.resolved?.utm_campaign !== "Caregiver"
+    || preservedCasePreview.preview?.resolved?.utm_term !== "MA"
+    || preservedCasePreview.preview?.resolved?.utm_content !== "Springfield"
+    || !preservedCasePreview.preview?.resolved?.final_long_url?.includes("utm_term=MA")
     || createResponse.status !== 200
     || createAttempt.firstResponse.status !== 409
     || createAttempt.firstBody.error?.code !== "consistency_confirmation_required"
@@ -667,13 +692,13 @@ try {
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo")
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "rare_combination")
     || compactEquivalentContext.duplicate_warnings?.length
-    || created.result?.utm_source !== "Facebook"
-    || created.result?.utm_medium !== "Social"
-    || created.result?.utm_campaign !== "Website"
-    || created.result?.utm_term !== "Jfclientspecificterm"
-    || created.result?.utm_content !== "Jfclientspecificcontent"
-    || !created.result?.tracked_url?.includes("utm_campaign=Website")
-    || created.result?.tracked_url?.includes("jfclientspecificterm")
+    || created.result?.utm_source !== "facebook"
+    || created.result?.utm_medium !== "social"
+    || created.result?.utm_campaign !== "website"
+    || created.result?.utm_term !== "jfclientspecificterm"
+    || created.result?.utm_content !== "jfclientspecificcontent"
+    || !created.result?.tracked_url?.includes("utm_campaign=website")
+    || !created.result?.tracked_url?.includes("jfclientspecificterm")
     || created.result?.status !== "completed_without_short_link"
     || created.result?.degradation_reason !== "bitly_not_configured"
     || !created.result?.tracked_url
