@@ -400,8 +400,9 @@ export class UtmIntelligenceService {
     const dictionaryClients = Object.keys(this.staticData.uiDictionaries?.clients ?? {});
     const fallbackClients = [...new Set(this.staticData.masterRows.map((row) => row.client).filter(Boolean))];
     return (dictionaryClients.length ? dictionaryClients : fallbackClients)
-      .map(normalizeOptional)
+      .map((client) => this.rulesService.normalizeClient(client, null) || normalizeOptional(client))
       .filter((client) => client && configured.has(client))
+      .filter((client, index, clients) => clients.indexOf(client) === index)
       .sort();
   }
 

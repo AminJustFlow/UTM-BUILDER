@@ -284,7 +284,7 @@ try {
   const landingPageSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=gas&query=LandingPage")).json();
   const sourceScopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about&source=constantcontact")).json();
   const unscopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about")).json();
-  const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys")).json();
+  const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
@@ -337,7 +337,7 @@ try {
   const clientNewResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "studleys", destination_url: "https://example.com/client-new-combination",
+      client: "jf", destination_url: "https://example.com/client-new-combination",
       utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
       utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
     })
@@ -345,7 +345,7 @@ try {
   const clientNew = await clientNewResponse.json();
   const unapprovedPreviewResponse = await af("/new/preview.json", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ client: "studleys", destination_url: "https://studleys.com/", utm_source: "facebook", utm_medium: "social", utm_campaign: "website" })
+    body: JSON.stringify({ client: "jf", destination_url: "https://justflownh.com/", utm_source: "facebook", utm_medium: "social", utm_campaign: "website" })
   });
   const unapprovedPreview = await unapprovedPreviewResponse.json();
   const typoContext = await (await af("/new/utm-intelligence/context.json?client=gas&campaign=websit&source=facebook&medium=social")).json();
@@ -615,7 +615,7 @@ try {
     || builderHtml.indexOf('id="campaign-standards"') > builderHtml.indexOf("<h3>Consistency warnings</h3>")
     || builderHtml.indexOf("<h3>Consistency warnings</h3>") > builderHtml.indexOf('id="campaign-label"')
     || !builderHtml.includes('<option value="gas"')
-    || builderHtml.includes('<option value="studleys"')
+    || !builderHtml.includes('<option value="studleys"')
     || !builderHtml.includes("Meta Ad campaign name")
     || !builderHtml.includes('id="qr-project-picker"')
     || !builderHtml.includes('id="qr-project-search"')

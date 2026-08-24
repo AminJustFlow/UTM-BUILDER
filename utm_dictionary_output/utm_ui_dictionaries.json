@@ -2,12 +2,37 @@
   "value_counts": {
     "campaign": [
       {
+        "value": "floral",
+        "count": 360,
+        "unique_clients": 1
+      },
+      {
+        "value": "houseplants",
+        "count": 240,
+        "unique_clients": 1
+      },
+      {
         "value": "about",
-        "count": 60,
+        "count": 170,
+        "unique_clients": 2
+      },
+      {
+        "value": "homepage",
+        "count": 40,
+        "unique_clients": 2
+      },
+      {
+        "value": "landscaping",
+        "count": 40,
         "unique_clients": 1
       },
       {
         "value": "services",
+        "count": 40,
+        "unique_clients": 1
+      },
+      {
+        "value": "wedding",
         "count": 40,
         "unique_clients": 1
       },
@@ -17,65 +42,70 @@
         "unique_clients": 1
       },
       {
-        "value": "homepage",
+        "value": "contact",
         "count": 20,
+        "unique_clients": 2
+      },
+      {
+        "value": "gardencenter",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "myaccount",
+        "count": 15,
         "unique_clients": 1
       },
       {
         "value": "shop",
         "count": 15,
         "unique_clients": 1
-      },
-      {
-        "value": "contact",
-        "count": 10,
-        "unique_clients": 1
       }
     ],
     "source": [
       {
         "value": "constantcontact",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       },
       {
         "value": "facebook",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       },
       {
         "value": "gmb",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       },
       {
         "value": "instagram",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       },
       {
         "value": "linkedin",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "medium": [
       {
         "value": "social",
-        "count": 136,
-        "unique_clients": 1
+        "count": 820,
+        "unique_clients": 2
       },
       {
         "value": "email",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "term": [
       {
         "value": "landingpage",
-        "count": 85,
-        "unique_clients": 1
+        "count": 250,
+        "unique_clients": 2
       },
       {
         "value": "caregiver",
@@ -83,7 +113,87 @@
         "unique_clients": 1
       },
       {
+        "value": "airpurifying",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "allflowers",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "allhouseplants",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "birthday",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "blooming",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "bonsai",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "collections",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "diywedding",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "faq",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "faqs",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "freshwrappedbouquets",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardencentergifts",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "getwellsoon",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "giftcards",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "guarantee",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "irrigationservices",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "justbecause",
         "count": 20,
         "unique_clients": 1
       },
@@ -93,26 +203,131 @@
         "unique_clients": 1
       },
       {
+        "value": "loveromance",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "memorialservice",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "newbaby",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "peperomia",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "plantgifts",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "refundsreturns",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "roses",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "scentedgeranium",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "stafffavorites",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "succulent",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "sympathy",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "team",
         "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "terrarium",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "trailing",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddingalacarte",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "windowsill",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "zodiac",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "donations",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "signupenews",
+        "count": 15,
         "unique_clients": 1
       }
     ],
     "content": [
       {
         "value": "explore",
-        "count": 40,
-        "unique_clients": 1
+        "count": 240,
+        "unique_clients": 2
       },
       {
         "value": "learn",
-        "count": 35,
-        "unique_clients": 1
+        "count": 235,
+        "unique_clients": 2
+      },
+      {
+        "value": "shop",
+        "count": 160,
+        "unique_clients": 2
       },
       {
         "value": "read",
-        "count": 35,
-        "unique_clients": 1
+        "count": 80,
+        "unique_clients": 2
+      },
+      {
+        "value": "contact",
+        "count": 15,
+        "unique_clients": 2
       },
       {
         "value": "apply",
@@ -120,12 +335,27 @@
         "unique_clients": 1
       },
       {
-        "value": "contact",
+        "value": "register",
         "count": 5,
         "unique_clients": 1
       },
       {
-        "value": "shop",
+        "value": "request",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "signin",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "signup",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "subscribe",
         "count": 5,
         "unique_clients": 1
       }
@@ -135,28 +365,28 @@
     "about": [
       {
         "value": "constantcontact",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       },
       {
         "value": "facebook",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       },
       {
         "value": "gmb",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       },
       {
         "value": "instagram",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       },
       {
         "value": "linkedin",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       }
     ],
     "careers": [
@@ -189,31 +419,58 @@
     "contact": [
       {
         "value": "constantcontact",
-        "count": 2,
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "instagram",
+        "count": 4,
+        "unique_clients": 2
+      },
+      {
+        "value": "linkedin",
+        "count": 4,
+        "unique_clients": 2
+      }
+    ],
+    "floral": [
+      {
+        "value": "constantcontact",
+        "count": 72,
         "unique_clients": 1
       },
       {
         "value": "facebook",
-        "count": 2,
+        "count": 72,
         "unique_clients": 1
       },
       {
         "value": "gmb",
-        "count": 2,
+        "count": 72,
         "unique_clients": 1
       },
       {
         "value": "instagram",
-        "count": 2,
+        "count": 72,
         "unique_clients": 1
       },
       {
         "value": "linkedin",
-        "count": 2,
+        "count": 72,
         "unique_clients": 1
       }
     ],
-    "homepage": [
+    "gardencenter": [
       {
         "value": "constantcontact",
         "count": 4,
@@ -237,6 +494,114 @@
       {
         "value": "linkedin",
         "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "homepage": [
+      {
+        "value": "constantcontact",
+        "count": 8,
+        "unique_clients": 2
+      },
+      {
+        "value": "facebook",
+        "count": 8,
+        "unique_clients": 2
+      },
+      {
+        "value": "gmb",
+        "count": 8,
+        "unique_clients": 2
+      },
+      {
+        "value": "instagram",
+        "count": 8,
+        "unique_clients": 2
+      },
+      {
+        "value": "linkedin",
+        "count": 8,
+        "unique_clients": 2
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "constantcontact",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 48,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "constantcontact",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "myaccount": [
+      {
+        "value": "constantcontact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 3,
         "unique_clients": 1
       }
     ],
@@ -293,19 +658,46 @@
         "count": 3,
         "unique_clients": 1
       }
+    ],
+    "wedding": [
+      {
+        "value": "constantcontact",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 8,
+        "unique_clients": 1
+      }
     ]
   },
   "campaign_to_mediums": {
     "about": [
       {
         "value": "social",
-        "count": 48,
-        "unique_clients": 1
+        "count": 136,
+        "unique_clients": 2
       },
       {
         "value": "email",
-        "count": 12,
-        "unique_clients": 1
+        "count": 34,
+        "unique_clients": 2
       }
     ],
     "careers": [
@@ -323,16 +715,28 @@
     "contact": [
       {
         "value": "social",
-        "count": 8,
+        "count": 16,
+        "unique_clients": 2
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 2
+      }
+    ],
+    "floral": [
+      {
+        "value": "social",
+        "count": 288,
         "unique_clients": 1
       },
       {
         "value": "email",
-        "count": 2,
+        "count": 72,
         "unique_clients": 1
       }
     ],
-    "homepage": [
+    "gardencenter": [
       {
         "value": "social",
         "count": 16,
@@ -341,6 +745,54 @@
       {
         "value": "email",
         "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "homepage": [
+      {
+        "value": "social",
+        "count": 32,
+        "unique_clients": 2
+      },
+      {
+        "value": "email",
+        "count": 8,
+        "unique_clients": 2
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "social",
+        "count": 192,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 48,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "social",
+        "count": 32,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "myaccount": [
+      {
+        "value": "social",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 3,
         "unique_clients": 1
       }
     ],
@@ -367,42 +819,54 @@
         "count": 3,
         "unique_clients": 1
       }
+    ],
+    "wedding": [
+      {
+        "value": "social",
+        "count": 32,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 8,
+        "unique_clients": 1
+      }
     ]
   },
   "source_to_mediums": {
     "constantcontact": [
       {
         "value": "email",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "facebook": [
       {
         "value": "social",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "instagram": [
       {
         "value": "social",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 34,
-        "unique_clients": 1
+        "count": 205,
+        "unique_clients": 2
       }
     ]
   },
@@ -410,6 +874,16 @@
     "about": [
       {
         "value": "landingpage",
+        "count": 40,
+        "unique_clients": 2
+      },
+      {
+        "value": "faq",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "guarantee",
         "count": 20,
         "unique_clients": 1
       },
@@ -419,8 +893,23 @@
         "unique_clients": 1
       },
       {
+        "value": "refundsreturns",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "team",
         "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "donations",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "signupenews",
+        "count": 15,
         "unique_clients": 1
       }
     ],
@@ -434,14 +923,194 @@
     "contact": [
       {
         "value": "landingpage",
-        "count": 10,
+        "count": 20,
+        "unique_clients": 2
+      }
+    ],
+    "floral": [
+      {
+        "value": "allflowers",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "birthday",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "freshwrappedbouquets",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "gardencentergifts",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "getwellsoon",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "giftcards",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "justbecause",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "loveromance",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "memorialservice",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "newbaby",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "plantgifts",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "roses",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "stafffavorites",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "summer",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "sympathy",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddingalacarte",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "zodiac",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "gardencenter": [
+      {
+        "value": "landingpage",
+        "count": 20,
         "unique_clients": 1
       }
     ],
     "homepage": [
       {
         "value": "landingpage",
+        "count": 40,
+        "unique_clients": 2
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "airpurifying",
         "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "allhouseplants",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "blooming",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "bonsai",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "collections",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "peperomia",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "scentedgeranium",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "succulent",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "terrarium",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "trailing",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "windowsill",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "irrigationservices",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "myaccount": [
+      {
+        "value": "landingpage",
+        "count": 15,
         "unique_clients": 1
       }
     ],
@@ -463,23 +1132,55 @@
         "count": 15,
         "unique_clients": 1
       }
+    ],
+    "wedding": [
+      {
+        "value": "diywedding",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
     ]
   },
   "campaign_to_contents": {
     "about": [
       {
         "value": "explore",
-        "count": 15,
-        "unique_clients": 1
+        "count": 35,
+        "unique_clients": 2
       },
       {
         "value": "learn",
-        "count": 15,
-        "unique_clients": 1
+        "count": 35,
+        "unique_clients": 2
       },
       {
         "value": "read",
-        "count": 15,
+        "count": 35,
+        "unique_clients": 2
+      },
+      {
+        "value": "contact",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "request",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "signup",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "subscribe",
+        "count": 5,
         "unique_clients": 1
       }
     ],
@@ -508,11 +1209,28 @@
     "contact": [
       {
         "value": "contact",
-        "count": 5,
+        "count": 10,
+        "unique_clients": 2
+      }
+    ],
+    "floral": [
+      {
+        "value": "explore",
+        "count": 90,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 90,
+        "unique_clients": 1
+      },
+      {
+        "value": "shop",
+        "count": 90,
         "unique_clients": 1
       }
     ],
-    "homepage": [
+    "gardencenter": [
       {
         "value": "explore",
         "count": 5,
@@ -525,6 +1243,74 @@
       },
       {
         "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "homepage": [
+      {
+        "value": "explore",
+        "count": 10,
+        "unique_clients": 2
+      },
+      {
+        "value": "learn",
+        "count": 10,
+        "unique_clients": 2
+      },
+      {
+        "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "shop",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "houseplants": [
+      {
+        "value": "explore",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
+        "value": "shop",
+        "count": 60,
+        "unique_clients": 1
+      }
+    ],
+    "landscaping": [
+      {
+        "value": "explore",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "myaccount": [
+      {
+        "value": "register",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "signin",
         "count": 5,
         "unique_clients": 1
       }
@@ -555,6 +1341,23 @@
       {
         "value": "shop",
         "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "wedding": [
+      {
+        "value": "explore",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 10,
         "unique_clients": 1
       }
     ]
@@ -1117,6 +1920,1122 @@
           {
             "value": "shop",
             "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      }
+    },
+    "sfg": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "floral",
+            "count": 360,
+            "unique_clients": 1
+          },
+          {
+            "value": "houseplants",
+            "count": 240,
+            "unique_clients": 1
+          },
+          {
+            "value": "about",
+            "count": 110,
+            "unique_clients": 1
+          },
+          {
+            "value": "landscaping",
+            "count": 40,
+            "unique_clients": 1
+          },
+          {
+            "value": "wedding",
+            "count": 40,
+            "unique_clients": 1
+          },
+          {
+            "value": "gardencenter",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "homepage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "myaccount",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 171,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 171,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 171,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 171,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "social",
+            "count": 684,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "landingpage",
+            "count": 165,
+            "unique_clients": 1
+          },
+          {
+            "value": "airpurifying",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "allflowers",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "allhouseplants",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "birthday",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "blooming",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "bonsai",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "collections",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "diywedding",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "faq",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "freshwrappedbouquets",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "gardencentergifts",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "getwellsoon",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "giftcards",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "guarantee",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "irrigationservices",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "justbecause",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "loveromance",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "memorialservice",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "newbaby",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "peperomia",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "plantgifts",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "refundsreturns",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "roses",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "scentedgeranium",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "stafffavorites",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "succulent",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "summer",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "sympathy",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "terrarium",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "trailing",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "weddingalacarte",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "windowsill",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "zodiac",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "donations",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "signupenews",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "explore",
+            "count": 200,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 200,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 155,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 45,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "register",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "request",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "signin",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "signup",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "subscribe",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "about": [
+          {
+            "value": "constantcontact",
+            "count": 22,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 22,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 22,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 22,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 22,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "constantcontact",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 2,
+            "unique_clients": 1
+          }
+        ],
+        "floral": [
+          {
+            "value": "constantcontact",
+            "count": 72,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 72,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 72,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 72,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 72,
+            "unique_clients": 1
+          }
+        ],
+        "gardencenter": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "houseplants": [
+          {
+            "value": "constantcontact",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 48,
+            "unique_clients": 1
+          }
+        ],
+        "landscaping": [
+          {
+            "value": "constantcontact",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "myaccount": [
+          {
+            "value": "constantcontact",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "wedding": [
+          {
+            "value": "constantcontact",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "about": [
+          {
+            "value": "social",
+            "count": 88,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 22,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "social",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 2,
+            "unique_clients": 1
+          }
+        ],
+        "floral": [
+          {
+            "value": "social",
+            "count": 288,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 72,
+            "unique_clients": 1
+          }
+        ],
+        "gardencenter": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "houseplants": [
+          {
+            "value": "social",
+            "count": 192,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 48,
+            "unique_clients": 1
+          }
+        ],
+        "landscaping": [
+          {
+            "value": "social",
+            "count": 32,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "myaccount": [
+          {
+            "value": "social",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "wedding": [
+          {
+            "value": "social",
+            "count": 32,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "gmb": [
+          {
+            "value": "social",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 171,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "about": [
+          {
+            "value": "faq",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "guarantee",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "refundsreturns",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "donations",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "signupenews",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "landingpage",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "floral": [
+          {
+            "value": "allflowers",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "birthday",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "freshwrappedbouquets",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "gardencentergifts",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "getwellsoon",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "giftcards",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "justbecause",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "loveromance",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "memorialservice",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "newbaby",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "plantgifts",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "roses",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "stafffavorites",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "summer",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "sympathy",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "weddingalacarte",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "zodiac",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "gardencenter": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "houseplants": [
+          {
+            "value": "airpurifying",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "allhouseplants",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "blooming",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "bonsai",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "collections",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "peperomia",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "scentedgeranium",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "succulent",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "terrarium",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "trailing",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "windowsill",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "landscaping": [
+          {
+            "value": "irrigationservices",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "myaccount": [
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "wedding": [
+          {
+            "value": "diywedding",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "about": [
+          {
+            "value": "explore",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "request",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "signup",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "subscribe",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "floral": [
+          {
+            "value": "explore",
+            "count": 90,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 90,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 90,
+            "unique_clients": 1
+          }
+        ],
+        "gardencenter": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "houseplants": [
+          {
+            "value": "explore",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "shop",
+            "count": 60,
+            "unique_clients": 1
+          }
+        ],
+        "landscaping": [
+          {
+            "value": "explore",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "myaccount": [
+          {
+            "value": "register",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "signin",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "wedding": [
+          {
+            "value": "explore",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 10,
             "unique_clients": 1
           }
         ]
