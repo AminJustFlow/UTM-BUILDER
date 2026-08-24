@@ -492,6 +492,27 @@ try {
   const overlayRestoreResponse = await af("/utms/restore", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
   });
+  const clientsPage = await af("/clients");
+  const clientsHtml = await clientsPage.text();
+  const renameClientResponse = await af("/clients/rename", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "studleys", display_name: "Studleys Smoke Name" }).toString()
+  });
+  const builderAfterClientRename = await (await af("/new")).text();
+  const restoreClientNameResponse = await af("/clients/rename", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "studleys", display_name: "Studleys" }).toString()
+  });
+  const rejectedPurgeResponse = await af("/clients/purge", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "studleys", confirmation: "wrong" }).toString()
+  });
+  const purgeClientResponse = await af("/clients/purge", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "studleys", confirmation: "PURGE studleys" }).toString()
+  });
+  const builderAfterClientPurge = await (await af("/new")).text();
+  const suggestionsAfterClientPurge = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=studleys")).json();
   const overlayKnownAfterRestore = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=adminoverlaycampaign")).json();
   const archiveBeforeRecreateResponse = await af("/utms/archive", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: overlayRequestId })
@@ -758,6 +779,15 @@ try {
     || archivedLibraryHtml.includes("Consistency Warnings To Review")
     || overlayRestoreResponse.status !== 200
     || !overlayKnownAfterRestore.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
+    || clientsPage.status !== 200
+    || !clientsHtml.includes("Permanently purge client")
+    || renameClientResponse.status !== 302
+    || !builderAfterClientRename.includes("STUDLEYS SMOKE NAME")
+    || restoreClientNameResponse.status !== 302
+    || rejectedPurgeResponse.status !== 302
+    || purgeClientResponse.status !== 302
+    || builderAfterClientPurge.includes('<option value="studleys"')
+    || suggestionsAfterClientPurge.items?.length
     || regularLogin.status !== 302
     || regularAttempt.response.status !== 200
     || regularSuggestions.items?.length

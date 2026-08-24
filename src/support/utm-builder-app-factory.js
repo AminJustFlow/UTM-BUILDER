@@ -25,6 +25,7 @@ import { UserRepository } from "../repositories/user-repository.js";
 import { UtmValueAcknowledgementRepository } from "../repositories/utm-value-acknowledgement-repository.js";
 import { ConsistencyNotificationSettingsRepository } from "../repositories/consistency-notification-settings-repository.js";
 import { ClientCampaignStandardsRepository } from "../repositories/client-campaign-standards-repository.js";
+import { ClientManagementRepository } from "../repositories/client-management-repository.js";
 import { AppSessionAuthService } from "../services/app-session-auth-service.js";
 import { SetupConsoleAuthService } from "../services/setup-console-auth-service.js";
 import { UserAccountService } from "../services/user-account-service.js";
@@ -42,6 +43,8 @@ import { UtmCsvImportService } from "../services/utm-csv-import-service.js";
 import { SmtpMailer } from "../services/smtp-mailer.js";
 import { ConsistencyNotificationService, ConsistencyNotificationScheduler } from "../services/consistency-notification-service.js";
 import { ClientCampaignStandardsService } from "../services/client-campaign-standards-service.js";
+import { ClientManagementService } from "../services/client-management-service.js";
+import { ClientManagementController } from "../controllers/client-management-controller.js";
 
 export async function createUtmBuilderApplication(projectRoot) {
   if (process.env.UTM_BUILDER_SKIP_ENV_FILE !== "1") {
@@ -72,6 +75,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   const utmValueAcknowledgementRepository = new UtmValueAcknowledgementRepository(database);
   const notificationSettingsRepository = new ConsistencyNotificationSettingsRepository(database);
   const campaignStandardsRepository = new ClientCampaignStandardsRepository(database);
+  const clientManagementRepository = new ClientManagementRepository(database);
   const userRepository = new UserRepository(database);
   const userAccountService = new UserAccountService({ userRepository });
   const rulesService = new RulesService(rules);
@@ -100,6 +104,13 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository,
     requestRepository
   });
+  const clientManagementService = new ClientManagementService({
+    repository: clientManagementRepository,
+    rulesService,
+    utmIntelligenceService,
+    qrStoragePath: config.qr.storagePath
+  });
+  await clientManagementService.initialize();
   const utmLibraryEditorService = new UtmLibraryEditorService({
     requestRepository,
     requestNormalizer,
@@ -174,6 +185,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     rulesService,
     standalone: true
   });
+  const clientManagementController = new ClientManagementController({ service: clientManagementService });
   const accountController = new AccountController({ userAccountService });
 
   const totalUsers = await userRepository.countAll();
@@ -245,6 +257,9 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/users/reset-password", requireAdmin((request) => userAdminController.handleResetPassword(request)));
   router.add("POST", "/users/delete", requireAdmin((request) => userAdminController.handleDelete(request)));
   router.add("POST", "/users/notification-settings", requireAdmin((request) => userAdminController.handleNotificationSettings(request)));
+  router.add("GET", "/clients", requireAdmin((request) => clientManagementController.handleHtml(request)));
+  router.add("POST", "/clients/rename", requireAdmin((request) => clientManagementController.handleRename(request)));
+  router.add("POST", "/clients/purge", requireAdmin((request) => clientManagementController.handlePurge(request)));
   router.add("GET", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleHtml(request)));
   router.add("POST", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleCreate(request)));
   router.add("POST", "/standards/settings", requireAdmin((request) => campaignStandardsAdminController.handleSettings(request)));

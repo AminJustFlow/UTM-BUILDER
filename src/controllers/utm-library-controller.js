@@ -66,6 +66,7 @@ export class UtmLibraryController {
       ?? this.utmLibraryService.listCached?.(request.query)
       ?? this.utmLibraryService.listAsync?.(request.query)
       ?? this.utmLibraryService.list(request.query));
+    this.applyClientDisplayNames(library);
     const acknowledgedSet = await this.loadAcknowledgedSet();
     const view = {
       library,
@@ -85,10 +86,10 @@ export class UtmLibraryController {
 
   async handleJson(request) {
     await this.utmIntelligenceService?.refreshDataAsync?.();
-    return NodeResponse.json(
-      await (this.utmLibraryService.listAsync?.(request.query)
-        ?? this.utmLibraryService.list(request.query))
-    );
+    const library = await (this.utmLibraryService.listAsync?.(request.query)
+      ?? this.utmLibraryService.list(request.query));
+    this.applyClientDisplayNames(library);
+    return NodeResponse.json(library);
   }
 
   async handleCsv(request) {
@@ -101,6 +102,7 @@ export class UtmLibraryController {
       page: 1,
       per_page: 10000
     }));
+    this.applyClientDisplayNames(library);
 
     return NodeResponse.text(renderCsv(library.items), 200, {
       "Content-Type": "text/csv; charset=utf-8",
@@ -123,6 +125,12 @@ export class UtmLibraryController {
       at_label: formatDate(row.created_at)
     }));
     return NodeResponse.json({ status: "ok", events });
+  }
+
+  applyClientDisplayNames(library) {
+    for (const item of library?.items ?? []) {
+      if (item.client) item.clientDisplayName = this.rulesService.getClientDisplayName(item.client);
+    }
   }
 
   async loadAcknowledgedSet() {

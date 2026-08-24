@@ -16,6 +16,17 @@ export class UtmIntelligenceService {
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
     this.runtimeRows = [];
+    this.purgedClients = new Set();
+    this.data = this.mergeRuntimeData(this.runtimeRows);
+  }
+
+  setPurgedClients(clients = []) {
+    this.purgedClients = new Set(clients.map(normalizeOptional).filter(Boolean));
+    this.data = this.mergeRuntimeData(this.runtimeRows);
+  }
+
+  addPurgedClient(client) {
+    this.purgedClients.add(normalizeOptional(client));
     this.data = this.mergeRuntimeData(this.runtimeRows);
   }
 
@@ -401,7 +412,7 @@ export class UtmIntelligenceService {
     const fallbackClients = [...new Set(this.staticData.masterRows.map((row) => row.client).filter(Boolean))];
     return (dictionaryClients.length ? dictionaryClients : fallbackClients)
       .map((client) => this.rulesService.normalizeClient(client, null) || normalizeOptional(client))
-      .filter((client) => client && configured.has(client))
+      .filter((client) => client && configured.has(client) && !this.purgedClients.has(client))
       .filter((client, index, clients) => clients.indexOf(client) === index)
       .sort();
   }
@@ -498,9 +509,11 @@ export class UtmIntelligenceService {
   }
 
   mergeRuntimeData(runtimeRows = this.runtimeRows) {
-    const masterRows = [...this.staticData.masterRows, ...runtimeRows];
+    const staticRows = this.staticData.masterRows.filter((row) => !this.purgedClients.has(row.client));
+    const activeRuntimeRows = runtimeRows.filter((row) => !this.purgedClients.has(row.client));
+    const masterRows = [...staticRows, ...activeRuntimeRows];
     const valueCounts = buildValueCounts(masterRows);
-    const approvedRows = [...this.staticData.masterRows, ...runtimeRows.filter((row) => row.dictionaryApproved)];
+    const approvedRows = [...staticRows, ...activeRuntimeRows.filter((row) => row.dictionaryApproved)];
     const approvedValueCounts = buildValueCounts(approvedRows);
     return {
       ...this.staticData,

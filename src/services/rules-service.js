@@ -5,6 +5,7 @@ const STATIC_CHANNEL_KEYS = ["facebook", "instagram", "linkedin", "email", "pr",
 export class RulesService {
   constructor(rules) {
     this.rules = rules;
+    this.clientDisplayNames = new Map();
     this.sourceChannels = buildSourceChannelMap(rules);
     this.campaignVocabulary = buildCampaignVocabulary(rules);
     this.utmValueMaps = buildUtmValueMaps(rules, this.sourceChannels);
@@ -106,8 +107,11 @@ export class RulesService {
   }
 
   getClientDisplayName(client) {
-    return this.rules.clients?.[client]?.displayName ?? title(client);
+    return this.clientDisplayNames.get(client) ?? this.rules.clients?.[client]?.displayName ?? title(client);
   }
+
+  setClientDisplayName(client, displayName) { this.clientDisplayNames.set(String(client), String(displayName)); }
+  setClientDisplayNames(values = {}) { for (const [key, value] of Object.entries(values)) this.setClientDisplayName(key, value); }
 
   getClientGuidance(client) {
     const guidance = this.rules.clients?.[client]?.guidance;
