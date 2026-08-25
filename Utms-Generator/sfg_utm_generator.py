@@ -107,6 +107,7 @@ DESTINATION_RULES: tuple[DestinationRule, ...] = (
     rule("All Houseplants", "/product-category/houseplants/", "Houseplants", "AllHouseplants", SHOP_CONTENTS),
     rule("Collections", "/product-category/houseplants/collections/", "Houseplants", "Collections", SHOP_CONTENTS),
     rule("Peperomia", "/product-category/houseplants/peperomia/", "Houseplants", "Peperomia", SHOP_CONTENTS),
+    rule("Patio", "/product-category/houseplants/patio/", "Houseplants", "Patio", SHOP_CONTENTS),
     rule("Scented Geranium", "/product-category/houseplants/scented-geranium/", "Houseplants", "ScentedGeranium", SHOP_CONTENTS),
     rule("Succulent", "/product-category/houseplants/succulent/", "Houseplants", "Succulent", SHOP_CONTENTS),
     rule("Terrarium", "/product-category/houseplants/terrarium/", "Houseplants", "Terrarium", SHOP_CONTENTS),

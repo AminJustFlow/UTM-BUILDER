@@ -8,7 +8,7 @@
       },
       {
         "value": "houseplants",
-        "count": 240,
+        "count": 260,
         "unique_clients": 1
       },
       {
@@ -65,39 +65,39 @@
     "source": [
       {
         "value": "constantcontact",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       },
       {
         "value": "facebook",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       },
       {
         "value": "gmb",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       },
       {
         "value": "instagram",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       },
       {
         "value": "linkedin",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
     "medium": [
       {
         "value": "social",
-        "count": 820,
+        "count": 836,
         "unique_clients": 2
       },
       {
         "value": "email",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
@@ -218,6 +218,11 @@
         "unique_clients": 1
       },
       {
+        "value": "patio",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "peperomia",
         "count": 20,
         "unique_clients": 1
@@ -306,17 +311,17 @@
     "content": [
       {
         "value": "explore",
-        "count": 240,
+        "count": 245,
         "unique_clients": 2
       },
       {
         "value": "learn",
-        "count": 235,
+        "count": 240,
         "unique_clients": 2
       },
       {
         "value": "shop",
-        "count": 160,
+        "count": 165,
         "unique_clients": 2
       },
       {
@@ -527,27 +532,27 @@
     "houseplants": [
       {
         "value": "constantcontact",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       },
       {
         "value": "facebook",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       },
       {
         "value": "gmb",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       },
       {
         "value": "instagram",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       },
       {
         "value": "linkedin",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       }
     ],
@@ -763,12 +768,12 @@
     "houseplants": [
       {
         "value": "social",
-        "count": 192,
+        "count": 208,
         "unique_clients": 1
       },
       {
         "value": "email",
-        "count": 48,
+        "count": 52,
         "unique_clients": 1
       }
     ],
@@ -837,35 +842,35 @@
     "constantcontact": [
       {
         "value": "email",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
     "facebook": [
       {
         "value": "social",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
     "instagram": [
       {
         "value": "social",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 205,
+        "count": 209,
         "unique_clients": 2
       }
     ]
@@ -1061,6 +1066,11 @@
       },
       {
         "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "patio",
         "count": 20,
         "unique_clients": 1
       },
@@ -1272,17 +1282,17 @@
     "houseplants": [
       {
         "value": "explore",
-        "count": 60,
+        "count": 65,
         "unique_clients": 1
       },
       {
         "value": "learn",
-        "count": 60,
+        "count": 65,
         "unique_clients": 1
       },
       {
         "value": "shop",
-        "count": 60,
+        "count": 65,
         "unique_clients": 1
       }
     ],
@@ -1935,7 +1945,7 @@
           },
           {
             "value": "houseplants",
-            "count": 240,
+            "count": 260,
             "unique_clients": 1
           },
           {
@@ -1977,39 +1987,39 @@
         "source": [
           {
             "value": "constantcontact",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           },
           {
             "value": "facebook",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           },
           {
             "value": "gmb",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           },
           {
             "value": "instagram",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           },
           {
             "value": "linkedin",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
         "medium": [
           {
             "value": "social",
-            "count": 684,
+            "count": 700,
             "unique_clients": 1
           },
           {
             "value": "email",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
@@ -2115,6 +2125,11 @@
             "unique_clients": 1
           },
           {
+            "value": "patio",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
             "value": "peperomia",
             "count": 20,
             "unique_clients": 1
@@ -2198,17 +2213,17 @@
         "content": [
           {
             "value": "explore",
-            "count": 200,
+            "count": 205,
             "unique_clients": 1
           },
           {
             "value": "learn",
-            "count": 200,
+            "count": 205,
             "unique_clients": 1
           },
           {
             "value": "shop",
-            "count": 155,
+            "count": 160,
             "unique_clients": 1
           },
           {
@@ -2387,27 +2402,27 @@
         "houseplants": [
           {
             "value": "constantcontact",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           },
           {
             "value": "facebook",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           },
           {
             "value": "gmb",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           },
           {
             "value": "instagram",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           },
           {
             "value": "linkedin",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           }
         ],
@@ -2557,12 +2572,12 @@
         "houseplants": [
           {
             "value": "social",
-            "count": 192,
+            "count": 208,
             "unique_clients": 1
           },
           {
             "value": "email",
-            "count": 48,
+            "count": 52,
             "unique_clients": 1
           }
         ],
@@ -2607,35 +2622,35 @@
         "constantcontact": [
           {
             "value": "email",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
         "facebook": [
           {
             "value": "social",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
         "gmb": [
           {
             "value": "social",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
         "instagram": [
           {
             "value": "social",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ],
         "linkedin": [
           {
             "value": "social",
-            "count": 171,
+            "count": 175,
             "unique_clients": 1
           }
         ]
@@ -2818,6 +2833,11 @@
             "unique_clients": 1
           },
           {
+            "value": "patio",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
             "value": "peperomia",
             "count": 20,
             "unique_clients": 1
@@ -2979,17 +2999,17 @@
         "houseplants": [
           {
             "value": "explore",
-            "count": 60,
+            "count": 65,
             "unique_clients": 1
           },
           {
             "value": "learn",
-            "count": 60,
+            "count": 65,
             "unique_clients": 1
           },
           {
             "value": "shop",
-            "count": 60,
+            "count": 65,
             "unique_clients": 1
           }
         ],
