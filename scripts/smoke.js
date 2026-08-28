@@ -173,6 +173,8 @@ try {
   const faviconAsset = await fetch(`${base}/assets/jf-drop.png`);
   const builderResponse = await af("/new");
   const builderHtml = await builderResponse.text();
+  const importPageResponse = await af("/imports");
+  const importPageHtml = await importPageResponse.text();
   const qrProjectsUnavailableResponse = await af("/new/qr-projects.json");
   const qrProjectsUnavailable = await qrProjectsUnavailableResponse.json();
   const missingQrProjectResponse = await af("/new", {
@@ -640,7 +642,18 @@ try {
     || !builderHtml.includes("Meta Ad campaign name")
     || !builderHtml.includes('id="qr-project-picker"')
     || !builderHtml.includes('id="qr-project-search"')
-    || !builderHtml.includes("PrintFlyer")
+    || !builderHtml.includes("Reporting campaign or category")
+    || !builderHtml.includes("Traffic source or platform")
+    || !builderHtml.includes("Marketing channel type")
+    || !builderHtml.includes("Optional page, audience, or category detail")
+    || !builderHtml.includes("Optional message, CTA, or creative detail")
+    || !builderHtml.includes("Campaign tracking details")
+    || !builderHtml.includes("No UTM values entered yet.")
+    || !builderHtml.includes("Channel is assigned automatically from Source and Medium.")
+    || builderHtml.includes("Advanced tracking settings")
+    || builderHtml.includes("manual tracking changes")
+    || builderHtml.includes("Change the platform")
+    || builderHtml.includes("â€”")
     || builderHtml.includes("CicRackCard")
     || builderHtml.includes("formatUtmInput")
     || builderHtml.includes('String(typedValue||"").trim().toLowerCase()')
@@ -661,7 +674,13 @@ try {
     || !gasStandardsBefore.includes("Campaign Standards")
     || !gasStandardsBefore.includes("Limited Campaign")
     || !gasStandardsBefore.includes("Meta Ad campaign name")
-    || !gasStandardsBefore.includes("Campaign Standards")
+    || !gasStandardsBefore.includes("Campaign value")
+    || !gasStandardsBefore.includes("Visible standard name")
+    || !gasStandardsBefore.includes("Aliases (comma-separated)")
+    || !gasStandardsBefore.includes("Sort order")
+    || importPageResponse.status !== 200
+    || !importPageHtml.includes("Upload an import-ready UTM CSV.")
+    || !importPageHtml.includes("destination URLs, tracked URLs, short URLs, and QR URLs")
     || createStandardResponse.status !== 302
     || standardId <= 0
     || !standardsAfterCreate.includes("Smoke Standard")
@@ -761,6 +780,8 @@ try {
     || !libraryBeforeAck.includes('class="grid library-results-grid"')
     || !libraryBeforeAck.includes('name="campaign" value="" placeholder="SpringSale"')
     || libraryBeforeAck.includes('placeholder="spring_sale"')
+    || !libraryBeforeAck.includes('placeholder="Optional term"')
+    || !libraryBeforeAck.includes('placeholder="Optional content"')
     || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(odd){background:var(--surface)}")
     || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(even){background:var(--surface-2)}")
     || libraryBeforeAck.includes("Last edited by")
@@ -783,6 +804,7 @@ try {
     || !overlayKnownAfterRestore.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
     || clientsPage.status !== 200
     || !clientsHtml.includes("Permanently purge client")
+    || !clientsHtml.includes("Renaming changes only the visible name. The internal key and existing UTM data stay unchanged.")
     || renameClientResponse.status !== 302
     || !builderAfterClientRename.includes("STUDLEYS SMOKE NAME")
     || restoreClientNameResponse.status !== 302

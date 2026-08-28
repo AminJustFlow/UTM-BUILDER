@@ -22,8 +22,8 @@ export class UtmImportController {
 function renderHtml(user) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${BRAND_HEAD_HTML}<title>Import UTM CSV</title><style>${renderJustFlowShellStyles()}</style></head>
   <body>${renderJustFlowThemeScript()}<div class="app">${renderJustFlowSidebar("imports", { standaloneUtm: true, user })}<main class="main">${renderJustFlowTopbar({ section: "UTM Builder", title: "Import CSV", showSearch: false })}<div class="page">
-    <div class="page-header"><div class="page-title-block"><h1>Import UTM library</h1><p class="subtitle">Upload a UTM Library CSV export. Existing matching links are skipped automatically.</p></div><div class="page-actions"><a class="btn" href="/utms">${renderIcon("link")} Link Library</a></div></div>
-    <section class="card"><div class="card-header"><div><h3>Select CSV file</h3><div class="meta">The importer preserves destination, tracked, short, and QR URLs.</div></div></div><div class="card-body">
+    <div class="page-header"><div class="page-title-block"><h1>Import UTM library</h1><p class="subtitle">Upload an import-ready UTM CSV. Existing matching links are skipped automatically.</p></div><div class="page-actions"><a class="btn" href="/utms">${renderIcon("link")} Link Library</a></div></div>
+    <section class="card"><div class="card-header"><div><h3>Select CSV file</h3><div class="meta">The importer preserves destination URLs, tracked URLs, short URLs, and QR URLs.</div></div></div><div class="card-body">
       <form id="import-form"><label class="field"><span>UTM library CSV</span><input id="csv-file" type="file" accept=".csv,text/csv" required></label><div style="display:flex;gap:10px;align-items:center;margin-top:16px"><button class="btn btn-primary" type="submit">Import CSV</button><span id="status" aria-live="polite"></span></div></form>
       <div id="result" style="margin-top:18px"></div>
     </div></section>

@@ -422,8 +422,8 @@ function renderHtml(view) {
                 <button class="button" type="submit">${renderIcon("search")} Show Links</button>
                 <a class="link-button" href="/utms${library.filters.view === "archived" ? "?view=archived" : ""}">Clear Filters</a>
                 <div class="advanced-fields">
-                  <div class="field"><label>Term</label><input type="search" name="term" value="${escapeHtml(library.filters.term)}" placeholder="Filter term"></div>
-                  <div class="field"><label>Content</label><input type="search" name="content" value="${escapeHtml(library.filters.content)}" placeholder="Filter content"></div>
+                  <div class="field"><label>Term</label><input type="search" name="term" value="${escapeHtml(library.filters.term)}" placeholder="Optional term"></div>
+                  <div class="field"><label>Content</label><input type="search" name="content" value="${escapeHtml(library.filters.content)}" placeholder="Optional content"></div>
                   <div class="field"><label>Status</label><select name="status">${renderOptions("All statuses", "all", library.available.statuses.filter((value) => value !== "all"), library.filters.status)}</select></div>
                   <div class="field"><label>Short link</label><select name="short_link">${renderToggleOptions(library.available.shortLinkStates, library.filters.shortLink)}</select></div>
                   <div class="field"><label>QR code</label><select name="qr">${renderToggleOptions(library.available.qrStates, library.filters.qr)}</select></div>

@@ -1329,11 +1329,11 @@ function title(value) {
 
 function describeField(field) {
   const descriptions = {
-    campaign: "Strategic bucket, such as Collateral.",
-    source: "Specific asset, such as PrintFlyer.",
-    medium: "Access method, such as QRCode.",
-    term: "Optional qualifier for intentional segmentation.",
-    content: "Optional creative or placement detail."
+    campaign: "Reporting campaign or category, such as Collateral.",
+    source: "Traffic source or platform, such as Facebook.",
+    medium: "Marketing channel type, such as Social.",
+    term: "Optional page, audience, or category detail.",
+    content: "Optional message, CTA, or creative detail."
   };
   return descriptions[field] ?? "";
 }

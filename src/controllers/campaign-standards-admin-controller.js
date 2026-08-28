@@ -152,10 +152,10 @@ function renderProfileForm(profile, action, buttonLabel) {
     ${profile.id ? `<input type="hidden" name="id" value="${profile.id}">` : ""}
     <input type="hidden" name="client_key" value="${escapeAttribute(profile.clientKey)}">
     ${field("Priority", "priority", profile.priority ?? 1, "number")}
-    ${field("Display order", "sort_order", profile.sortOrder ?? 0, "number")}
-    ${field("Campaign", "campaign", profile.campaign)}
-    ${field("Display name", "display_name", profile.displayName)}
-    <div class="field span-2"><label>Aliases</label><input name="aliases" value="${escapeAttribute((profile.aliases ?? []).join(", "))}" placeholder="News, Articles"></div>
+    ${field("Sort order", "sort_order", profile.sortOrder ?? 0, "number")}
+    ${field("Campaign value", "campaign", profile.campaign)}
+    ${field("Visible standard name", "display_name", profile.displayName)}
+    <div class="field span-2"><label>Aliases (comma-separated)</label><input name="aliases" value="${escapeAttribute((profile.aliases ?? []).join(", "))}" placeholder="News, Articles"></div>
     <div class="field"><label>Source</label><input name="source" value="${escapeAttribute(profile.source)}" placeholder="MetaAd"></div>
     <div class="field"><label>Medium</label><input name="medium" value="${escapeAttribute(profile.medium)}" placeholder="Social"></div>
     <div class="field full"><label>Campaign guideline</label><textarea name="guideline" required>${escapeHtml(profile.guideline)}</textarea></div>
