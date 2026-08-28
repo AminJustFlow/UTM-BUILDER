@@ -418,7 +418,7 @@ function renderHtml(view) {
                 <div class="field"><label>Client</label><select name="client">${renderOptions("All clients", "", library.available.clients, library.filters.client, formatClientOptionLabel)}</select></div>
                 <div class="field"><label>Source</label><select name="source">${renderTextOptions("All sources", "", library.available.sources, library.filters.source)}</select></div>
                 <div class="field"><label>Medium</label><select name="medium">${renderTextOptions("All mediums", "", library.available.mediums, library.filters.medium)}</select></div>
-                <div class="field"><label>Campaign name</label><input type="text" name="campaign" value="${escapeHtml(library.filters.campaign)}" placeholder="spring_sale"></div>
+                <div class="field"><label>Campaign name</label><input type="text" name="campaign" value="${escapeHtml(library.filters.campaign)}" placeholder="SpringSale"></div>
                 <button class="button" type="submit">${renderIcon("search")} Show Links</button>
                 <a class="link-button" href="/utms${library.filters.view === "archived" ? "?view=archived" : ""}">Clear Filters</a>
                 <div class="advanced-fields">
