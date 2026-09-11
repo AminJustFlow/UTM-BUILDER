@@ -1,14 +1,10 @@
 import { NodeResponse } from "../http/response.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
+import { formatUtmValue } from "../services/utm-value-format.js";
 import { parseFormBody } from "./auth-page.js";
 import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
 const GOVERNANCE_FIELDS = ["campaign", "source", "medium", "term", "content", "pair", "combination"];
-const LEGACY_GOVERNANCE_DISPLAY_VALUES = new Map([
-  ["gas|caregiver", "Caregiver"],
-  ["gas|follow", "Follow"],
-  ["gas|massachusetts", "Massachusetts"]
-]);
 
 function acknowledgementKey(field, value) {
   return `${String(field ?? "").trim().toLowerCase()}:${String(value ?? "").trim().toLowerCase()}`;
@@ -942,7 +938,7 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
 }
 
 function renderGovernanceChip(fieldKey, item, canManage) {
-  const displayValue = displayGovernanceValue(item.client, item.value);
+  const displayValue = displayGovernanceValue(item.client, item.value, item.type);
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
         <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
@@ -955,10 +951,9 @@ function renderGovernanceChip(fieldKey, item, canManage) {
   return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(displayValue)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
 }
 
-export function displayGovernanceValue(client, value) {
+export function displayGovernanceValue(client, value, warningType = "new_value") {
   const rawValue = String(value ?? "");
-  const key = `${String(client ?? "").trim().toLowerCase()}|${rawValue.trim().toLowerCase()}`;
-  return LEGACY_GOVERNANCE_DISPLAY_VALUES.get(key) ?? rawValue;
+  return warningType === "new_value" ? formatUtmValue(rawValue) : rawValue;
 }
 
 function renderResultCard(item, { highlightRequestId, archived = false, canManage = false }) {

@@ -87,10 +87,14 @@ if (
   displayGovernanceValue("gas", "caregiver") !== "Caregiver"
   || displayGovernanceValue("GAS", "follow") !== "Follow"
   || displayGovernanceValue("gas", "massachusetts") !== "Massachusetts"
-  || displayGovernanceValue("gas", "unrelatedvalue") !== "unrelatedvalue"
-  || displayGovernanceValue("studleys", "caregiver") !== "caregiver"
+  || displayGovernanceValue("gas", "inspiration") !== "Inspiration"
+  || displayGovernanceValue("gas", "utm") !== "UTM"
+  || displayGovernanceValue("gas", "linkedin") !== "LinkedIn"
+  || displayGovernanceValue("gas", "unrelatedvalue") !== "Unrelatedvalue"
+  || displayGovernanceValue("studleys", "caregiver") !== "Caregiver"
+  || displayGovernanceValue("gas", "campaign=inspiration|source=linkedin", "new_combination") !== "campaign=inspiration|source=linkedin"
 ) {
-  throw new Error("Legacy governance warning display smoke test failed.");
+  throw new Error("Governance warning display smoke test failed.");
 }
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
