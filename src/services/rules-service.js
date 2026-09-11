@@ -6,6 +6,7 @@ export class RulesService {
   constructor(rules) {
     this.rules = rules;
     this.clientDisplayNames = new Map();
+    this.runtimeCampaignStandards = null;
     this.sourceChannels = buildSourceChannelMap(rules);
     this.campaignVocabulary = buildCampaignVocabulary(rules);
     this.utmValueMaps = buildUtmValueMaps(rules, this.sourceChannels);
@@ -141,6 +142,36 @@ export class RulesService {
       fields: normalizeFields(guidance.fields),
       campaignProfiles
     };
+  }
+
+  setCampaignStandards(profiles = []) {
+    const grouped = new Map();
+    profiles.forEach((profile) => {
+      const client = String(profile.client_key ?? profile.clientKey ?? "").trim().toLowerCase();
+      const campaign = String(profile.campaign ?? "").trim();
+      if (!client || !campaign) return;
+      const aliases = Array.isArray(profile.aliases)
+        ? profile.aliases
+        : parseStringArray(profile.aliases_json);
+      const item = {
+        campaign,
+        displayName: String(profile.display_name ?? profile.displayName ?? campaign).trim() || campaign,
+        aliases,
+        source: String(profile.source ?? "").trim(),
+        medium: String(profile.medium ?? "").trim()
+      };
+      if (!grouped.has(client)) grouped.set(client, []);
+      grouped.get(client).push(item);
+    });
+    this.runtimeCampaignStandards = grouped;
+  }
+
+  getCampaignStandards(client) {
+    const key = String(client ?? "").trim().toLowerCase();
+    if (this.runtimeCampaignStandards !== null) {
+      return this.runtimeCampaignStandards.get(key) ?? [];
+    }
+    return this.getClientGuidance(key).campaignProfiles;
   }
 
   getChannelDisplayName(channel) {
@@ -284,6 +315,17 @@ export class RulesService {
     const trimmed = String(value).trim();
     if (trimmed === "") {
       return "";
+    }
+
+    if (field === "campaign" && context.client) {
+      const normalized = normalizeComparable(trimmed);
+      const standard = this.getCampaignStandards(context.client).find((profile) => {
+        return [profile.campaign, profile.displayName, ...(profile.aliases ?? [])]
+          .some((candidate) => normalizeComparable(candidate) === normalized);
+      });
+      if (standard) {
+        return standard.campaign;
+      }
     }
 
     if (this.usesDictionaryOnlyUtms(context.client)) {
@@ -657,6 +699,15 @@ export class RulesService {
         this.getSourceMedium(channel)?.source ?? ""
       ]
     })));
+  }
+}
+
+function parseStringArray(value) {
+  try {
+    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    return Array.isArray(parsed) ? parsed.map((item) => String(item ?? "").trim()).filter(Boolean) : [];
+  } catch {
+    return [];
   }
 }
 

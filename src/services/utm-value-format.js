@@ -2,6 +2,7 @@ const PRESERVED_WORDS = new Map([
   ["cpc", "CPC"],
   ["gmb", "GMB"],
   ["jf", "JF"],
+  ["ma", "MA"],
   ["nh", "NH"],
   ["pr", "PR"],
   ["qr", "QR"],

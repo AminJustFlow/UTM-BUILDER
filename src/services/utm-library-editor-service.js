@@ -324,6 +324,7 @@ export class UtmLibraryEditorService {
   }
 
   async submit(input = {}, context) {
+    await this.utmIntelligenceService?.refreshDataAsync?.();
     const parsed = ParsedLinkRequest.fromObject({
       client: normalizeOptional(input.client),
       channel: normalizeOptional(input.channel),

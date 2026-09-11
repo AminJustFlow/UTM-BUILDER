@@ -4,10 +4,11 @@ import { formatUtmValue } from "./utm-value-format.js";
 import { sanitizeOptionalUtmValue } from "./utm-value-sanitizer.js";
 
 export class RequestNormalizer {
-  constructor(rulesService, urlService, confidenceThreshold) {
+  constructor(rulesService, urlService, confidenceThreshold, utmIntelligenceService = null) {
     this.rulesService = rulesService;
     this.urlService = urlService;
     this.confidenceThreshold = confidenceThreshold;
+    this.utmIntelligenceService = utmIntelligenceService;
   }
 
   normalize(parsed) {
@@ -100,11 +101,11 @@ export class RequestNormalizer {
     }
     const finalWarnings = [...new Set(sanitizedWarnings)];
     const formattedUtm = {
-      source: formatResolvedUtmValue(utm.source, parsed.utmSource),
-      medium: formatResolvedUtmValue(utm.medium, parsed.utmMedium),
-      campaign: formatResolvedUtmValue(utm.campaign, parsed.utmCampaign),
-      term: formatResolvedUtmValue(sanitizedTerm, parsed.utmTerm),
-      content: formatResolvedUtmValue(sanitizedContent, parsed.utmContent)
+      source: this.formatResolvedUtmValue("source", utm.source, client),
+      medium: this.formatResolvedUtmValue("medium", utm.medium, client),
+      campaign: this.formatResolvedUtmValue("campaign", utm.campaign, client),
+      term: this.formatResolvedUtmValue("term", sanitizedTerm, client),
+      content: this.formatResolvedUtmValue("content", sanitizedContent, client)
     };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
@@ -151,6 +152,10 @@ export class RequestNormalizer {
       parsed.utmContent,
       parsed.campaignLabel
     ].some((value) => Boolean(String(value ?? "").trim()));
+  }
+
+  formatResolvedUtmValue(field, value, client) {
+    return this.utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
   }
 
   isGuidedBuilderSource(source) {
@@ -206,12 +211,4 @@ export class RequestNormalizer {
 
     return missingFields.filter((field) => !resolved.has(field));
   }
-}
-
-function formatResolvedUtmValue(resolvedValue, explicitValue) {
-  if (explicitValue !== undefined && explicitValue !== null && String(explicitValue).trim() !== "") {
-    return String(resolvedValue ?? "").trim();
-  }
-
-  return formatUtmValue(resolvedValue);
 }

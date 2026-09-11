@@ -38,6 +38,14 @@ export class ClientCampaignStandardsRepository {
     `, { client_key: clientKey });
   }
 
+  async listActiveProfiles() {
+    return await this.database.allAsync(`
+      SELECT * FROM client_campaign_profiles
+      WHERE is_active = 1
+      ORDER BY client_key ASC, priority ASC, sort_order ASC, display_name ASC, campaign ASC, id ASC
+    `);
+  }
+
   async findProfileById(id) {
     return await this.database.getAsync(
       "SELECT * FROM client_campaign_profiles WHERE id = :id LIMIT 1",

@@ -1,3 +1,5 @@
+import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "./consistency-warning-format.js";
+
 const REVIEW_TYPES = new Set(["new_value", "new_pairing", "new_combination"]);
 
 export class ConsistencyNotificationService {
@@ -32,8 +34,11 @@ export class ConsistencyNotificationService {
         const client = lower(normalized.client);
         if (!client || !value || acknowledged.has(`${client}|${lower(storageField)}:${lower(value)}`)) return;
         const key = `${client}|${storageField}|${value}`;
+        const fallbackValues = normalizedWarningValues(normalized);
         const current = grouped.get(key) ?? {
-          client, type: warning.type, fields, value, message: warning.message,
+          client, type: warning.type, fields, value,
+          displayValue: formatConsistencyWarningValue(warning, fallbackValues),
+          message: formatConsistencyWarningMessage(warning, fallbackValues),
           count: 0, createdBy: row.source_user_name ?? "System", createdAt: row.created_at
         };
         current.count += 1;
@@ -81,13 +86,23 @@ export class ConsistencyNotificationScheduler {
 
 function buildMessage(recipients, items, appBaseUrl) {
   const reviewUrl = `${appBaseUrl}/utms`;
-  const lines = items.map((item) => `- ${item.client}: ${item.value} — ${item.message} (${item.count})`);
-  const rows = items.map((item) => `<tr><td>${escape(item.client)}</td><td>${escape(item.type.replace(/_/gu, " "))}</td><td>${escape(item.value)}</td><td>${escape(item.message)}</td><td>${item.count}</td><td>${escape(item.createdBy)}</td></tr>`).join("");
+  const lines = items.map((item) => `- ${item.client}: ${item.displayValue} — ${item.message} (${item.count})`);
+  const rows = items.map((item) => `<tr><td>${escape(item.client)}</td><td>${escape(item.type.replace(/_/gu, " "))}</td><td>${escape(item.displayValue)}</td><td>${escape(item.message)}</td><td>${item.count}</td><td>${escape(item.createdBy)}</td></tr>`).join("");
   return {
     to: recipients.join(", "),
     subject: `[JF UTM Builder] ${items.length} consistency item${items.length === 1 ? "" : "s"} to review`,
     text: `UTM consistency items require review:\n\n${lines.join("\n")}\n\nReview: ${reviewUrl}`,
     html: `<h2>UTM consistency review</h2><p>${items.length} item${items.length === 1 ? "" : "s"} require review.</p><table border="1" cellpadding="6" cellspacing="0"><thead><tr><th>Client</th><th>Type</th><th>Value</th><th>Warning</th><th>Uses</th><th>Created by</th></tr></thead><tbody>${rows}</tbody></table><p><a href="${escape(reviewUrl)}">Open the Link Library</a></p>`
+  };
+}
+
+function normalizedWarningValues(normalized) {
+  return {
+    campaign: normalized.utm_campaign,
+    source: normalized.utm_source,
+    medium: normalized.utm_medium,
+    term: normalized.utm_term,
+    content: normalized.utm_content
   };
 }
 

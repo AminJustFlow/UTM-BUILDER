@@ -1,6 +1,6 @@
 import { NodeResponse } from "../http/response.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
-import { formatUtmValue } from "../services/utm-value-format.js";
+import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "../services/consistency-warning-format.js";
 import { parseFormBody } from "./auth-page.js";
 import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
@@ -938,7 +938,7 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
 }
 
 function renderGovernanceChip(fieldKey, item, canManage) {
-  const displayValue = displayGovernanceValue(item.client, item.value, item.type);
+  const displayValue = item.displayValue ?? displayGovernanceValue(item.client, item.value, item.type);
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
         <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
@@ -953,7 +953,8 @@ function renderGovernanceChip(fieldKey, item, canManage) {
 
 export function displayGovernanceValue(client, value, warningType = "new_value") {
   const rawValue = String(value ?? "");
-  return warningType === "new_value" ? formatUtmValue(rawValue) : rawValue;
+  if (warningType !== "new_value") return rawValue;
+  return formatConsistencyWarningValue({ type: warningType, fields: ["value"], values: { value: rawValue } });
 }
 
 function renderResultCard(item, { highlightRequestId, archived = false, canManage = false }) {
@@ -1066,9 +1067,12 @@ export function summarizeGovernance(items, utmIntelligenceService, acknowledgedS
       const client = normalizeTextValue(item.client);
       if (!client || !value || acknowledgedSet.has(acknowledgementKey(`${client}|${storageField}`, value))) return;
       const key = `${client}|${storageField}|${value}`;
+      const fallbackValues = governanceFallbackValues(item);
       const current = grouped.get(key) ?? {
         client, storageField, value, type: warning.type, fields,
-        message: warning.message, count: 0, createdBy: item.createdByName, createdAt: item.createdAt
+        displayValue: formatConsistencyWarningValue(warning, fallbackValues),
+        message: formatConsistencyWarningMessage(warning, fallbackValues),
+        count: 0, createdBy: item.createdByName, createdAt: item.createdAt
       };
       current.count += Number(item.requestCount ?? 1);
       grouped.set(key, current);
@@ -1084,6 +1088,16 @@ export function summarizeGovernance(items, utmIntelligenceService, acknowledgedS
   return {
     totalNewValues: fields.reduce((sum, field) => sum + field.items.length, 0),
     fields
+  };
+}
+
+function governanceFallbackValues(item) {
+  return {
+    campaign: item.utmCampaign,
+    source: item.utmSource,
+    medium: item.utmMedium,
+    term: item.utmTerm,
+    content: item.utmContent
   };
 }
 

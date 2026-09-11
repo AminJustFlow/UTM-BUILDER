@@ -1,20 +1,24 @@
 import crypto from "node:crypto";
 
+import { formatUtmValue } from "./utm-value-format.js";
+
 const REQUIRED_COLUMNS = [
   "client", "channel", "destination_url", "final_long_url",
   "utm_source", "utm_medium", "utm_campaign"
 ];
 
 export class UtmCsvImportService {
-  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService, linkAuditRepository = null }) {
+  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService, linkAuditRepository = null, utmIntelligenceService = null }) {
     this.requestRepository = requestRepository;
     this.generatedLinkRepository = generatedLinkRepository;
     this.fingerprintService = fingerprintService;
     this.urlService = urlService;
     this.linkAuditRepository = linkAuditRepository;
+    this.utmIntelligenceService = utmIntelligenceService;
   }
 
   async import(csvText, actor = null) {
+    await this.utmIntelligenceService?.refreshDataAsync?.();
     const sourceUserId = actor?.id ? `user:${actor.id}` : "utm_csv_import";
     const sourceUserName = actor?.displayName || "CSV Import";
     const parsed = parseCsv(csvText);
@@ -31,12 +35,19 @@ export class UtmCsvImportService {
     for (let index = 0; index < parsed.rows.length; index += 1) {
       const row = parsed.rows[index];
       try {
-        const values = normalizeRow(row);
+        const values = normalizeRow(row, this.utmIntelligenceService);
         if (!values.client || !values.destinationUrl || !values.finalLongUrl) {
           throw new Error("Client, destination URL, and final long URL are required.");
         }
 
         values.normalizedDestinationUrl = this.urlService.normalizeDestination(values.destinationUrl);
+        values.finalLongUrl = this.urlService.appendUtms(values.finalLongUrl, {
+          utm_source: values.utmSource,
+          utm_medium: values.utmMedium,
+          utm_campaign: values.utmCampaign,
+          utm_term: values.utmTerm,
+          utm_content: values.utmContent
+        });
         const normalized = buildNormalizedPayload(values);
         const identityShape = buildIdentityShape(values);
         const utmIdentityKey = this.fingerprintService.generateUtmIdentity(identityShape);
@@ -133,18 +144,20 @@ export class UtmCsvImportService {
   }
 }
 
-function normalizeRow(row) {
+function normalizeRow(row, utmIntelligenceService = null) {
+  const client = text(row.client);
+  const canonical = (field, value) => utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
   return {
-    client: text(row.client),
+    client,
     channel: text(row.channel) || "Imported",
     assetType: text(row.asset_type) || "link",
-    campaignLabel: text(row.campaign_label) || text(row.utm_campaign),
-    canonicalCampaign: text(row.canonical_campaign) || text(row.utm_campaign),
-    utmSource: text(row.utm_source),
-    utmMedium: text(row.utm_medium),
-    utmCampaign: text(row.utm_campaign),
-    utmTerm: text(row.utm_term),
-    utmContent: text(row.utm_content),
+    campaignLabel: canonical("campaign", text(row.campaign_label) || text(row.utm_campaign)),
+    canonicalCampaign: canonical("campaign", text(row.canonical_campaign) || text(row.utm_campaign)),
+    utmSource: canonical("source", row.utm_source),
+    utmMedium: canonical("medium", row.utm_medium),
+    utmCampaign: canonical("campaign", row.utm_campaign),
+    utmTerm: canonical("term", row.utm_term),
+    utmContent: canonical("content", row.utm_content),
     destinationUrl: text(row.destination_url),
     finalLongUrl: text(row.final_long_url),
     shortUrl: text(row.short_url),

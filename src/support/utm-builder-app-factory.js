@@ -86,11 +86,6 @@ export async function createUtmBuilderApplication(projectRoot) {
   await campaignStandardsService.bootstrap();
   const urlService = new UrlService();
   const fingerprintService = new FingerprintService();
-  const requestNormalizer = new RequestNormalizer(
-    rulesService,
-    urlService,
-    config.app.confidenceThreshold
-  );
   const qrCodeService = new QrCodeService(new HttpClient(), config.qr);
   const linkGenerationService = new LinkGenerationService({
     generatedLinkRepository,
@@ -102,8 +97,15 @@ export async function createUtmBuilderApplication(projectRoot) {
     projectRoot,
     rulesService,
     generatedLinkRepository,
-    requestRepository
+    requestRepository,
+    campaignStandardsRepository
   });
+  const requestNormalizer = new RequestNormalizer(
+    rulesService,
+    urlService,
+    config.app.confidenceThreshold,
+    utmIntelligenceService
+  );
   const clientManagementService = new ClientManagementService({
     repository: clientManagementRepository,
     rulesService,
@@ -129,7 +131,8 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository,
     fingerprintService,
     urlService,
-    linkAuditRepository
+    linkAuditRepository,
+    utmIntelligenceService
   });
   const utmBuilderController = new UtmBuilderController({
     utmLibraryEditorService,

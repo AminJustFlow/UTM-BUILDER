@@ -6,6 +6,8 @@ import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
 import { displayDestinationPath, displayGovernanceValue } from "../src/controllers/utm-library-controller.js";
+import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "../src/services/consistency-warning-format.js";
+import { formatUtmValue } from "../src/services/utm-value-format.js";
 import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
@@ -74,6 +76,9 @@ if (dictionaryOnlyRules.clients().some((client) =>
 )) {
   throw new Error("Dictionary-only client rules smoke test failed.");
 }
+if (dictionaryOnlyRules.normalizeUtmField("campaign", "News", { client: "studleys" }) !== "Inspiration") {
+  throw new Error("Configured campaign alias smoke test failed.");
+}
 
 if (
   displayDestinationPath("https://guardianangelseniorservices.com/contact/") !== "/contact/"
@@ -88,6 +93,7 @@ if (
   || displayGovernanceValue("GAS", "follow") !== "Follow"
   || displayGovernanceValue("gas", "massachusetts") !== "Massachusetts"
   || displayGovernanceValue("gas", "inspiration") !== "Inspiration"
+  || displayGovernanceValue("gas", "ShopNow") !== "ShopNow"
   || displayGovernanceValue("gas", "utm") !== "UTM"
   || displayGovernanceValue("gas", "linkedin") !== "LinkedIn"
   || displayGovernanceValue("gas", "unrelatedvalue") !== "Unrelatedvalue"
@@ -95,6 +101,35 @@ if (
   || displayGovernanceValue("gas", "campaign=inspiration|source=linkedin", "new_combination") !== "campaign=inspiration|source=linkedin"
 ) {
   throw new Error("Governance warning display smoke test failed.");
+}
+
+const compoundWarning = {
+  type: "new_pairing",
+  fields: ["campaign", "content"],
+  values: { campaign: "floral", content: "shopnow" },
+  display_values: { campaign: "Floral", content: "ShopNow" }
+};
+if (
+  formatConsistencyWarningValue(compoundWarning) !== "Floral|ShopNow"
+  || formatConsistencyWarningMessage(compoundWarning) !== 'Campaign "Floral" with Content "ShopNow" has not been used for this client.'
+) {
+  throw new Error("Compound consistency warning formatting smoke test failed.");
+}
+
+if (
+  formatUtmValue("facebook") !== "Facebook"
+  || formatUtmValue("shop now") !== "ShopNow"
+  || formatUtmValue("shop_now") !== "ShopNow"
+  || formatUtmValue("shop-now") !== "ShopNow"
+  || formatUtmValue("ShopNow") !== "ShopNow"
+  || formatUtmValue("ConstantContact") !== "ConstantContact"
+  || formatUtmValue("LandingPage") !== "LandingPage"
+  || formatUtmValue("linkedin") !== "LinkedIn"
+  || formatUtmValue("seo") !== "SEO"
+  || formatUtmValue("utm") !== "UTM"
+  || formatUtmValue("ma") !== "MA"
+) {
+  throw new Error("PascalCase UTM formatting smoke test failed.");
 }
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
@@ -286,6 +321,12 @@ try {
   const standardsAfterMutations = await (await af("/standards?client=gas")).text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
   const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
+  const configuredCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=SmokeCampaignCopy")).json();
+  const configuredCampaignContext = await (await af("/new/utm-intelligence/context.json?client=studleys&campaign=Inspiration&source=ConstantContact&medium=Email&term=LandingPage&content=ShopNow")).json();
+  const configuredAliasPreview = await (await af("/new/preview.json", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "gas", destination_url: "https://example.com/configured-alias", utm_source: "facebook", utm_medium: "social", utm_campaign: "SmokeAlias", utm_term: "", utm_content: "" })
+  })).json();
   const constantContactSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=ConstantContact")).json();
   const landingPageSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=gas&query=LandingPage")).json();
   const sourceScopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about&source=constantcontact")).json();
@@ -434,7 +475,7 @@ try {
   const concurrentStatuses = concurrentResponses.map((response) => response.status).sort((left, right) => left - right);
   const csv = [
     "request_id,status,client,channel,asset_type,campaign_label,canonical_campaign,utm_source,utm_medium,utm_campaign,utm_term,utm_content,destination_url,final_long_url,short_url,qr_url,request_count,first_seen_at,last_seen_at,original_message",
-    '"1","completed","GAS","Facebook","social","website","website","facebook","social","website","","","https://example.com","https://example.com/?utm_source=facebook&utm_medium=social&utm_campaign=website","https://bit.ly/example","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","Smoke import"'
+    '"1","completed","GAS","Facebook","social","website","website","facebook","social","website","landing_page","shop now","https://example.com/?ref=smoke#section","https://example.com/?ref=smoke&utm_source=facebook&utm_medium=social&utm_campaign=website&utm_term=landing_page&utm_content=shop+now#section","https://bit.ly/example","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","Smoke import"'
   ].join("\n");
   const importResponse = await af("/imports", {
     method: "POST",
@@ -448,6 +489,8 @@ try {
     body: csv
   });
   const duplicate = await duplicateResponse.json();
+  const importedLibrary = await (await af("/utms.json?search=Smoke%20import")).json();
+  const importedItem = importedLibrary.items?.find((item) => item.originalMessage === "Smoke import");
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
   const historyBody = await historyResponse.json();
 
@@ -456,20 +499,21 @@ try {
       destination_url: `https://example.com/governance-smoke-${Date.now()}`,
       utm_source: "facebook",
       utm_medium: "social",
-      utm_campaign: "caregiver",
+      utm_campaign: "Caregiver",
       utm_term: "",
-      utm_content: ""
+      utm_content: "ShopNow"
   });
   const govCreateResponse = govCreateAttempt.response;
   const govCreated = govCreateAttempt.body;
-  const govValue = govCreated.result?.utm_campaign ?? "";
+  const govWarning = govCreateAttempt.firstBody.error?.consistency_warnings?.find((warning) => warning.type === "new_value" && warning.fields?.includes("content"));
+  const govValue = govCreated.result?.utm_content ?? "";
   const govMarker = `data-governance-value="${String(govValue).toLowerCase()}"`;
   const libraryBeforeAck = await (await af("/utms")).text();
   const ackResponse = await fetch(`${base}/utms/governance/acknowledge`, {
     method: "POST",
     redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
-    body: new URLSearchParams({ field: "campaign", value: govValue, client: "gas", warning_type: "new_value" }).toString()
+    body: new URLSearchParams({ field: "content", value: govValue, client: "gas", warning_type: "new_value" }).toString()
   });
   const libraryAfterAck = await (await af("/utms")).text();
   const overlayAttempt = await createWithConsistencyConfirmation({
@@ -677,7 +721,8 @@ try {
     || builderHtml.includes("Change the platform")
     || builderHtml.includes("â€”")
     || builderHtml.includes("CicRackCard")
-    || builderHtml.includes("formatUtmInput")
+    || !builderHtml.includes("formatUtmInput")
+    || !builderHtml.includes('addEventListener("blur"')
     || builderHtml.includes('String(typedValue||"").trim().toLowerCase()')
     || missingQrProjectResponse.status !== 422
     || missingQrProject.error?.code !== "qr_project_required"
@@ -725,6 +770,9 @@ try {
     || !suggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
     || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
+    || !configuredCampaignSuggestions.items?.some((item) => item.value === "SmokeCampaignCopy" && item.normalized_value === "smokecampaigncopy" && item.known && item.count === 0)
+    || configuredCampaignContext.consistency?.warnings?.some((warning) => warning.type === "new_value" && warning.fields?.includes("campaign"))
+    || configuredAliasPreview.preview?.resolved?.utm_campaign !== "SmokeCampaignCopy"
     || !constantContactSuggestions.items?.some((item) => item.value === "ConstantContact" && item.normalized_value === "constantcontact" && item.known)
     || !landingPageSuggestions.items?.some((item) => item.value === "LandingPage" && item.normalized_value === "landingpage" && item.known)
     || sourceScopedMediums.items?.length !== 1
@@ -736,10 +784,10 @@ try {
     || !unscopedMediums.items?.some((item) => item.normalized_value === "social")
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
-    || existingQueryPreview.preview?.resolved?.utm_source !== "facebook"
-    || existingQueryPreview.preview?.resolved?.utm_medium !== "social"
-    || existingQueryPreview.preview?.resolved?.utm_campaign !== "website"
-    || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=facebook")
+    || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"
+    || existingQueryPreview.preview?.resolved?.utm_medium !== "Social"
+    || existingQueryPreview.preview?.resolved?.utm_campaign !== "Website"
+    || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=Facebook")
     || existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1?utm_source=")
     || preservedCasePreviewResponse.status !== 200
     || preservedCasePreview.preview?.resolved?.utm_source !== "MetaAd"
@@ -764,13 +812,13 @@ try {
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "possible_typo")
     || compactEquivalentContext.consistency?.warnings?.some((warning) => warning.type === "rare_combination")
     || compactEquivalentContext.duplicate_warnings?.length
-    || created.result?.utm_source !== "facebook"
-    || created.result?.utm_medium !== "social"
-    || created.result?.utm_campaign !== "website"
-    || created.result?.utm_term !== "jfclientspecificterm"
-    || created.result?.utm_content !== "jfclientspecificcontent"
-    || !created.result?.tracked_url?.includes("utm_campaign=website")
-    || !created.result?.tracked_url?.includes("jfclientspecificterm")
+    || created.result?.utm_source !== "Facebook"
+    || created.result?.utm_medium !== "Social"
+    || created.result?.utm_campaign !== "Website"
+    || created.result?.utm_term !== "Jfclientspecificterm"
+    || created.result?.utm_content !== "Jfclientspecificcontent"
+    || !created.result?.tracked_url?.includes("utm_campaign=Website")
+    || !created.result?.tracked_url?.includes("Jfclientspecificterm")
     || created.result?.status !== "completed_without_short_link"
     || created.result?.degradation_reason !== "bitly_not_configured"
     || !created.result?.tracked_url
@@ -789,14 +837,25 @@ try {
     || concurrentStatuses.join(",") !== "200,409"
     || imported.summary?.imported !== 1
     || duplicate.summary?.skipped !== 1
+    || importedItem?.utmSource !== "Facebook"
+    || importedItem?.utmMedium !== "Social"
+    || importedItem?.utmCampaign !== "Website"
+    || importedItem?.utmTerm !== "LandingPage"
+    || importedItem?.utmContent !== "ShopNow"
+    || !importedItem?.finalLongUrl?.includes("ref=smoke&utm_source=Facebook&utm_medium=Social&utm_campaign=Website&utm_term=LandingPage&utm_content=ShopNow")
+    || !importedItem?.finalLongUrl?.endsWith("#section")
     || historyResponse.status !== 200
     || !historyBody.events?.some((event) => event.actor === "Smoke Admin")
     || !historyBody.events?.some((event) => event.action === "consistency_override")
     || govCreateResponse.status !== 200
+    || govWarning?.values?.content !== "shopnow"
+    || govWarning?.display_values?.content !== "ShopNow"
+    || govWarning?.message !== 'Content "ShopNow" has never been used for this client.'
     || !govValue
     || !libraryBeforeAck.includes(govMarker)
-    || !libraryBeforeAck.includes("gas: Caregiver (1)")
-    || !libraryBeforeAck.includes('name="value" value="caregiver"')
+    || !libraryBeforeAck.includes("gas: ShopNow (1)")
+    || libraryBeforeAck.includes("gas: Shopnow (1)")
+    || !libraryBeforeAck.includes('name="value" value="shopnow"')
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
     || !libraryBeforeAck.includes('class="grid library-results-grid"')
@@ -977,9 +1036,9 @@ async function verifyConsistencyNotificationSchedule() {
       async listConsistencyHistoryAsync() {
         return [{
           raw_payload: JSON.stringify({ accepted_consistency_warnings: [{
-            type: "new_value", fields: ["campaign"], values: { campaign: "new_campaign" }, message: "New campaign"
+            type: "new_value", fields: ["content"], values: { content: "shopnow" }, message: 'Content "Shopnow" has never been used for this client.'
           }] }),
-          normalized_payload: JSON.stringify({ client: "jf" }),
+          normalized_payload: JSON.stringify({ client: "jf", utm_content: "ShopNow" }),
           source_user_name: "Smoke Admin", created_at: "2026-07-01T09:00:00.000Z"
         }];
       }
@@ -991,7 +1050,9 @@ async function verifyConsistencyNotificationSchedule() {
   });
   const first = await service.runIfDue(new Date("2026-07-01T10:00:00.000Z"));
   const second = await service.runIfDue(new Date("2026-07-01T10:30:00.000Z"));
-  if (!first.sent || second.sent || sent.length !== 1 || !sent[0].html.includes("new_campaign")) {
+  if (!first.sent || second.sent || sent.length !== 1
+    || !sent[0].html.includes("ShopNow") || sent[0].html.includes("Shopnow")
+    || !sent[0].text.includes("ShopNow") || sent[0].text.includes("Shopnow")) {
     throw new Error("Consistency notification schedule verification failed.");
   }
 }
