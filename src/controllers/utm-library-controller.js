@@ -58,10 +58,11 @@ export class UtmLibraryController {
 
   async handleHtml(request) {
     await this.utmIntelligenceService?.refreshDataAsync?.();
-    const library = await (this.utmLibraryService.listCachedAsync?.(request.query)
-      ?? this.utmLibraryService.listCached?.(request.query)
-      ?? this.utmLibraryService.listAsync?.(request.query)
-      ?? this.utmLibraryService.list(request.query));
+    const query = this.normalizeClientQuery(request.query);
+    const library = await (this.utmLibraryService.listCachedAsync?.(query)
+      ?? this.utmLibraryService.listCached?.(query)
+      ?? this.utmLibraryService.listAsync?.(query)
+      ?? this.utmLibraryService.list(query));
     this.applyClientDisplayNames(library);
     const acknowledgedSet = await this.loadAcknowledgedSet();
     const view = {
@@ -82,19 +83,21 @@ export class UtmLibraryController {
 
   async handleJson(request) {
     await this.utmIntelligenceService?.refreshDataAsync?.();
-    const library = await (this.utmLibraryService.listAsync?.(request.query)
-      ?? this.utmLibraryService.list(request.query));
+    const query = this.normalizeClientQuery(request.query);
+    const library = await (this.utmLibraryService.listAsync?.(query)
+      ?? this.utmLibraryService.list(query));
     this.applyClientDisplayNames(library);
     return NodeResponse.json(library);
   }
 
   async handleCsv(request) {
+    const query = this.normalizeClientQuery(request.query);
     const library = await (this.utmLibraryService.listAsync?.({
-      ...request.query,
+      ...query,
       page: 1,
       per_page: 10000
     }) ?? this.utmLibraryService.list({
-      ...request.query,
+      ...query,
       page: 1,
       per_page: 10000
     }));
@@ -125,8 +128,26 @@ export class UtmLibraryController {
 
   applyClientDisplayNames(library) {
     for (const item of library?.items ?? []) {
-      if (item.client) item.clientDisplayName = this.rulesService.getClientDisplayName(item.client);
+      if (!item.client) continue;
+      item.client = this.rulesService.normalizeClient(item.client, item.destinationUrl) ?? item.client;
+      item.clientDisplayName = this.rulesService.getClientDisplayName(item.client);
     }
+    if (!library?.available) return;
+    library.available.clients = [...new Set((library.available.clients ?? [])
+      .map((client) => this.rulesService.normalizeClient(client) ?? client)
+      .filter(Boolean))];
+    library.available.clientLabels = Object.fromEntries(library.available.clients.map((client) => [
+      client,
+      this.rulesService.getClientDisplayName(client)
+    ]));
+    if (library.filters?.client) {
+      library.filters.client = this.rulesService.normalizeClient(library.filters.client) ?? library.filters.client;
+    }
+  }
+
+  normalizeClientQuery(query = {}) {
+    const client = normalizeTextValue(query.client);
+    return client ? { ...query, client: this.rulesService.normalizeClient(client) ?? client } : query;
   }
 
   async loadAcknowledgedSet() {
@@ -411,7 +432,7 @@ function renderHtml(view) {
             <div class="card-body">
               <form method="get" action="/utms" class="control-bar library-filters" id="library-filter-form">
                 <div class="field"><label>Search</label><input type="search" name="search" value="${escapeHtml(library.filters.search)}" placeholder="Client, campaign, URL, or message"></div>
-                <div class="field"><label>Client</label><select name="client">${renderOptions("All clients", "", library.available.clients, library.filters.client, formatClientOptionLabel)}</select></div>
+                <div class="field"><label>Client</label><select name="client">${renderOptions("All clients", "", library.available.clients, library.filters.client, (value) => library.available.clientLabels?.[value] ?? formatClientOptionLabel(value))}</select></div>
                 <div class="field"><label>Source</label><select name="source">${renderTextOptions("All sources", "", library.available.sources, library.filters.source)}</select></div>
                 <div class="field"><label>Medium</label><select name="medium">${renderTextOptions("All mediums", "", library.available.mediums, library.filters.medium)}</select></div>
                 <div class="field"><label>Campaign name</label><input type="text" name="campaign" value="${escapeHtml(library.filters.campaign)}" placeholder="SpringSale"></div>
@@ -813,7 +834,8 @@ function renderHtml(view) {
           const body = await response.json();
           if (!body || !body.available || requestToken !== facetRequestToken) return;
 
-          updateSelectOptions("client", body.available.clients || [], "All clients", "", function(value){return String(value||"").trim().toUpperCase()});
+          const clientLabels = body.available.clientLabels || {};
+          updateSelectOptions("client", body.available.clients || [], "All clients", "", function(value){return clientLabels[value] || String(value||"").trim().toUpperCase()});
           updateSelectOptions("source", body.available.sources || [], "All sources", "", (value) => value);
           updateSelectOptions("medium", body.available.mediums || [], "All mediums", "", (value) => value);
           updateSelectOptions("status", (body.available.statuses || []).filter((value) => value !== "all"), "All statuses", "all", humanizeLabel);

@@ -132,7 +132,8 @@ export async function createUtmBuilderApplication(projectRoot) {
     fingerprintService,
     urlService,
     linkAuditRepository,
-    utmIntelligenceService
+    utmIntelligenceService,
+    rulesService
   });
   const utmBuilderController = new UtmBuilderController({
     utmLibraryEditorService,

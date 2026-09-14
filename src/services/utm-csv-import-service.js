@@ -8,13 +8,14 @@ const REQUIRED_COLUMNS = [
 ];
 
 export class UtmCsvImportService {
-  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService, linkAuditRepository = null, utmIntelligenceService = null }) {
+  constructor({ requestRepository, generatedLinkRepository, fingerprintService, urlService, linkAuditRepository = null, utmIntelligenceService = null, rulesService = null }) {
     this.requestRepository = requestRepository;
     this.generatedLinkRepository = generatedLinkRepository;
     this.fingerprintService = fingerprintService;
     this.urlService = urlService;
     this.linkAuditRepository = linkAuditRepository;
     this.utmIntelligenceService = utmIntelligenceService;
+    this.rulesService = rulesService;
   }
 
   async import(csvText, actor = null) {
@@ -35,7 +36,7 @@ export class UtmCsvImportService {
     for (let index = 0; index < parsed.rows.length; index += 1) {
       const row = parsed.rows[index];
       try {
-        const values = normalizeRow(row, this.utmIntelligenceService);
+        const values = normalizeRow(row, this.utmIntelligenceService, this.rulesService);
         if (!values.client || !values.destinationUrl || !values.finalLongUrl) {
           throw new Error("Client, destination URL, and final long URL are required.");
         }
@@ -144,11 +145,15 @@ export class UtmCsvImportService {
   }
 }
 
-function normalizeRow(row, utmIntelligenceService = null) {
-  const client = text(row.client);
+function normalizeRow(row, utmIntelligenceService = null, rulesService = null) {
+  const importedClient = text(row.client);
+  const destinationUrl = text(row.destination_url);
+  const client = rulesService?.normalizeClient?.(importedClient, destinationUrl) ?? importedClient;
+  const clientDisplayName = rulesService?.getClientDisplayName?.(client) ?? importedClient;
   const canonical = (field, value) => utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
   return {
     client,
+    clientDisplayName,
     channel: text(row.channel) || "Imported",
     assetType: text(row.asset_type) || "link",
     campaignLabel: canonical("campaign", text(row.campaign_label) || text(row.utm_campaign)),
@@ -158,7 +163,7 @@ function normalizeRow(row, utmIntelligenceService = null) {
     utmCampaign: canonical("campaign", row.utm_campaign),
     utmTerm: canonical("term", row.utm_term),
     utmContent: canonical("content", row.utm_content),
-    destinationUrl: text(row.destination_url),
+    destinationUrl,
     finalLongUrl: text(row.final_long_url),
     shortUrl: text(row.short_url),
     qrUrl: text(row.qr_url)
@@ -168,7 +173,7 @@ function normalizeRow(row, utmIntelligenceService = null) {
 function buildNormalizedPayload(values) {
   return {
     client: values.client,
-    client_display_name: values.client,
+    client_display_name: values.clientDisplayName,
     channel: values.channel,
     channel_display_name: values.channel,
     asset_type: values.assetType,
