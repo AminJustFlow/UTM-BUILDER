@@ -300,19 +300,98 @@ const manualClients = {
     domains: ["castleintheclouds.org"],
     taxonomyKey: "cic",
     guidance: {
-      summary: "Castle uses Term and Content to keep publication advertising consistent across placements and issues.",
+      summary: "Use the highest-priority Castle campaign that fits the destination. Campaign standards keep website, event, development, education, and advertising reporting consistent.",
       fields: {
-        term: {
-          label: "Campaign Term — Publication Name",
-          help: "Enter the publication carrying the advertisement.",
-	          placeholder: "NewHampshireMagazine"
-        },
-        content: {
-          label: "Campaign Content — Issue Name",
-          help: "Enter the publication issue or edition.",
-	          placeholder: "Spring2026"
+        campaign: {
+          label: "Campaign — Castle reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the destination or promotion.",
+          placeholder: "Visit"
         }
-      }
+      },
+      campaignProfiles: [
+        {
+          priority: 1,
+          campaign: "LimitedCampaign",
+          displayName: "Limited Campaign",
+          guideline: "Use sparingly and only when determined by Ami or Amin. Example: GardenTour."
+        },
+        {
+          priority: 1,
+          campaign: "MetaAdCampaignName",
+          displayName: "Meta Ad campaign name",
+          guideline: "Use the Meta campaign name with no punctuation, spaces, or date. Example: EveryDayFlowers.",
+          source: "MetaAd",
+          medium: "Social",
+          fields: {
+            term: { label: "Term — Meta ad set", help: "Use the Meta ad set name without the campaign name.", placeholder: "AdSetName" },
+            content: { label: "Content — Creative type", help: "Identify the creative format as Static, Video, or Carousel.", placeholder: "Static" }
+          }
+        },
+        {
+          priority: 1,
+          campaign: "HomePage",
+          guideline: "Use only for the Castle home page.",
+          fields: {
+            term: { label: "Term — Website page", help: "Use LandingPage for the home page.", placeholder: "LandingPage" },
+            content: { label: "Content — Message or CTA", help: "Use Learn, Explore, or leave blank when no distinct CTA applies.", placeholder: "Learn" }
+          }
+        },
+        ...[
+          ["Visit", "HoursAndAdmission", "Use Visit, Learn, Explore, or leave blank."],
+          ["ProgramsAndEvents", "UpcomingEvents", "Use the workbook-approved program or event CTA."],
+          ["Dine", "CarriageHouseRestaurant", "Use Visit, Learn, Explore, Buy, or leave blank as appropriate."],
+          ["WeddingsAndEvents", "CastleWeddings", "Use Learn, Explore, or leave blank."],
+          ["Support", "Donate", "Use Support, Learn, Donate, Join, Sponsor, Volunteer, or leave blank as appropriate."],
+          ["About", "History", "Use Learn, Explore, Contact, or leave blank as appropriate."]
+        ].map(([campaign, termExample, contentHelp]) => ({
+          priority: 1,
+          campaign,
+          guideline: "Use for stable pages within this section of the Castle website.",
+          fields: {
+            term: { label: "Term — Website page", help: "Use LandingPage or the compact page name from the approved taxonomy.", placeholder: termExample },
+            content: { label: "Content — Message or CTA", help: contentHelp, placeholder: campaign === "Support" ? "Support" : "Learn" }
+          }
+        })),
+        {
+          priority: 2,
+          campaign: "Calendar",
+          guideline: "Use for events that do not fit ProgramsAndEvents or an Education-specific campaign.",
+          fields: { term: { label: "Term — Event name", help: "Use the compact event name.", placeholder: "GuidedTours" } }
+        },
+        {
+          priority: 2,
+          campaign: "Ads",
+          guideline: "Use only for paid advertising placements unrelated to a more specific campaign.",
+          fields: {
+            term: { label: "Term — Issue or section", help: "Use the issue or sub-publication name; repeat the publication when appropriate.", placeholder: "SpringIssue" }
+          }
+        },
+        ...[
+          ["Collateral", "Use only for collateral produced specifically for Castle in the Clouds.", "WebsitePageName"],
+          ["Development", "Use only for development campaigns, not general website links.", "WebsitePageName"],
+          ["Education", "Use only for education-specific topics and programs.", "ProgramName"],
+          ["News", "Use for a specific press or news topic.", "Topic"]
+        ].map(([campaign, guideline, placeholder]) => ({
+          priority: 2,
+          campaign,
+          guideline,
+          fields: { term: { label: "Term — Campaign detail", help: "Use the relevant website page, program, or topic.", placeholder } }
+        })),
+        {
+          priority: 3,
+          campaign: "MobileLinks",
+          guideline: "Use only for destinations under /links.",
+          fields: {
+            term: { label: "Term — Mobile links page", help: "Use LandingPage for the mobile links landing page.", placeholder: "LandingPage" },
+            content: { label: "Content — Link type", help: "Use Profile when the destination is a social or publication profile.", placeholder: "Profile" }
+          }
+        },
+        {
+          priority: 4,
+          campaign: "Website",
+          guideline: "Use only when no priority 1–3 campaign fits, after review with Ami or Amin."
+        }
+      ]
     }
   },
   "900": {

@@ -12,6 +12,24 @@ import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
 
+const approvedDictionary = JSON.parse(fs.readFileSync(
+  new URL("../utm_dictionary_output/utm_ui_dictionaries.json", import.meta.url),
+  "utf8"
+));
+const approvedClientRowCount = (client) => (approvedDictionary.clients?.[client]?.value_counts?.campaign ?? [])
+  .reduce((total, entry) => total + Number(entry.count ?? 0), 0);
+if (
+  approvedClientRowCount("gas") !== 170
+  || approvedClientRowCount("sfg") !== 875
+  || approvedClientRowCount("cic") !== 755
+  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,gas,sfg"
+  || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
+  || approvedDictionary.clients.gas.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
+  || approvedDictionary.clients.sfg.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
+) {
+  throw new Error("Approved client dictionary isolation smoke test failed.");
+}
+
 const qrTestStorage = fs.mkdtempSync(path.join(os.tmpdir(), "jf-qr-smoke-"));
 const qrCalls = [];
 const qrService = new QrCodeService({
@@ -320,6 +338,8 @@ try {
   });
   const standardsAfterMutations = await (await af("/standards?client=gas")).text();
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
+  const cicCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=castle")).json();
+  const cicTermSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=castle&campaign=Visit&query=HikingWalkingTrails")).json();
   const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
   const configuredCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=SmokeCampaignCopy")).json();
   const configuredCampaignContext = await (await af("/new/utm-intelligence/context.json?client=studleys&campaign=Inspiration&source=ConstantContact&medium=Email&term=LandingPage&content=ShopNow")).json();
@@ -769,6 +789,9 @@ try {
     || !suggestions.items?.length
     || !suggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || suggestions.items?.some((item) => String(item.value ?? "").includes("_"))
+    || !cicCampaignSuggestions.items?.some((item) => item.value === "Visit" && item.normalized_value === "visit" && item.known)
+    || cicCampaignSuggestions.items?.some((item) => item.value === "Floral")
+    || !cicTermSuggestions.items?.some((item) => item.value === "HikingWalkingTrails" && item.normalized_value === "hikingwalkingtrails" && item.known)
     || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || !configuredCampaignSuggestions.items?.some((item) => item.value === "SmokeCampaignCopy" && item.normalized_value === "smokecampaigncopy" && item.known && item.count === 0)
     || configuredCampaignContext.consistency?.warnings?.some((warning) => warning.type === "new_value" && warning.fields?.includes("campaign"))

@@ -7,19 +7,44 @@
         "unique_clients": 1
       },
       {
+        "value": "visit",
+        "count": 305,
+        "unique_clients": 1
+      },
+      {
+        "value": "about",
+        "count": 285,
+        "unique_clients": 3
+      },
+      {
         "value": "houseplants",
         "count": 260,
         "unique_clients": 1
       },
       {
-        "value": "about",
-        "count": 170,
-        "unique_clients": 2
+        "value": "support",
+        "count": 140,
+        "unique_clients": 1
+      },
+      {
+        "value": "dine",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
+        "value": "programsandevents",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
+        "value": "weddingsandevents",
+        "count": 60,
+        "unique_clients": 1
       },
       {
         "value": "homepage",
-        "count": 40,
-        "unique_clients": 2
+        "count": 55,
+        "unique_clients": 3
       },
       {
         "value": "landscaping",
@@ -65,51 +90,56 @@
     "source": [
       {
         "value": "constantcontact",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       },
       {
         "value": "facebook",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       },
       {
         "value": "gmb",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       },
       {
         "value": "instagram",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       },
       {
         "value": "linkedin",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "medium": [
       {
         "value": "social",
-        "count": 836,
-        "unique_clients": 2
+        "count": 1440,
+        "unique_clients": 3
       },
       {
         "value": "email",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "term": [
       {
         "value": "landingpage",
-        "count": 250,
-        "unique_clients": 2
+        "count": 265,
+        "unique_clients": 3
       },
       {
         "value": "caregiver",
         "count": 25,
+        "unique_clients": 1
+      },
+      {
+        "value": "adoptanartifact",
+        "count": 20,
         "unique_clients": 1
       },
       {
@@ -124,6 +154,26 @@
       },
       {
         "value": "allhouseplants",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "areainformation",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "basementtours",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "becomeamember",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "becomeasponsor",
         "count": 20,
         "unique_clients": 1
       },
@@ -143,12 +193,42 @@
         "unique_clients": 1
       },
       {
+        "value": "c-tag",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "cafeintheclouds",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "carriagehouserestaurant",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "collections",
         "count": 20,
         "unique_clients": 1
       },
       {
+        "value": "directionsandparking",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "diywedding",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "donate",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "exhibitgallery",
         "count": 20,
         "unique_clients": 1
       },
@@ -183,7 +263,27 @@
         "unique_clients": 1
       },
       {
+        "value": "giftshop",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "grouptours",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "guarantee",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "hikingwalkingtrails",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "hoursandadmission",
         "count": 20,
         "unique_clients": 1
       },
@@ -198,6 +298,16 @@
         "unique_clients": 1
       },
       {
+        "value": "kidsandfamilies",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "librarymembership",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "locations",
         "count": 20,
         "unique_clients": 1
@@ -208,7 +318,17 @@
         "unique_clients": 1
       },
       {
+        "value": "mansion",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "memorialservice",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "musicnights",
         "count": 20,
         "unique_clients": 1
       },
@@ -248,6 +368,11 @@
         "unique_clients": 1
       },
       {
+        "value": "shannonpondandthemeadows",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "stafffavorites",
         "count": 20,
         "unique_clients": 1
@@ -278,7 +403,27 @@
         "unique_clients": 1
       },
       {
+        "value": "thingstodo",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "trailing",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "virtuallibrary",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitorinformation",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
         "count": 20,
         "unique_clients": 1
       },
@@ -293,8 +438,38 @@
         "unique_clients": 1
       },
       {
+        "value": "winteractivities",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "zodiac",
         "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "boardofdirectors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "calendarofevents",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "castleweddings",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmasatthecastle",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "corporatemeetings",
+        "count": 15,
         "unique_clients": 1
       },
       {
@@ -303,21 +478,81 @@
         "unique_clients": 1
       },
       {
+        "value": "eventspaces",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "forteachers",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "history",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "missionandvalues",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "nationalhistoriclandmark",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "partnerships",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "privateevents",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "restoration",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "signupenews",
         "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "staffleadership",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "upcomingevents",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "contactus",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitorfeedback",
+        "count": 5,
         "unique_clients": 1
       }
     ],
     "content": [
       {
-        "value": "explore",
-        "count": 245,
-        "unique_clients": 2
+        "value": "learn",
+        "count": 440,
+        "unique_clients": 3
       },
       {
-        "value": "learn",
-        "count": 240,
-        "unique_clients": 2
+        "value": "explore",
+        "count": 415,
+        "unique_clients": 3
       },
       {
         "value": "shop",
@@ -325,17 +560,57 @@
         "unique_clients": 2
       },
       {
+        "value": "visit",
+        "count": 90,
+        "unique_clients": 1
+      },
+      {
         "value": "read",
         "count": 80,
         "unique_clients": 2
       },
       {
+        "value": "support",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
         "value": "contact",
-        "count": 15,
-        "unique_clients": 2
+        "count": 20,
+        "unique_clients": 3
+      },
+      {
+        "value": "donate",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
+        "count": 10,
+        "unique_clients": 1
       },
       {
         "value": "apply",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "buy",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "catc",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "join",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "preview",
         "count": 5,
         "unique_clients": 1
       },
@@ -360,7 +635,17 @@
         "unique_clients": 1
       },
       {
+        "value": "sponsor",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
         "value": "subscribe",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "twilighttours",
         "count": 5,
         "unique_clients": 1
       }
@@ -370,28 +655,28 @@
     "about": [
       {
         "value": "constantcontact",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       },
       {
         "value": "facebook",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       },
       {
         "value": "gmb",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       },
       {
         "value": "instagram",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       },
       {
         "value": "linkedin",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       }
     ],
     "careers": [
@@ -446,6 +731,33 @@
         "value": "linkedin",
         "count": 4,
         "unique_clients": 2
+      }
+    ],
+    "dine": [
+      {
+        "value": "constantcontact",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 12,
+        "unique_clients": 1
       }
     ],
     "floral": [
@@ -505,28 +817,28 @@
     "homepage": [
       {
         "value": "constantcontact",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       },
       {
         "value": "facebook",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       },
       {
         "value": "gmb",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       },
       {
         "value": "instagram",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       },
       {
         "value": "linkedin",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       }
     ],
     "houseplants": [
@@ -610,6 +922,33 @@
         "unique_clients": 1
       }
     ],
+    "programsandevents": [
+      {
+        "value": "constantcontact",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "services": [
       {
         "value": "constantcontact",
@@ -664,6 +1003,60 @@
         "unique_clients": 1
       }
     ],
+    "support": [
+      {
+        "value": "constantcontact",
+        "count": 28,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 28,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 28,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 28,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 28,
+        "unique_clients": 1
+      }
+    ],
+    "visit": [
+      {
+        "value": "constantcontact",
+        "count": 61,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 61,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 61,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 61,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 61,
+        "unique_clients": 1
+      }
+    ],
     "wedding": [
       {
         "value": "constantcontact",
@@ -690,19 +1083,46 @@
         "count": 8,
         "unique_clients": 1
       }
+    ],
+    "weddingsandevents": [
+      {
+        "value": "constantcontact",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 12,
+        "unique_clients": 1
+      }
     ]
   },
   "campaign_to_mediums": {
     "about": [
       {
         "value": "social",
-        "count": 136,
-        "unique_clients": 2
+        "count": 228,
+        "unique_clients": 3
       },
       {
         "value": "email",
-        "count": 34,
-        "unique_clients": 2
+        "count": 57,
+        "unique_clients": 3
       }
     ],
     "careers": [
@@ -727,6 +1147,18 @@
         "value": "email",
         "count": 4,
         "unique_clients": 2
+      }
+    ],
+    "dine": [
+      {
+        "value": "social",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 12,
+        "unique_clients": 1
       }
     ],
     "floral": [
@@ -756,13 +1188,13 @@
     "homepage": [
       {
         "value": "social",
-        "count": 32,
-        "unique_clients": 2
+        "count": 44,
+        "unique_clients": 3
       },
       {
         "value": "email",
-        "count": 8,
-        "unique_clients": 2
+        "count": 11,
+        "unique_clients": 3
       }
     ],
     "houseplants": [
@@ -801,6 +1233,18 @@
         "unique_clients": 1
       }
     ],
+    "programsandevents": [
+      {
+        "value": "social",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "services": [
       {
         "value": "social",
@@ -825,6 +1269,30 @@
         "unique_clients": 1
       }
     ],
+    "support": [
+      {
+        "value": "social",
+        "count": 112,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 28,
+        "unique_clients": 1
+      }
+    ],
+    "visit": [
+      {
+        "value": "social",
+        "count": 244,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 61,
+        "unique_clients": 1
+      }
+    ],
     "wedding": [
       {
         "value": "social",
@@ -836,42 +1304,54 @@
         "count": 8,
         "unique_clients": 1
       }
+    ],
+    "weddingsandevents": [
+      {
+        "value": "social",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 12,
+        "unique_clients": 1
+      }
     ]
   },
   "source_to_mediums": {
     "constantcontact": [
       {
         "value": "email",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "facebook": [
       {
         "value": "social",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "instagram": [
       {
         "value": "social",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 209,
-        "unique_clients": 2
+        "count": 360,
+        "unique_clients": 3
       }
     ]
   },
@@ -908,13 +1388,53 @@
         "unique_clients": 1
       },
       {
+        "value": "boardofdirectors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "donations",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "history",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "missionandvalues",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "nationalhistoriclandmark",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "partnerships",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "restoration",
         "count": 15,
         "unique_clients": 1
       },
       {
         "value": "signupenews",
         "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "staffleadership",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "contactus",
+        "count": 10,
         "unique_clients": 1
       }
     ],
@@ -930,6 +1450,23 @@
         "value": "landingpage",
         "count": 20,
         "unique_clients": 2
+      }
+    ],
+    "dine": [
+      {
+        "value": "cafeintheclouds",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "carriagehouserestaurant",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "musicnights",
+        "count": 20,
+        "unique_clients": 1
       }
     ],
     "floral": [
@@ -1034,8 +1571,8 @@
     "homepage": [
       {
         "value": "landingpage",
-        "count": 40,
-        "unique_clients": 2
+        "count": 55,
+        "unique_clients": 3
       }
     ],
     "houseplants": [
@@ -1124,6 +1661,28 @@
         "unique_clients": 1
       }
     ],
+    "programsandevents": [
+      {
+        "value": "calendarofevents",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "christmasatthecastle",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "forteachers",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "upcomingevents",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "services": [
       {
         "value": "faqs",
@@ -1143,6 +1702,125 @@
         "unique_clients": 1
       }
     ],
+    "support": [
+      {
+        "value": "adoptanartifact",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "becomeamember",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "becomeasponsor",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "c-tag",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "donate",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "librarymembership",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "visit": [
+      {
+        "value": "areainformation",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "basementtours",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "directionsandparking",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "exhibitgallery",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "giftshop",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "grouptours",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "hikingwalkingtrails",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "hoursandadmission",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "kidsandfamilies",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "mansion",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "shannonpondandthemeadows",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "thingstodo",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "virtuallibrary",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitorinformation",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "winteractivities",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "visitorfeedback",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
     "wedding": [
       {
         "value": "diywedding",
@@ -1154,19 +1832,41 @@
         "count": 20,
         "unique_clients": 1
       }
+    ],
+    "weddingsandevents": [
+      {
+        "value": "castleweddings",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "corporatemeetings",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "eventspaces",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "privateevents",
+        "count": 15,
+        "unique_clients": 1
+      }
     ]
   },
   "campaign_to_contents": {
     "about": [
       {
         "value": "explore",
-        "count": 35,
-        "unique_clients": 2
+        "count": 70,
+        "unique_clients": 3
       },
       {
         "value": "learn",
-        "count": 35,
-        "unique_clients": 2
+        "count": 70,
+        "unique_clients": 3
       },
       {
         "value": "read",
@@ -1175,8 +1875,8 @@
       },
       {
         "value": "contact",
-        "count": 5,
-        "unique_clients": 1
+        "count": 10,
+        "unique_clients": 2
       },
       {
         "value": "request",
@@ -1223,6 +1923,28 @@
         "unique_clients": 2
       }
     ],
+    "dine": [
+      {
+        "value": "explore",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "buy",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
     "floral": [
       {
         "value": "explore",
@@ -1260,13 +1982,13 @@
     "homepage": [
       {
         "value": "explore",
-        "count": 10,
-        "unique_clients": 2
+        "count": 15,
+        "unique_clients": 3
       },
       {
         "value": "learn",
-        "count": 10,
-        "unique_clients": 2
+        "count": 15,
+        "unique_clients": 3
       },
       {
         "value": "read",
@@ -1325,6 +2047,33 @@
         "unique_clients": 1
       }
     ],
+    "programsandevents": [
+      {
+        "value": "explore",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "catc",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "preview",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "twilighttours",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
     "services": [
       {
         "value": "explore",
@@ -1354,6 +2103,65 @@
         "unique_clients": 1
       }
     ],
+    "support": [
+      {
+        "value": "learn",
+        "count": 35,
+        "unique_clients": 1
+      },
+      {
+        "value": "support",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
+        "value": "donate",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "volunteer",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "explore",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "join",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "sponsor",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "visit": [
+      {
+        "value": "explore",
+        "count": 75,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 75,
+        "unique_clients": 1
+      },
+      {
+        "value": "visit",
+        "count": 75,
+        "unique_clients": 1
+      }
+    ],
     "wedding": [
       {
         "value": "explore",
@@ -1370,9 +2178,1081 @@
         "count": 10,
         "unique_clients": 1
       }
+    ],
+    "weddingsandevents": [
+      {
+        "value": "explore",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 20,
+        "unique_clients": 1
+      }
     ]
   },
   "clients": {
+    "cic": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "visit",
+            "count": 305,
+            "unique_clients": 1
+          },
+          {
+            "value": "support",
+            "count": 140,
+            "unique_clients": 1
+          },
+          {
+            "value": "about",
+            "count": 115,
+            "unique_clients": 1
+          },
+          {
+            "value": "dine",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "programsandevents",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "weddingsandevents",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "homepage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 151,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 151,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 151,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 151,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "social",
+            "count": 604,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "adoptanartifact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "areainformation",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "basementtours",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "becomeamember",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "becomeasponsor",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "c-tag",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "cafeintheclouds",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "carriagehouserestaurant",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "directionsandparking",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "donate",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "exhibitgallery",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "giftshop",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "grouptours",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "hikingwalkingtrails",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "hoursandadmission",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "kidsandfamilies",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "librarymembership",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "mansion",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "musicnights",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "shannonpondandthemeadows",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "thingstodo",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "virtuallibrary",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "visitorinformation",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "volunteer",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "winteractivities",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "boardofdirectors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "calendarofevents",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "castleweddings",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "christmasatthecastle",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "corporatemeetings",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "eventspaces",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "forteachers",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "history",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "missionandvalues",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "nationalhistoriclandmark",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "partnerships",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "privateevents",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "restoration",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "staffleadership",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "upcomingevents",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "contactus",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "visitorfeedback",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "learn",
+            "count": 200,
+            "unique_clients": 1
+          },
+          {
+            "value": "explore",
+            "count": 170,
+            "unique_clients": 1
+          },
+          {
+            "value": "visit",
+            "count": 90,
+            "unique_clients": 1
+          },
+          {
+            "value": "support",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "donate",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "volunteer",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "buy",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "catc",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "join",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "preview",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "sponsor",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "twilighttours",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "about": [
+          {
+            "value": "constantcontact",
+            "count": 23,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 23,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 23,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 23,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 23,
+            "unique_clients": 1
+          }
+        ],
+        "dine": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "constantcontact",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "programsandevents": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "support": [
+          {
+            "value": "constantcontact",
+            "count": 28,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 28,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 28,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 28,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 28,
+            "unique_clients": 1
+          }
+        ],
+        "visit": [
+          {
+            "value": "constantcontact",
+            "count": 61,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 61,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 61,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 61,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 61,
+            "unique_clients": 1
+          }
+        ],
+        "weddingsandevents": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "about": [
+          {
+            "value": "social",
+            "count": 92,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 23,
+            "unique_clients": 1
+          }
+        ],
+        "dine": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "social",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "programsandevents": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "support": [
+          {
+            "value": "social",
+            "count": 112,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 28,
+            "unique_clients": 1
+          }
+        ],
+        "visit": [
+          {
+            "value": "social",
+            "count": 244,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 61,
+            "unique_clients": 1
+          }
+        ],
+        "weddingsandevents": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "gmb": [
+          {
+            "value": "social",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 151,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "about": [
+          {
+            "value": "boardofdirectors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "history",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "missionandvalues",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "nationalhistoriclandmark",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "partnerships",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "restoration",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "staffleadership",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "contactus",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "dine": [
+          {
+            "value": "cafeintheclouds",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "carriagehouserestaurant",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "musicnights",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "programsandevents": [
+          {
+            "value": "calendarofevents",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "christmasatthecastle",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "forteachers",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "upcomingevents",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "support": [
+          {
+            "value": "adoptanartifact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "becomeamember",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "becomeasponsor",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "c-tag",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "donate",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "librarymembership",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "volunteer",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "visit": [
+          {
+            "value": "areainformation",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "basementtours",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "directionsandparking",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "exhibitgallery",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "giftshop",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "grouptours",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "hikingwalkingtrails",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "hoursandadmission",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "kidsandfamilies",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "mansion",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "shannonpondandthemeadows",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "thingstodo",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "virtuallibrary",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "visitorinformation",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "winteractivities",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "visitorfeedback",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "weddingsandevents": [
+          {
+            "value": "castleweddings",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "corporatemeetings",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "eventspaces",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "privateevents",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "about": [
+          {
+            "value": "explore",
+            "count": 35,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 35,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "dine": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "visit",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "buy",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "programsandevents": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "catc",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "preview",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "twilighttours",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "support": [
+          {
+            "value": "learn",
+            "count": 35,
+            "unique_clients": 1
+          },
+          {
+            "value": "support",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "donate",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "volunteer",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "join",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "sponsor",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "visit",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "visit": [
+          {
+            "value": "explore",
+            "count": 75,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 75,
+            "unique_clients": 1
+          },
+          {
+            "value": "visit",
+            "count": 75,
+            "unique_clients": 1
+          }
+        ],
+        "weddingsandevents": [
+          {
+            "value": "explore",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      }
+    },
     "gas": {
       "value_counts": {
         "campaign": [
