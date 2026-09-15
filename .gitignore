@@ -8,3 +8,4 @@ storage/database/*.sqlite
 storage/database/*.sqlite-*
 storage/logs/*.log
 storage/utm-intelligence-runtime-*/
+storage/load-tests/

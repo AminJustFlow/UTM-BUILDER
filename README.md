@@ -74,6 +74,34 @@ The builder compares populated UTM values and combinations against the selected 
 
 Administrators can enable daily consistency-review email notifications and manage recipients from the Users page. Delivery runs once at 6:00 AM in the configured application timezone and only sends when review items exist. Configure `APP_BASE_URL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` in `.env`; credentials are never stored in the database or admin UI.
 
+## Run the read-only load test
+
+The load test simulates the authenticated recommendation-heavy builder workflow without creating links, calling Bitly, generating QR codes, or changing application data. Create a temporary non-admin member first, then provide its credentials only through the current terminal environment.
+
+PowerShell:
+
+```powershell
+$env:LOAD_TEST_BASE_URL = "https://utm.justflownh.com"
+$env:LOAD_TEST_USERNAME = "utm-load-test"
+$env:LOAD_TEST_PASSWORD = "temporary-password"
+$env:LOAD_TEST_ALLOW_PRODUCTION = "yes"
+npm run load-test
+```
+
+Bash:
+
+```bash
+LOAD_TEST_BASE_URL=https://utm.justflownh.com \
+LOAD_TEST_USERNAME=utm-load-test \
+LOAD_TEST_PASSWORD='temporary-password' \
+LOAD_TEST_ALLOW_PRODUCTION=yes \
+npm run load-test
+```
+
+Defaults are one user for 60 seconds, five users for 600 seconds, ten users for 120 seconds, and a 60-second cooldown. For a short harness check, override `LOAD_TEST_WARMUP_SECONDS`, `LOAD_TEST_STEADY_SECONDS`, `LOAD_TEST_BURST_SECONDS`, `LOAD_TEST_COOLDOWN_SECONDS`, `LOAD_TEST_THINK_MIN_MS`, and `LOAD_TEST_THINK_MAX_MS`. JSON reports are written under `storage/load-tests/`, which is ignored by Git. The command exits unsuccessfully when the agreed latency or error thresholds are exceeded. Remove or disable the temporary member after testing.
+
+On the application server, run `bash scripts/load-test-monitor.sh 900 30` at the same time. It writes 30-second CPU, memory, swap, disk, service-state, and recent-error samples to `storage/load-tests/server-metrics.csv` without reading request or user data.
+
 ## Publish as its own repository
 
 Copy this directory outside the parent project, then run:

@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node ./bin/server.js",
     "dev": "node --watch --watch-path=./bin --watch-path=./src --watch-path=./config --watch-path=./.env ./bin/server.js",
-    "smoke": "node ./scripts/smoke.js"
+    "smoke": "node ./scripts/smoke.js",
+    "load-test": "node ./scripts/load-test.js"
   },
   "dependencies": {
     "nodemailer": "^9.0.3",
