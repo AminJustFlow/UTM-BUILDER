@@ -4,6 +4,14 @@ export class ClientCampaignStandardsService {
     this.rulesService = rulesService;
   }
 
+  setUtmIntelligenceService(service) {
+    this.utmIntelligenceService = service;
+  }
+
+  markIntelligenceChanged() {
+    this.utmIntelligenceService?.invalidateData?.();
+  }
+
   async bootstrap() {
     for (const clientKey of this.rulesService.clients()) {
       if (await this.repository.getSettings(clientKey)) {
@@ -80,6 +88,7 @@ export class ClientCampaignStandardsService {
     await this.recordAudit(clientKey, null, "settings_updated", actor, "Updated client guidance summary.", {
       summary: text(input.summary)
     }, timestamp);
+    this.markIntelligenceChanged();
     return success(clientKey, "Client guidance summary updated.");
   }
 
@@ -90,6 +99,7 @@ export class ClientCampaignStandardsService {
     if (!validation.ok) return validation;
     const profileId = await this.repository.createProfile(payload);
     await this.recordAudit(payload.clientKey, profileId, "created", actor, `Created ${payload.campaign}.`, payload, timestamp);
+    this.markIntelligenceChanged();
     return { ...success(payload.clientKey, `Campaign standard "${payload.campaign}" created.`), profileId };
   }
 
@@ -106,6 +116,7 @@ export class ClientCampaignStandardsService {
       before: mapProfile(existing),
       after: payload
     }, timestamp);
+    this.markIntelligenceChanged();
     return success(payload.clientKey, `Campaign standard "${payload.campaign}" updated.`);
   }
 
@@ -138,6 +149,7 @@ export class ClientCampaignStandardsService {
     const timestamp = new Date().toISOString();
     await this.repository.setProfileActive(id, isActive, actor, timestamp);
     await this.recordAudit(existing.client_key, id, isActive ? "activated" : "deactivated", actor, `${isActive ? "Activated" : "Deactivated"} ${existing.campaign}.`, mapProfile(existing), timestamp);
+    this.markIntelligenceChanged();
     return success(existing.client_key, `Campaign standard ${isActive ? "activated" : "deactivated"}.`);
   }
 
@@ -148,6 +160,7 @@ export class ClientCampaignStandardsService {
     const timestamp = new Date().toISOString();
     await this.repository.deleteProfile(id);
     await this.recordAudit(existing.client_key, id, "deleted", actor, `Deleted ${existing.campaign}.`, mapProfile(existing), timestamp);
+    this.markIntelligenceChanged();
     return success(existing.client_key, `Campaign standard "${existing.campaign}" deleted.`);
   }
 

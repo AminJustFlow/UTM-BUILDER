@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
@@ -11,6 +12,43 @@ import { formatUtmValue } from "../src/services/utm-value-format.js";
 import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
+import { UtmIntelligenceService } from "../src/services/utm-intelligence-service.js";
+
+let intelligenceHistoryLoads = 0;
+let intelligenceStandardsLoads = 0;
+const intelligenceService = new UtmIntelligenceService({
+  projectRoot: path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."),
+  rulesService: new RulesService(rules),
+  requestRepository: {
+    async listConsistencyHistoryAsync() {
+      intelligenceHistoryLoads += 1;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return [];
+    }
+  },
+  campaignStandardsRepository: {
+    async listActiveProfiles() {
+      intelligenceStandardsLoads += 1;
+      return null;
+    }
+  },
+  refreshTtlMs: 60_000
+});
+await Promise.all([
+  intelligenceService.refreshDataAsync(),
+  intelligenceService.refreshDataAsync(),
+  intelligenceService.refreshDataAsync()
+]);
+intelligenceService.suggestions({ client: "gas", field: "campaign" });
+intelligenceService.suggestions({ client: "gas", field: "source", campaign: "About" });
+if (intelligenceHistoryLoads !== 1 || intelligenceStandardsLoads !== 1) {
+  throw new Error("UTM intelligence refresh coalescing/cache smoke test failed.");
+}
+intelligenceService.invalidateData();
+await intelligenceService.refreshDataAsync();
+if (intelligenceHistoryLoads !== 2 || intelligenceStandardsLoads !== 2) {
+  throw new Error("UTM intelligence invalidation smoke test failed.");
+}
 
 const approvedDictionary = JSON.parse(fs.readFileSync(
   new URL("../utm_dictionary_output/utm_ui_dictionaries.json", import.meta.url),
@@ -736,6 +774,10 @@ try {
     || !builderHtml.includes("Loading Content recommendations…")
     || !builderHtml.includes("Loading suggestions…")
     || !builderHtml.includes("suggestionRequestIds")
+    || !builderHtml.includes("suggestionControllers")
+    || !builderHtml.includes("suggestionCache")
+    || !builderHtml.includes("new AbortController()")
+    || !builderHtml.includes("debouncedSuggestionLoads")
     || !builderHtml.includes("requestId!==suggestionRequestIds[field]")
     || !builderHtml.includes("state.activeRecommendationField")
     || !builderHtml.includes("state.queuedSubmission=true")

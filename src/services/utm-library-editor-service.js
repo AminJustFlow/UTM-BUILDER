@@ -255,6 +255,7 @@ export class UtmLibraryEditorService {
       sourceUserName: actorSourceName(actor, "UTM Library"),
       summary: `Archived saved link (${archivedRequests} version${archivedRequests === 1 ? "" : "s"} preserved).`
     });
+    this.utmIntelligenceService?.invalidateData?.();
 
     return {
       ok: true,
@@ -274,6 +275,7 @@ export class UtmLibraryEditorService {
     await this.recordAudit({ fingerprint, requestId, action: "restored", actor,
       sourceUserId: actorSourceId(actor, "utm_library"), sourceUserName: actorSourceName(actor, "UTM Library"),
       summary: `Restored saved link (${restoredRequests} version${restoredRequests === 1 ? "" : "s"}).` });
+    this.utmIntelligenceService?.invalidateData?.();
     return { ok: true, requestId, restoredRequests };
   }
 
@@ -515,6 +517,7 @@ export class UtmLibraryEditorService {
         }));
 
         await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings);
+        this.utmIntelligenceService?.invalidateData?.();
 
         return {
           ok: true,
@@ -548,6 +551,7 @@ export class UtmLibraryEditorService {
       }));
 
       await this.recordSubmitAudit(context, input, normalized, fingerprint, requestId, acceptedConsistencyWarnings);
+      this.utmIntelligenceService?.invalidateData?.();
 
       return {
         ok: true,

@@ -98,8 +98,10 @@ export async function createUtmBuilderApplication(projectRoot) {
     rulesService,
     generatedLinkRepository,
     requestRepository,
-    campaignStandardsRepository
+    campaignStandardsRepository,
+    logger
   });
+  campaignStandardsService.setUtmIntelligenceService?.(utmIntelligenceService);
   const requestNormalizer = new RequestNormalizer(
     rulesService,
     urlService,

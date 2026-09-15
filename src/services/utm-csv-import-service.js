@@ -141,6 +141,9 @@ export class UtmCsvImportService {
       }
     }
 
+    if (summary.imported > 0) {
+      this.utmIntelligenceService?.invalidateData?.();
+    }
     return { ok: true, summary };
   }
 }

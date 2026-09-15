@@ -8,12 +8,16 @@ const DEFAULT_SUGGESTION_LIMIT = 8;
 const DEFAULT_HISTORY_LIMIT = 6;
 
 export class UtmIntelligenceService {
-  constructor({ projectRoot, rulesService, generatedLinkRepository = null, requestRepository = null, campaignStandardsRepository = null, currentYear = new Date().getFullYear() }) {
+  constructor({ projectRoot, rulesService, generatedLinkRepository = null, requestRepository = null, campaignStandardsRepository = null, logger = null, refreshTtlMs = 15_000, currentYear = new Date().getFullYear() }) {
     this.projectRoot = projectRoot;
     this.rulesService = rulesService;
     this.generatedLinkRepository = generatedLinkRepository;
     this.requestRepository = requestRepository;
     this.campaignStandardsRepository = campaignStandardsRepository;
+    this.logger = logger;
+    this.refreshTtlMs = Math.max(1_000, Number(refreshTtlMs) || 15_000);
+    this.lastRefreshAt = 0;
+    this.refreshPromise = null;
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
     this.runtimeRows = [];
@@ -25,11 +29,13 @@ export class UtmIntelligenceService {
   setPurgedClients(clients = []) {
     this.purgedClients = new Set(clients.map(normalizeOptional).filter(Boolean));
     this.data = this.mergeRuntimeData(this.runtimeRows);
+    this.lastRefreshAt = 0;
   }
 
   addPurgedClient(client) {
     this.purgedClients.add(normalizeOptional(client));
     this.data = this.mergeRuntimeData(this.runtimeRows);
+    this.lastRefreshAt = Date.now();
   }
 
   metadata({ client = null, channel = null } = {}) {
@@ -493,22 +499,59 @@ export class UtmIntelligenceService {
   }
 
   refreshData() {
-    this.data = this.mergeRuntimeData(this.loadRuntimeRows());
     return this.data;
   }
 
-  async refreshDataAsync() {
-    const [runtimeRows, campaignStandards] = await Promise.all([
-      this.loadRuntimeRowsAsync(),
-      this.campaignStandardsRepository?.listActiveProfiles?.() ?? Promise.resolve(null)
-    ]);
-    this.runtimeRows = runtimeRows;
-    if (campaignStandards) {
-      this.rulesService.setCampaignStandards(campaignStandards);
-      this.configuredValues = buildConfiguredValueMaps(this.rulesService);
+  invalidateData() {
+    this.lastRefreshAt = 0;
+  }
+
+  async refreshDataAsync({ force = false } = {}) {
+    if (!force && this.lastRefreshAt && Date.now() - this.lastRefreshAt < this.refreshTtlMs) {
+      return this.data;
     }
-    this.data = this.mergeRuntimeData(this.runtimeRows);
-    return this.data;
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+    const startedAt = performance.now();
+    this.refreshPromise = (async () => {
+      const databaseStartedAt = performance.now();
+      const [runtimeRows, campaignStandards] = await Promise.all([
+        this.loadRuntimeRowsAsync(),
+        this.campaignStandardsRepository?.listActiveProfiles?.() ?? Promise.resolve(null)
+      ]);
+      const databaseMs = performance.now() - databaseStartedAt;
+      this.runtimeRows = runtimeRows;
+      if (campaignStandards) {
+        this.rulesService.setCampaignStandards(campaignStandards);
+        this.configuredValues = buildConfiguredValueMaps(this.rulesService);
+      }
+      const mergeStartedAt = performance.now();
+      this.data = this.mergeRuntimeData(this.runtimeRows);
+      const mergeMs = performance.now() - mergeStartedAt;
+      this.lastRefreshAt = Date.now();
+      const totalMs = performance.now() - startedAt;
+      this.logger?.debug?.("UTM intelligence dataset refreshed.", {
+        runtime_rows: runtimeRows.length,
+        database_ms: roundTiming(databaseMs),
+        index_ms: roundTiming(mergeMs),
+        total_ms: roundTiming(totalMs)
+      });
+      if (totalMs >= 500) {
+        this.logger?.warning?.("Slow UTM intelligence dataset refresh.", {
+          runtime_rows: runtimeRows.length,
+          database_ms: roundTiming(databaseMs),
+          index_ms: roundTiming(mergeMs),
+          total_ms: roundTiming(totalMs)
+        });
+      }
+      return this.data;
+    })();
+    try {
+      return await this.refreshPromise;
+    } finally {
+      this.refreshPromise = null;
+    }
   }
 
   loadStaticData() {
@@ -1399,6 +1442,10 @@ function clampNumber(value, fallback, min, max) {
     return fallback;
   }
   return Math.min(max, Math.max(min, parsed));
+}
+
+function roundTiming(value) {
+  return Math.round(Number(value) * 10) / 10;
 }
 
 function title(value) {

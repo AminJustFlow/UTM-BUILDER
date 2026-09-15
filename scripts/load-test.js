@@ -5,6 +5,7 @@ const config = {
   baseUrl: required("LOAD_TEST_BASE_URL"),
   username: required("LOAD_TEST_USERNAME"),
   password: required("LOAD_TEST_PASSWORD"),
+  profile: enumValue("LOAD_TEST_PROFILE", "full", ["full", "recommendations"]),
   warmupSeconds: positiveNumber("LOAD_TEST_WARMUP_SECONDS", 60),
   steadySeconds: positiveNumber("LOAD_TEST_STEADY_SECONDS", 600),
   burstSeconds: positiveNumber("LOAD_TEST_BURST_SECONDS", 120),
@@ -55,7 +56,7 @@ process.on("SIGINT", () => {
   process.stderr.write("\nStopping after active read-only requests finish…\n");
 });
 
-console.log(`Read-only UTM load test: ${base.origin}`);
+console.log(`Read-only UTM load test: ${base.origin} (${config.profile} profile)`);
 console.log(`Phases: 1 user/${config.warmupSeconds}s, 5 users/${config.steadySeconds}s, 10 users/${config.burstSeconds}s, cooldown ${config.cooldownSeconds}s`);
 
 await runPhase("warmup", 1, config.warmupSeconds);
@@ -110,6 +111,10 @@ async function runWorkflow(phase, virtualUser, cookie, scenario) {
   const headers = { Cookie: cookie };
   await timedRequest({ phase, virtualUser, label: "builder", pathname: "/new", headers });
   await think();
+  if (config.profile === "recommendations") {
+    await runRecommendationWorkflow(phase, virtualUser, headers, scenario);
+    return;
+  }
   for (const field of ["campaign", "source", "medium", "term", "content"]) {
     const query = new URLSearchParams({
       field, client: scenario.client, campaign: scenario.campaign, source: scenario.source,
@@ -137,6 +142,23 @@ async function runWorkflow(phase, virtualUser, cookie, scenario) {
   const libraryQuery = new URLSearchParams({ client: scenario.client, campaign: scenario.campaign, per_page: "12" });
   await timedRequest({ phase, virtualUser, label: "library", pathname: `/utms.json?${libraryQuery}`, headers, expectJson: true });
   await think();
+}
+
+async function runRecommendationWorkflow(phase, virtualUser, headers, scenario) {
+  const selected = { client: scenario.client };
+  const transitions = [
+    ["campaign", "client_to_campaign"],
+    ["source", "campaign_to_source"],
+    ["medium", "source_to_medium"],
+    ["term", "medium_to_term"],
+    ["content", "term_to_content"]
+  ];
+  for (const [field, label] of transitions) {
+    const query = new URLSearchParams({ field, ...selected });
+    await timedRequest({ phase, virtualUser, label, pathname: `/new/utm-intelligence/suggestions.json?${query}`, headers, expectJsonOk: true });
+    selected[field] = scenario[field];
+    await think();
+  }
 }
 
 async function timedRequest({ phase, virtualUser, label, pathname, method = "GET", headers = {}, body, expectedStatus = 200, redirect = "follow", expectJson = false, expectJsonOk = false }) {
@@ -193,8 +215,12 @@ function buildReport() {
   const burst = measurements.filter((item) => item.phase === "burst");
   checkErrorRate("steady", steady, 0.01, violations);
   checkErrorRate("burst", burst, 0.01, violations);
-  checkP95("steady recommendations/context", steady.filter((item) => item.label.startsWith("suggestions_") || item.label === "context"), 1000, violations);
-  checkP95("steady builder/library", steady.filter((item) => ["builder", "library"].includes(item.label)), 2000, violations);
+  if (config.profile === "recommendations") {
+    checkP95("steady recommendation transitions", steady.filter((item) => item.label.includes("_to_")), 1000, violations);
+  } else {
+    checkP95("steady recommendations/context", steady.filter((item) => item.label.startsWith("suggestions_") || item.label === "context"), 1000, violations);
+    checkP95("steady builder/library", steady.filter((item) => ["builder", "library"].includes(item.label)), 2000, violations);
+  }
   checkP95("burst overall", burst, 2000, violations);
   if (measurements.some((item) => item.status >= 500 || item.error === "timeout")) violations.push("At least one HTTP 5xx response or timeout occurred.");
   return {
@@ -248,5 +274,6 @@ function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 function round(value, decimals = 1) { const factor = 10 ** decimals; return Math.round(value * factor) / factor; }
 function required(name) { const value = String(process.env[name] ?? "").trim(); if (!value) fail(`${name} is required.`); return value; }
 function positiveNumber(name, fallback) { const value = Number(process.env[name] ?? fallback); if (!Number.isFinite(value) || value <= 0) fail(`${name} must be greater than zero.`); return value; }
+function enumValue(name, fallback, allowedValues) { const value = String(process.env[name] ?? fallback).trim().toLowerCase(); if (!allowedValues.includes(value)) fail(`${name} must be one of: ${allowedValues.join(", ")}.`); return value; }
 function nonnegativeNumber(name, fallback) { const value = Number(process.env[name] ?? fallback); if (!Number.isFinite(value) || value < 0) fail(`${name} must be zero or greater.`); return value; }
 function fail(message) { throw new Error(message); }

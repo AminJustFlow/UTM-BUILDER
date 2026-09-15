@@ -133,11 +133,16 @@ export class UtmBuilderController {
   }
 
   async handleSuggestions(request) {
+    const refreshStartedAt = performance.now();
     await this.utmIntelligenceService.refreshDataAsync?.();
+    const refreshMs = performance.now() - refreshStartedAt;
+    const calculationStartedAt = performance.now();
+    const payload = this.utmIntelligenceService.suggestions(request.query);
+    const calculationMs = performance.now() - calculationStartedAt;
     return NodeResponse.json({
       status: "ok",
-      ...this.utmIntelligenceService.suggestions(request.query)
-    });
+      ...payload
+    }, 200, { "Server-Timing": timingHeader({ refresh: refreshMs, suggestions: calculationMs }) });
   }
 
   async handleCounts(request) {
@@ -173,14 +178,18 @@ export class UtmBuilderController {
   }
 
   async handleContext(request) {
+    const refreshStartedAt = performance.now();
     await this.utmIntelligenceService.refreshDataAsync?.();
+    const refreshMs = performance.now() - refreshStartedAt;
+    const calculationStartedAt = performance.now();
     const acknowledgements = await this.loadAcknowledgements();
     const context = this.utmIntelligenceService.context(request.query);
     context.consistency = this.utmIntelligenceService.consistencyAnalysis(request.query, acknowledgements);
+    const calculationMs = performance.now() - calculationStartedAt;
     return NodeResponse.json({
       status: "ok",
       ...context
-    });
+    }, 200, { "Server-Timing": timingHeader({ refresh: refreshMs, context: calculationMs }) });
   }
 
   async handlePreview(request) {
@@ -381,4 +390,10 @@ function normalizeNullable(value) {
 function positiveInteger(value, fallback) {
   const parsed = Number.parseInt(String(value ?? ""), 10);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function timingHeader(measurements) {
+  return Object.entries(measurements)
+    .map(([name, duration]) => `${name};dur=${Math.max(0, Number(duration)).toFixed(1)}`)
+    .join(", ");
 }
