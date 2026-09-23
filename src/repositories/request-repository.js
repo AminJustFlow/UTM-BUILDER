@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { normalizeUtmComparable } from "../services/utm-value-format.js";
+import { isCanonicalQrCodeMedium, normalizeUtmComparable } from "../services/utm-value-format.js";
 import { syncAll, syncGet, syncRun } from "../support/database.js";
 
 function serializeValue(value) {
@@ -74,6 +74,10 @@ export class RequestRepository {
     const comparableCampaignExpr = utmComparableSql(campaignExpr);
     const comparableTermExpr = utmComparableSql(termExpr);
     const comparableContentExpr = utmComparableSql(contentExpr);
+    const canonicalQrCodeMedium = isCanonicalQrCodeMedium(normalized.utmMedium);
+    const mediumCondition = canonicalQrCodeMedium
+      ? `COALESCE(${mediumExpr}, '') = :medium_exact`
+      : `${comparableMediumExpr} = :medium`;
     return await this.database.getAsync(`
       SELECT *
       FROM requests
@@ -81,7 +85,7 @@ export class RequestRepository {
         AND archived_at IS NULL
         AND COALESCE(${destinationExpr}, '') = :destination
         AND ${comparableSourceExpr} = :source
-        AND ${comparableMediumExpr} = :medium
+        AND ${mediumCondition}
         AND ${comparableCampaignExpr} = :campaign
         AND ${comparableTermExpr} = :term
         AND ${comparableContentExpr} = :content
@@ -90,7 +94,9 @@ export class RequestRepository {
     `, {
       destination: normalized.normalizedDestinationUrl,
       source: normalizeUtmComparable(normalized.utmSource),
-      medium: normalizeUtmComparable(normalized.utmMedium),
+      ...(canonicalQrCodeMedium
+        ? { medium_exact: String(normalized.utmMedium ?? "").trim() }
+        : { medium: normalizeUtmComparable(normalized.utmMedium) }),
       campaign: normalizeUtmComparable(normalized.utmCampaign ?? normalized.canonicalCampaign),
       term: normalizeUtmComparable(normalized.utmTerm),
       content: normalizeUtmComparable(normalized.utmContent)

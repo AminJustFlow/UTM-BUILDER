@@ -277,6 +277,7 @@ export class UtmIntelligenceService {
     ];
     for (const fields of pairs) {
       if (fields.some((field) => !filters[field] || newFields.has(field))) continue;
+      if (fields.some((field) => this.isGlobalSuggestion(field, filters[field]))) continue;
       const usageCount = clientRows.filter((row) => fields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
       const valueKey = fields.map((field) => filters[field]).join("|");
       const acknowledgement = `${client}|pair:${fields.join("+")}:${valueKey}`;
@@ -300,7 +301,9 @@ export class UtmIntelligenceService {
     const populatedFields = UTM_FIELDS.filter((field) => filters[field]);
     const exactCount = clientRows.filter((row) => populatedFields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
     const combinationValue = populatedFields.map((field) => `${field}=${filters[field]}`).join("|");
+    const hasGlobalSuggestion = populatedFields.some((field) => this.isGlobalSuggestion(field, filters[field]));
     if (!newFields.size && !warnings.some((warning) => warning.type === "new_pairing") && exactCount === 0
+      && !hasGlobalSuggestion
       && !acknowledged.has(`${client}|combination:${combinationValue}`)) {
       warnings.push({
         type: "new_combination", severity: "warning", fields: populatedFields,

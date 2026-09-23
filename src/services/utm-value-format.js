@@ -15,6 +15,8 @@ const PRESERVED_PHRASES = new Map([
   ["qrcode", "QrCode"]
 ]);
 
+export const CANONICAL_QR_CODE_MEDIUM = "QrCode";
+
 export function formatUtmValue(value) {
   const text = String(value ?? "").trim();
   if (!text) {
@@ -36,6 +38,10 @@ export function formatUtmValue(value) {
 
 export function normalizeUtmComparable(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9]+/gu, "");
+}
+
+export function isCanonicalQrCodeMedium(value) {
+  return String(value ?? "").trim() === CANONICAL_QR_CODE_MEDIUM;
 }
 
 function formatUtmToken(token) {

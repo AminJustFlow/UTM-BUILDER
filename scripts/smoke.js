@@ -13,6 +13,9 @@ import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
 import { UtmIntelligenceService } from "../src/services/utm-intelligence-service.js";
+import { FingerprintService } from "../src/services/fingerprint-service.js";
+import { UtmLibraryService } from "../src/services/utm-library-service.js";
+import { RequestRepository } from "../src/repositories/request-repository.js";
 
 let intelligenceHistoryLoads = 0;
 let intelligenceStandardsLoads = 0;
@@ -189,11 +192,98 @@ if (
   || formatUtmValue("ConstantContact") !== "ConstantContact"
   || formatUtmValue("LandingPage") !== "LandingPage"
   || formatUtmValue("linkedin") !== "LinkedIn"
+  || formatUtmValue("Qrcode") !== "QrCode"
+  || formatUtmValue("QRCode") !== "QrCode"
+  || formatUtmValue("QrCode") !== "QrCode"
   || formatUtmValue("seo") !== "SEO"
   || formatUtmValue("utm") !== "UTM"
   || formatUtmValue("ma") !== "MA"
 ) {
   throw new Error("PascalCase UTM formatting smoke test failed.");
+}
+
+const legacyQrShape = {
+  client: "castle",
+  channel: "qr",
+  assetType: "offline",
+  normalizedDestinationUrl: "https://example.com/event/",
+  utmSource: "LaconiaDailySun",
+  utmMedium: "Qrcode",
+  utmCampaign: "CarShow",
+  canonicalCampaign: "CarShow",
+  utmTerm: "LaconiaDailySun",
+  utmContent: "Scan"
+};
+const canonicalQrShape = { ...legacyQrShape, utmMedium: "QrCode" };
+const fingerprintService = new FingerprintService();
+if (
+  fingerprintService.generate(legacyQrShape) === fingerprintService.generate(canonicalQrShape)
+  || fingerprintService.generateUtmIdentity(legacyQrShape) === fingerprintService.generateUtmIdentity(canonicalQrShape)
+  || fingerprintService.generate({ ...legacyQrShape, utmMedium: "Social" })
+    !== fingerprintService.generate({ ...legacyQrShape, utmMedium: "social" })
+) {
+  throw new Error("Canonical QrCode identity versioning smoke test failed.");
+}
+
+const legacyTrackedUrl = "https://example.com/event/?utm_source=laconiaDailySUN&utm_medium=Qrcode&utm_campaign=carSHOW&utm_term=DailySUN&utm_content=SCAN";
+const rawLibraryItem = new UtmLibraryService({}).mapRequestRecord({
+  id: 1,
+  request_uuid: "raw-library-smoke",
+  status: "completed",
+  normalized_payload: JSON.stringify({
+    client: "castle",
+    channel: "qr",
+    canonical_campaign: "CarShow",
+    utm_source: "LaconiaDailySun",
+    utm_medium: "QrCode",
+    utm_campaign: "CarShow",
+    utm_term: "LaconiaDailySun",
+    utm_content: "Scan",
+    destination_url: "https://example.com/event/",
+    normalized_destination_url: "https://example.com/event/",
+    final_long_url: legacyTrackedUrl
+  }),
+  final_long_url: legacyTrackedUrl,
+  raw_payload: "{}",
+  warnings: "[]",
+  missing_fields: "[]"
+});
+if (
+  rawLibraryItem.utmSource !== "laconiaDailySUN"
+  || rawLibraryItem.utmMedium !== "Qrcode"
+  || rawLibraryItem.utmCampaign !== "carSHOW"
+  || rawLibraryItem.utmTerm !== "DailySUN"
+  || rawLibraryItem.utmContent !== "SCAN"
+) {
+  throw new Error("Raw Link Library UTM display smoke test failed.");
+}
+
+const duplicateQueries = [];
+const duplicateRepository = new RequestRepository({
+  client: "sqlite",
+  async getAsync(sql, params) {
+    duplicateQueries.push({ sql, params });
+    return null;
+  }
+});
+await duplicateRepository.findExactUtmDuplicateAsync(canonicalQrShape);
+await duplicateRepository.findExactUtmDuplicateAsync(legacyQrShape);
+if (
+  !duplicateQueries[0]?.sql.includes("= :medium_exact")
+  || duplicateQueries[0]?.params?.medium_exact !== "QrCode"
+  || duplicateQueries[1]?.sql.includes("= :medium_exact")
+) {
+  throw new Error("Canonical QrCode duplicate matching smoke test failed.");
+}
+
+const qrConsistency = intelligenceService.consistencyAnalysis({
+  client: "studleys",
+  campaign: "Floral",
+  source: "ConstantContact",
+  medium: "QrCode"
+});
+if (qrConsistency.warnings.some((warning) => warning.fields?.includes("medium")) || qrConsistency.requires_confirmation) {
+  throw new Error("Universal QrCode consistency suppression smoke test failed.");
 }
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";

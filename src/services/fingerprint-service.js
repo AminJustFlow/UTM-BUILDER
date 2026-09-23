@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { normalizeUtmComparable } from "./utm-value-format.js";
+import { isCanonicalQrCodeMedium, normalizeUtmComparable } from "./utm-value-format.js";
 
 export class FingerprintService {
   generate(normalizedRequest) {
@@ -9,7 +9,7 @@ export class FingerprintService {
       asset_type: normalizedRequest.assetType,
       normalized_destination_url: normalizedRequest.normalizedDestinationUrl,
       utm_source: normalizeUtmComparable(normalizedRequest.utmSource),
-      utm_medium: normalizeUtmComparable(normalizedRequest.utmMedium),
+      utm_medium: normalizedMediumIdentity(normalizedRequest.utmMedium),
       utm_campaign: normalizeUtmComparable(normalizedRequest.utmCampaign ?? normalizedRequest.canonicalCampaign),
       utm_term: normalizeUtmComparable(normalizedRequest.utmTerm),
       utm_content: normalizeUtmComparable(normalizedRequest.utmContent)
@@ -20,10 +20,15 @@ export class FingerprintService {
     return crypto.createHash("sha256").update(JSON.stringify({
       normalized_destination_url: normalizedRequest.normalizedDestinationUrl,
       utm_source: normalizeUtmComparable(normalizedRequest.utmSource),
-      utm_medium: normalizeUtmComparable(normalizedRequest.utmMedium),
+      utm_medium: normalizedMediumIdentity(normalizedRequest.utmMedium),
       utm_campaign: normalizeUtmComparable(normalizedRequest.utmCampaign ?? normalizedRequest.canonicalCampaign),
       utm_term: normalizeUtmComparable(normalizedRequest.utmTerm),
       utm_content: normalizeUtmComparable(normalizedRequest.utmContent)
     })).digest("hex");
   }
+}
+
+function normalizedMediumIdentity(value) {
+  const comparable = normalizeUtmComparable(value);
+  return isCanonicalQrCodeMedium(value) ? `${comparable}:canonical-v2` : comparable;
 }

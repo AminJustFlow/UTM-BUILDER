@@ -1,5 +1,3 @@
-import { formatUtmValue } from "./utm-value-format.js";
-
 const DEFAULT_STATUSES = ["completed", "completed_without_short_link"];
 const DEFAULT_SORT = "recent";
 const SORT_OPTIONS = ["recent", "oldest", "client", "campaign", "requests"];
@@ -487,12 +485,12 @@ export class UtmLibraryService {
       channelDisplayName: normalized.channel_display_name ?? humanizeLabel(channel),
       assetType: normalized.asset_type ?? null,
       campaignLabel: normalized.campaign_label ?? null,
-      canonicalCampaign: formatUtmValue(normalized.canonical_campaign ?? extractedUtms.utm_campaign ?? ""),
-      utmSource: formatUtmValue(normalized.utm_source ?? extractedUtms.utm_source ?? ""),
-      utmMedium: formatUtmValue(normalized.utm_medium ?? extractedUtms.utm_medium ?? ""),
-      utmCampaign: formatUtmValue(normalized.utm_campaign ?? extractedUtms.utm_campaign ?? ""),
-      utmTerm: formatUtmValue(normalized.utm_term ?? extractedUtms.utm_term ?? ""),
-      utmContent: formatUtmValue(normalized.utm_content ?? extractedUtms.utm_content ?? ""),
+      canonicalCampaign: storedUtmValue(extractedUtms, normalized, "utm_campaign", "canonical_campaign"),
+      utmSource: storedUtmValue(extractedUtms, normalized, "utm_source"),
+      utmMedium: storedUtmValue(extractedUtms, normalized, "utm_medium"),
+      utmCampaign: storedUtmValue(extractedUtms, normalized, "utm_campaign"),
+      utmTerm: storedUtmValue(extractedUtms, normalized, "utm_term"),
+      utmContent: storedUtmValue(extractedUtms, normalized, "utm_content"),
       destinationUrl: normalized.destination_url ?? normalized.normalized_destination_url ?? "",
       normalizedDestinationUrl: normalized.normalized_destination_url ?? "",
       finalLongUrl,
@@ -561,16 +559,21 @@ function extractUtms(url) {
 
   try {
     const parsed = new URL(url);
-    return {
-      utm_source: parsed.searchParams.get("utm_source") ?? "",
-      utm_medium: parsed.searchParams.get("utm_medium") ?? "",
-      utm_campaign: parsed.searchParams.get("utm_campaign") ?? "",
-      utm_term: parsed.searchParams.get("utm_term") ?? "",
-      utm_content: parsed.searchParams.get("utm_content") ?? ""
-    };
+    return Object.fromEntries(
+      ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"]
+        .filter((key) => parsed.searchParams.has(key))
+        .map((key) => [key, parsed.searchParams.get(key) ?? ""])
+    );
   } catch {
     return {};
   }
+}
+
+function storedUtmValue(extractedUtms, normalized, key, fallbackKey = key) {
+  if (Object.hasOwn(extractedUtms, key)) {
+    return String(extractedUtms[key] ?? "").trim();
+  }
+  return String(normalized[fallbackKey] ?? "").trim();
 }
 
 function humanizeLabel(value) {
