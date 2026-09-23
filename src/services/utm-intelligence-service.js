@@ -101,10 +101,9 @@ export class UtmIntelligenceService {
       .map((value) => this.buildSuggestion(field, value, scopedRows, approvedRows, filters, maps))
       .filter(Boolean)
       .filter((item) => !query || item.normalized_value.includes(query) || compactValue(item.normalized_value).includes(compactQuery))
-      .sort(compareSuggestions)
-      .slice(0, limit);
+      .sort(compareSuggestions);
 
-    return { items: ranked };
+    return { items: this.limitSuggestions(ranked, field, limit) };
   }
 
   counts(input = {}) {
@@ -767,6 +766,27 @@ export class UtmIntelligenceService {
     return this.configuredValues.get(`${normalizedClient}:${field}`)?.has(normalizeOptional(value)) ?? false;
   }
 
+  isGlobalSuggestion(field, value) {
+    const normalized = normalizeOptional(value);
+    return this.rulesService.getGlobalUtmSuggestions(field)
+      .some((candidate) => normalizeOptional(candidate) === normalized);
+  }
+
+  limitSuggestions(ranked, field, limit) {
+    const globalSuggestions = ranked.filter((item) => this.isGlobalSuggestion(field, item.normalized_value));
+    if (globalSuggestions.length === 0) {
+      return ranked.slice(0, limit);
+    }
+
+    const globalValues = new Set(globalSuggestions.map((item) => item.normalized_value));
+    return [
+      ...ranked
+        .filter((item) => !globalValues.has(item.normalized_value))
+        .slice(0, Math.max(0, limit - globalSuggestions.length)),
+      ...globalSuggestions.slice(0, limit)
+    ].sort(compareSuggestions);
+  }
+
   displayValue(field, value, client = null) {
     const normalized = normalizeOptional(value);
     return this.configuredValues.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
@@ -795,13 +815,21 @@ export class UtmIntelligenceService {
   }
 
   collectCandidateValues(field, filters, approvedRows, maps) {
+    const candidates = new Set();
     if (field === "medium" && filters.source) {
-      return (maps.sourceMedium.get(filters.source) ?? []).map((row) => row.value);
+      for (const row of maps.sourceMedium.get(filters.source) ?? []) {
+        candidates.add(row.value);
+      }
+    } else {
+      for (const value of uniqueRowValues(approvedRows, field)) {
+        candidates.add(value);
+      }
     }
-    const candidates = new Set(uniqueRowValues(approvedRows, field));
     if (!this.purgedClients.has(filters.client)) {
       for (const value of this.configuredValues.get(`${filters.client}:${field}`)?.keys() ?? []) {
-        candidates.add(value);
+        if (field !== "medium" || !filters.source || this.isGlobalSuggestion(field, value)) {
+          candidates.add(value);
+        }
       }
     }
     if (field === "source" && filters.campaign) {
@@ -1287,6 +1315,11 @@ function normalizeOptional(value) {
 function buildConfiguredValueMaps(rulesService) {
   const maps = new Map();
   for (const client of rulesService.clients()) {
+    for (const field of UTM_FIELDS) {
+      for (const value of rulesService.getGlobalUtmSuggestions(field)) {
+        registerConfiguredValue(maps, client, field, value);
+      }
+    }
     for (const profile of rulesService.getCampaignStandards(client)) {
       registerConfiguredValue(maps, client, "campaign", profile.campaign);
       registerConfiguredValue(maps, client, "source", profile.source);

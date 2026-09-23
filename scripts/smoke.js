@@ -132,6 +132,14 @@ if (dictionaryOnlyRules.clients().some((client) =>
 )) {
   throw new Error("Dictionary-only client rules smoke test failed.");
 }
+if (
+  dictionaryOnlyRules.getGlobalUtmSuggestions("medium").join(",") !== "QrCode"
+  || dictionaryOnlyRules.getSourceMedium("qr")?.medium !== "Offline"
+  || dictionaryOnlyRules.normalizeChannel(null, null, false, { medium: "QrCode" }) !== "qr"
+  || dictionaryOnlyRules.normalizeAssetType(null, "qr", { medium: "QrCode" }) !== "offline"
+) {
+  throw new Error("Universal QrCode suggestion rules smoke test failed.");
+}
 if (dictionaryOnlyRules.normalizeUtmField("campaign", "News", { client: "studleys" }) !== "Inspiration") {
   throw new Error("Configured campaign alias smoke test failed.");
 }
@@ -389,6 +397,24 @@ try {
   const landingPageSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=gas&query=LandingPage")).json();
   const sourceScopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about&source=constantcontact")).json();
   const unscopedMediums = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&campaign=about")).json();
+  const universalMediumSuggestions = await Promise.all(["gas", "studleys", "castle"].map(async (client) => (
+    await (await af(`/new/utm-intelligence/suggestions.json?field=medium&client=${client}`)).json()
+  )));
+  const filteredMediumSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=medium&client=gas&query=email")).json();
+  const qrCodePreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "gas",
+      destination_url: "https://example.com/qr-code-medium",
+      utm_source: "QR",
+      utm_medium: "QrCode",
+      utm_campaign: "Website",
+      utm_term: "",
+      utm_content: ""
+    })
+  });
+  const qrCodePreview = await qrCodePreviewResponse.json();
   const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
@@ -858,13 +884,18 @@ try {
     || configuredAliasPreview.preview?.resolved?.utm_campaign !== "SmokeCampaignCopy"
     || !constantContactSuggestions.items?.some((item) => item.value === "ConstantContact" && item.normalized_value === "constantcontact" && item.known)
     || !landingPageSuggestions.items?.some((item) => item.value === "LandingPage" && item.normalized_value === "landingpage" && item.known)
-    || sourceScopedMediums.items?.length !== 1
-    || sourceScopedMediums.items?.[0]?.normalized_value !== "email"
-    || sourceScopedMediums.items?.[0]?.relation !== "Used with ConstantContact 34 times"
-    || sourceScopedMediums.items?.[0]?.recommended !== true
+    || sourceScopedMediums.items?.length !== 2
+    || !sourceScopedMediums.items?.some((item) => item.normalized_value === "email" && item.relation === "Used with ConstantContact 34 times" && item.recommended === true)
+    || !sourceScopedMediums.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true)
     || sourceScopedMediums.items?.some((item) => item.normalized_value === "social")
     || !unscopedMediums.items?.some((item) => item.normalized_value === "email")
     || !unscopedMediums.items?.some((item) => item.normalized_value === "social")
+    || !unscopedMediums.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true)
+    || universalMediumSuggestions.some((response) => !response.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true))
+    || filteredMediumSuggestions.items?.some((item) => item.normalized_value === "qrcode")
+    || qrCodePreviewResponse.status !== 200
+    || qrCodePreview.preview?.resolved?.utm_medium !== "QrCode"
+    || qrCodePreview.preview?.resolved?.channel !== "qr"
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
     || existingQueryPreview.preview?.resolved?.utm_source !== "Facebook"
@@ -1028,18 +1059,74 @@ async function verifyBitlyFailureClassification() {
   for (const [error, expectedReason] of cases) {
     const service = createMockLinkGenerationService(async () => { throw error; });
     const result = await service.generate(mockNormalized(), `smoke-${expectedReason}-${error.statusCode ?? error.code}`);
-    if (!result.degraded || result.degradedReason !== expectedReason || !result.result.longUrl) {
+    if (!result.degraded || result.degradedReason !== expectedReason || !result.result.longUrl || result.result.longUrl.includes("jf_fp")) {
       throw new Error(`Bitly degradation classification failed for ${expectedReason}.`);
     }
   }
 
-  const success = await createMockLinkGenerationService(async () => ({
-    link: "https://bit.ly/smoke",
-    id: "bitly/smoke",
-    payload: { link: "https://bit.ly/smoke" }
-  })).generate(mockNormalized(), "smoke-success");
-  if (success.degraded || success.result.shortUrl !== "https://bit.ly/smoke") {
-    throw new Error("Successful Bitly response did not retain its short link.");
+  const normalizedWithLegacyFingerprint = mockNormalized();
+  normalizedWithLegacyFingerprint.finalLongUrl += "&jf_fp=legacy-fingerprint#details";
+  const expectedCleanLongUrl = mockNormalized().finalLongUrl + "#details";
+  let shortenedSuccessUrl = null;
+  let createdSuccess = null;
+  const successService = new LinkGenerationService({
+    generatedLinkRepository: {
+      async findByFingerprintAsync() { return null; },
+      async createAsync(payload) { createdSuccess = payload; return 1; }
+    },
+    bitlyService: {
+      async shorten(longUrl) {
+        shortenedSuccessUrl = longUrl;
+        return {
+          link: "https://bit.ly/smoke",
+          id: "bitly/smoke",
+          payload: { link: "https://bit.ly/smoke", long_url: longUrl }
+        };
+      }
+    },
+    qrCodeService: { generateUrl(url) { return `https://qr.example/?data=${encodeURIComponent(url)}`; } }
+  });
+  const success = await successService.generate(normalizedWithLegacyFingerprint, "smoke-success");
+  if (
+    success.degraded
+    || success.result.shortUrl !== "https://bit.ly/smoke"
+    || success.result.longUrl !== expectedCleanLongUrl
+    || shortenedSuccessUrl !== expectedCleanLongUrl
+    || createdSuccess?.finalLongUrl !== expectedCleanLongUrl
+    || createdSuccess?.fingerprint !== "smoke-success"
+  ) {
+    throw new Error("New Bitly links must use a clean URL while retaining the internal fingerprint.");
+  }
+
+  const legacyExisting = {
+    fingerprint: "legacy-existing",
+    final_long_url: `${mockNormalized().finalLongUrl}&jf_fp=legacy-existing`,
+    short_url: "https://bit.ly/legacy-existing",
+    qr_url: "https://qr.example/legacy-existing",
+    qr_preview_url: null,
+    bitly_id: "bitly/legacy-existing",
+    bitly_payload: JSON.stringify({ link: "https://bit.ly/legacy-existing" })
+  };
+  const existingService = new LinkGenerationService({
+    generatedLinkRepository: {
+      async findByFingerprintAsync() { return legacyExisting; },
+      async updateByFingerprintAsync() { throw new Error("Existing records must not be updated."); }
+    },
+    bitlyService: {
+      async shorten() { throw new Error("Existing Bitly links must not be recreated."); }
+    },
+    qrCodeService: {
+      generateUrl() { throw new Error("Existing QR assets must not be recreated."); }
+    }
+  });
+  const reused = await existingService.generate(mockNormalized(), legacyExisting.fingerprint);
+  if (
+    !reused.result.reusedExisting
+    || reused.result.longUrl !== legacyExisting.final_long_url
+    || reused.result.shortUrl !== legacyExisting.short_url
+    || reused.result.qrUrl !== legacyExisting.qr_url
+  ) {
+    throw new Error("Existing fingerprinted links must be reused without modification.");
   }
 
   let supplementedLongUrl = null;
@@ -1063,9 +1150,10 @@ async function verifyBitlyFailureClassification() {
     qrCodeService: { generateUrl(url) { return `https://qr.example/?data=${encodeURIComponent(url)}`; } }
   });
   const cleanLongUrl = "https://example.com/?utm_source=Facebook&utm_medium=Social&utm_campaign=Website";
+  const legacySupplementLongUrl = `${cleanLongUrl}&jf_fp=supplement-fingerprint`;
   const supplement = await supplementService.supplement({
     fingerprint: "supplement-fingerprint",
-    final_long_url: cleanLongUrl,
+    final_long_url: legacySupplementLongUrl,
     short_url: "",
     qr_url: null
   }, { generateShort: true });
@@ -1073,9 +1161,10 @@ async function verifyBitlyFailureClassification() {
     supplement.shortUrl !== "https://bit.ly/supplement"
     || supplementedLongUrl !== cleanLongUrl
     || supplementedLongUrl.includes("jf_fp")
+    || supplement.finalLongUrl !== legacySupplementLongUrl
     || Object.hasOwn(supplementedFields ?? {}, "final_long_url")
   ) {
-    throw new Error("Missing short-link generation must not add jf_fp to the tracked URL.");
+    throw new Error("Missing short-link generation must omit jf_fp without rewriting the existing record.");
   }
 
   const unexpected = new Error("database-style unexpected failure");

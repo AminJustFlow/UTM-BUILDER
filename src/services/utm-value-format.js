@@ -11,7 +11,8 @@ const PRESERVED_WORDS = new Map([
 ]);
 
 const PRESERVED_PHRASES = new Map([
-  ["linkedin", "LinkedIn"]
+  ["linkedin", "LinkedIn"],
+  ["qrcode", "QrCode"]
 ]);
 
 export function formatUtmValue(value) {

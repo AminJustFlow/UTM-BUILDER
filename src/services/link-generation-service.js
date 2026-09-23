@@ -18,32 +18,31 @@ export class LinkGenerationService {
   }
 
   async generate(normalized, fingerprint, { qrProjectId = null, qrProjectName = null } = {}) {
-    const trackedLongUrl = this.withFingerprint(normalized.finalLongUrl, fingerprint);
+    const cleanLongUrl = this.urlService.removeInternalTrackingParams(normalized.finalLongUrl);
     const existing = await (this.generatedLinkRepository.findByFingerprintAsync?.(fingerprint)
       ?? this.generatedLinkRepository.findByFingerprint(fingerprint));
     if (existing) {
-      const refreshed = await this.ensureTrackedUrl(await this.ensureQr(existing, normalized, { qrProjectId, qrProjectName }), normalized, fingerprint);
       return {
         fingerprint,
         result: new LinkGenerationResult({
           fingerprint,
-          longUrl: refreshed.final_long_url || trackedLongUrl,
-          shortUrl: refreshed.short_url,
-          qrUrl: refreshed.qr_url ?? null,
-          qrPreviewUrl: refreshed.qr_preview_url ?? null,
+          longUrl: existing.final_long_url || cleanLongUrl,
+          shortUrl: existing.short_url,
+          qrUrl: existing.qr_url ?? null,
+          qrPreviewUrl: existing.qr_preview_url ?? null,
           reusedExisting: true,
-          bitlyMetadata: safeJsonParse(refreshed.bitly_payload)
+          bitlyMetadata: safeJsonParse(existing.bitly_payload)
         }),
-        bitlyId: refreshed.bitly_id ?? null,
-        bitlyPayload: safeJsonParse(refreshed.bitly_payload),
+        bitlyId: existing.bitly_id ?? null,
+        bitlyPayload: safeJsonParse(existing.bitly_payload),
         degraded: false
       };
     }
 
     try {
-      const bitly = await this.bitlyService.shorten(trackedLongUrl);
+      const bitly = await this.bitlyService.shorten(cleanLongUrl);
       const timestamp = new Date().toISOString();
-      const qr = normalized.needsQr ? await this.generateQr(bitly.link || trackedLongUrl, normalized, fingerprint, timestamp, { qrProjectId, qrProjectName }) : {};
+      const qr = normalized.needsQr ? await this.generateQr(bitly.link || cleanLongUrl, normalized, fingerprint, timestamp, { qrProjectId, qrProjectName }) : {};
       const qrUrl = qr.qrUrl ?? null;
 
       try {
@@ -59,7 +58,7 @@ export class LinkGenerationService {
           utmCampaign: normalized.utmCampaign,
           utmTerm: normalized.utmTerm,
           utmContent: normalized.utmContent,
-          finalLongUrl: trackedLongUrl,
+          finalLongUrl: cleanLongUrl,
           shortUrl: bitly.link,
           qrUrl,
           qrPreviewUrl: null,
@@ -79,7 +78,7 @@ export class LinkGenerationService {
           utmCampaign: normalized.utmCampaign,
           utmTerm: normalized.utmTerm,
           utmContent: normalized.utmContent,
-          finalLongUrl: trackedLongUrl,
+          finalLongUrl: cleanLongUrl,
           shortUrl: bitly.link,
           qrUrl,
           qrPreviewUrl: null,
@@ -95,20 +94,19 @@ export class LinkGenerationService {
           throw error;
         }
 
-        const refreshed = await this.ensureTrackedUrl(await this.ensureQr(raceExisting, normalized, { qrProjectId, qrProjectName }), normalized, fingerprint);
         return {
           fingerprint,
           result: new LinkGenerationResult({
             fingerprint,
-            longUrl: refreshed.final_long_url || trackedLongUrl,
-            shortUrl: refreshed.short_url,
-            qrUrl: refreshed.qr_url ?? null,
-            qrPreviewUrl: refreshed.qr_preview_url ?? null,
+            longUrl: raceExisting.final_long_url || cleanLongUrl,
+            shortUrl: raceExisting.short_url,
+            qrUrl: raceExisting.qr_url ?? null,
+            qrPreviewUrl: raceExisting.qr_preview_url ?? null,
             reusedExisting: true,
-            bitlyMetadata: safeJsonParse(refreshed.bitly_payload)
+            bitlyMetadata: safeJsonParse(raceExisting.bitly_payload)
           }),
-          bitlyId: refreshed.bitly_id ?? null,
-          bitlyPayload: safeJsonParse(refreshed.bitly_payload),
+          bitlyId: raceExisting.bitly_id ?? null,
+          bitlyPayload: safeJsonParse(raceExisting.bitly_payload),
           degraded: false
         };
       }
@@ -117,7 +115,7 @@ export class LinkGenerationService {
         fingerprint,
         result: new LinkGenerationResult({
           fingerprint,
-          longUrl: trackedLongUrl,
+          longUrl: cleanLongUrl,
           shortUrl: bitly.link,
           qrUrl,
           qrPreviewUrl: null,
@@ -145,13 +143,13 @@ export class LinkGenerationService {
         cause_message: error?.cause?.message ?? null
       });
 
-      const qr = normalized.needsQr ? await this.generateQr(trackedLongUrl, normalized, fingerprint, new Date(), { qrProjectId, qrProjectName }) : {};
+      const qr = normalized.needsQr ? await this.generateQr(cleanLongUrl, normalized, fingerprint, new Date(), { qrProjectId, qrProjectName }) : {};
       const qrUrl = qr.qrUrl ?? null;
       return {
         fingerprint,
         result: new LinkGenerationResult({
           fingerprint,
-          longUrl: trackedLongUrl,
+          longUrl: cleanLongUrl,
           shortUrl: null,
           qrUrl,
           qrPreviewUrl: qr.qrPreviewUrl,
@@ -185,7 +183,7 @@ export class LinkGenerationService {
 
     if (generateShort && !shortUrl) {
       try {
-        const bitly = await this.bitlyService.shorten(finalLongUrl);
+        const bitly = await this.bitlyService.shorten(this.urlService.removeInternalTrackingParams(finalLongUrl));
         shortUrl = bitly.link;
         bitlyId = bitly.id ?? null;
         bitlyPayload = bitly.payload ?? {};
@@ -293,28 +291,6 @@ export class LinkGenerationService {
       ...existing,
       qr_url: qr.qrUrl
     };
-  }
-
-  async ensureTrackedUrl(existing, normalized, fingerprint) {
-    const trackedLongUrl = this.withFingerprint(existing.final_long_url || normalized.finalLongUrl, fingerprint);
-    if (existing.final_long_url === trackedLongUrl) {
-      return existing;
-    }
-
-    await (this.generatedLinkRepository.updateByFingerprintAsync?.(existing.fingerprint, {
-      final_long_url: trackedLongUrl
-    }) ?? this.generatedLinkRepository.updateByFingerprint(existing.fingerprint, {
-      final_long_url: trackedLongUrl
-    }));
-
-    return {
-      ...existing,
-      final_long_url: trackedLongUrl
-    };
-  }
-
-  withFingerprint(longUrl, fingerprint) {
-    return this.urlService.appendInternalTrackingParams(longUrl, { jf_fp: fingerprint });
   }
 
   async generateQr(targetUrl, normalized, fingerprint, createdAt = new Date(), { qrProjectId = null, qrProjectName = null } = {}) {

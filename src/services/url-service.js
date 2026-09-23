@@ -40,6 +40,14 @@ export class UrlService {
     }
     return parsed.toString();
   }
+
+  removeInternalTrackingParams(url) {
+    const parsed = new URL(url);
+    for (const key of INTERNAL_TRACKING_KEYS) {
+      parsed.searchParams.delete(key);
+    }
+    return parsed.toString();
+  }
 }
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];

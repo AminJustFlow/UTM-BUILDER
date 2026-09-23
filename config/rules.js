@@ -565,6 +565,9 @@ const clients = attachTaxonomy({
 
 export default {
   assetTypes: ["social", "email", "pr", "offline", "paid", "owned"],
+  globalUtmSuggestions: {
+    medium: ["QrCode"]
+  },
   workbookTaxonomy,
   clients,
   channels: staticChannels,

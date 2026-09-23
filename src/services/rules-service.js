@@ -27,6 +27,11 @@ export class RulesService {
     return this.rules.assetTypes ?? [];
   }
 
+  getGlobalUtmSuggestions(field) {
+    const values = this.rules.globalUtmSuggestions?.[field];
+    return Array.isArray(values) ? [...values] : [];
+  }
+
   normalizeClient(client, destinationUrl = null) {
     const normalized = this.normalizeByAliases(client, this.rules.clients ?? {});
     if (normalized) {
