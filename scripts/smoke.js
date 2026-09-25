@@ -217,6 +217,18 @@ if (
   throw new Error("Governance client code aggregation smoke test failed.");
 }
 
+const legacyApprovalOverrides = intelligenceService.buildApprovedValueOverrides([
+  { field: "gas|content", value: "legacyapprovedvalue", display_value: null },
+  { field: "gas|pair:campaign+content", value: "caregiver|legacyapprovedvalue", display_value: null },
+  { field: "gas|combination", value: "campaign=caregiver|content=legacyapprovedvalue", display_value: null }
+], [{ client: "gas", content: "legacyapprovedvalue", contentDisplay: "LegacyApprovedValue" }]);
+if (
+  legacyApprovalOverrides.size !== 1
+  || legacyApprovalOverrides.get("gas:content")?.get("legacyapprovedvalue") !== "LegacyApprovedValue"
+) {
+  throw new Error("Legacy approved-value overlay smoke test failed.");
+}
+
 if (
   formatUtmValue("facebook") !== "Facebook"
   || formatUtmValue("shop now") !== "ShopNow"
@@ -716,6 +728,12 @@ try {
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
   const historyBody = await historyResponse.json();
 
+  const adminCookieBeforeGovernance = sessionCookie;
+  const governanceRegularLogin = await fetch(`${base}/login`, {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ username: "smokeuser", password: "smoke-user-pass-123" }).toString()
+  });
+  sessionCookie = cookieValue(governanceRegularLogin, "jf_app_session");
   const govCreateAttempt = await createWithConsistencyConfirmation({
       client: "gas",
       destination_url: `https://example.com/governance-smoke-${Date.now()}`,
@@ -723,21 +741,47 @@ try {
       utm_medium: "social",
       utm_campaign: "Caregiver",
       utm_term: "",
-      utm_content: "ShopNow"
+      utm_content: "ApprovalOnlyValue"
   });
+  sessionCookie = adminCookieBeforeGovernance;
   const govCreateResponse = govCreateAttempt.response;
   const govCreated = govCreateAttempt.body;
   const govWarning = govCreateAttempt.firstBody.error?.consistency_warnings?.find((warning) => warning.type === "new_value" && warning.fields?.includes("content"));
   const govValue = govCreated.result?.utm_content ?? "";
   const govMarker = `data-governance-value="${String(govValue).toLowerCase()}"`;
   const libraryBeforeAck = await (await af("/utms")).text();
+  const govSuggestionsBeforeAck = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=gas&query=approvalonlyvalue")).json();
   const ackResponse = await fetch(`${base}/utms/governance/acknowledge`, {
     method: "POST",
     redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
-    body: new URLSearchParams({ field: "content", value: govValue, client: "gas", warning_type: "new_value" }).toString()
+    body: new URLSearchParams({ field: "content", value: String(govValue).toLowerCase(), display_value: govValue, client: "gas", warning_type: "new_value" }).toString()
+  });
+  const duplicateAckResponse = await fetch(`${base}/utms/governance/acknowledge`, {
+    method: "POST", redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
+    body: new URLSearchParams({ field: "content", value: String(govValue).toLowerCase(), display_value: govValue, client: "gas", warning_type: "new_value" }).toString()
+  });
+  const pairAckResponse = await fetch(`${base}/utms/governance/acknowledge`, {
+    method: "POST", redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
+    body: new URLSearchParams({ field: "pair:campaign+content", value: "caregiver|paironlyvalue", client: "gas", warning_type: "new_pairing" }).toString()
+  });
+  const typoAckResponse = await fetch(`${base}/utms/governance/acknowledge`, {
+    method: "POST", redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
+    body: new URLSearchParams({ field: "source", value: "facebok", display_value: "Facebok", client: "gas", warning_type: "new_value" }).toString()
   });
   const libraryAfterAck = await (await af("/utms")).text();
+  const govSuggestionsAfterAck = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=gas&campaign=Caregiver&source=Facebook&query=approvalonlyvalue")).json();
+  const govSuggestionsOtherClient = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=castle&query=approvalonlyvalue")).json();
+  const govSuggestionsWrongField = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=approvalonlyvalue")).json();
+  const pairValueSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=gas&query=paironlyvalue")).json();
+  const typoValueSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=source&client=gas&query=facebok")).json();
+  const govArchiveResponse = await af("/utms/archive", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ request_id: govCreated.result?.request_id })
+  });
+  const govSuggestionsAfterArchive = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=gas&query=approvalonlyvalue")).json();
   const overlayAttempt = await createWithConsistencyConfirmation({
     client: "gas", destination_url: "https://example.com/admin-overlay",
     utm_source: "facebook", utm_medium: "social", utm_campaign: "adminoverlaycampaign",
@@ -1093,16 +1137,17 @@ try {
     || !historyBody.events?.some((event) => event.actor === "Smoke Admin")
     || !historyBody.events?.some((event) => event.action === "consistency_override")
     || govCreateResponse.status !== 200
-    || govWarning?.values?.content !== "shopnow"
-    || govWarning?.display_values?.content !== "ShopNow"
-    || govWarning?.message !== 'Content "ShopNow" has never been used for this client.'
+    || governanceRegularLogin.status !== 302
+    || govWarning?.values?.content !== "approvalonlyvalue"
+    || govWarning?.display_values?.content !== "ApprovalOnlyValue"
+    || govWarning?.message !== 'Content "ApprovalOnlyValue" has never been used for this client.'
     || !govValue
     || !libraryBeforeAck.includes(govMarker)
-    || !libraryBeforeAck.includes("GAS · Content: ShopNow (1)")
-    || libraryBeforeAck.includes("gas: ShopNow (1)")
-    || libraryBeforeAck.includes("GAS · Content: Shopnow (1)")
+    || !libraryBeforeAck.includes("GAS · Content: ApprovalOnlyValue (1)")
+    || libraryBeforeAck.includes("gas: ApprovalOnlyValue (1)")
     || !libraryBeforeAck.includes('name="client" value="gas"')
-    || !libraryBeforeAck.includes('name="value" value="shopnow"')
+    || !libraryBeforeAck.includes('name="value" value="approvalonlyvalue"')
+    || !libraryBeforeAck.includes('name="display_value" value="ApprovalOnlyValue"')
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
     || !libraryBeforeAck.includes('class="grid library-results-grid"')
@@ -1114,7 +1159,19 @@ try {
     || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(even){background:var(--surface-2)}")
     || libraryBeforeAck.includes("Last edited by")
     || ackResponse.status !== 302
+    || duplicateAckResponse.status !== 302
+    || pairAckResponse.status !== 302
+    || typoAckResponse.status !== 302
+    || !typoAckResponse.headers.get("location")?.includes("Possible+typos")
     || libraryAfterAck.includes(govMarker)
+    || govSuggestionsBeforeAck.items?.some((item) => item.normalized_value === "approvalonlyvalue")
+    || !govSuggestionsAfterAck.items?.some((item) => item.value === "ApprovalOnlyValue" && item.normalized_value === "approvalonlyvalue" && item.known)
+    || govSuggestionsOtherClient.items?.some((item) => item.normalized_value === "approvalonlyvalue")
+    || govSuggestionsWrongField.items?.some((item) => item.normalized_value === "approvalonlyvalue")
+    || pairValueSuggestions.items?.some((item) => item.normalized_value === "paironlyvalue")
+    || typoValueSuggestions.items?.some((item) => item.normalized_value === "facebok")
+    || govArchiveResponse.status !== 200
+    || !govSuggestionsAfterArchive.items?.some((item) => item.value === "ApprovalOnlyValue" && item.normalized_value === "approvalonlyvalue" && item.known)
     || overlayAttempt.response.status !== 200
     || secondOverlayAttempt.response.status !== 200
     || !overlayKnownBeforeArchive.items?.some((item) => item.normalized_value === "adminoverlaycampaign" && item.known)
@@ -1162,7 +1219,13 @@ try {
       qrProjectsUnavailableStatus: qrProjectsUnavailableResponse.status,
       qrProjectsUnavailableCode: qrProjectsUnavailable.error?.code,
       missingQrProjectStatus: missingQrProjectResponse.status,
-      missingQrProjectCode: missingQrProject.error?.code
+      missingQrProjectCode: missingQrProject.error?.code,
+      govSuggestionsBeforeAck: govSuggestionsBeforeAck.items,
+      govSuggestionsAfterAck: govSuggestionsAfterAck.items,
+      govSuggestionsOtherClient: govSuggestionsOtherClient.items,
+      govSuggestionsWrongField: govSuggestionsWrongField.items,
+      govArchiveStatus: govArchiveResponse.status,
+      govSuggestionsAfterArchive: govSuggestionsAfterArchive.items
     })}`);
   }
   process.stdout.write("Standalone UTM Builder smoke test passed.\n");

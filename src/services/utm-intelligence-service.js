@@ -8,12 +8,13 @@ const DEFAULT_SUGGESTION_LIMIT = 8;
 const DEFAULT_HISTORY_LIMIT = 6;
 
 export class UtmIntelligenceService {
-  constructor({ projectRoot, rulesService, generatedLinkRepository = null, requestRepository = null, campaignStandardsRepository = null, logger = null, refreshTtlMs = 15_000, currentYear = new Date().getFullYear() }) {
+  constructor({ projectRoot, rulesService, generatedLinkRepository = null, requestRepository = null, campaignStandardsRepository = null, utmValueAcknowledgementRepository = null, logger = null, refreshTtlMs = 15_000, currentYear = new Date().getFullYear() }) {
     this.projectRoot = projectRoot;
     this.rulesService = rulesService;
     this.generatedLinkRepository = generatedLinkRepository;
     this.requestRepository = requestRepository;
     this.campaignStandardsRepository = campaignStandardsRepository;
+    this.utmValueAcknowledgementRepository = utmValueAcknowledgementRepository;
     this.logger = logger;
     this.refreshTtlMs = Math.max(1_000, Number(refreshTtlMs) || 15_000);
     this.lastRefreshAt = 0;
@@ -21,6 +22,7 @@ export class UtmIntelligenceService {
     this.currentYear = currentYear;
     this.staticData = this.loadStaticData();
     this.runtimeRows = [];
+    this.acknowledgedRows = [];
     this.configuredValues = buildConfiguredValueMaps(this.rulesService);
     this.purgedClients = new Set();
     this.data = this.mergeRuntimeData(this.runtimeRows);
@@ -243,7 +245,8 @@ export class UtmIntelligenceService {
       const value = filters[field];
       if (!value) continue;
       const usageCount = countComparableRows(clientRows, field, value);
-      if (usageCount > 0 || this.isConfiguredValue(client, field, value) || acknowledged.has(`${client}|${field}:${value}`)) continue;
+      if (usageCount > 0 || this.isConfiguredValue(client, field, value) || this.isApprovedValueOverride(client, field, value)
+        || acknowledged.has(`${client}|${field}:${value}`)) continue;
       const near = this.findNearDuplicateForRows(field, value, clientRows)
         ?? this.findNearDuplicateForRows(field, value, this.data.approvedRows);
       const recommendationRows = clientRows.length ? clientRows : this.data.approvedRows;
@@ -419,6 +422,7 @@ export class UtmIntelligenceService {
     }
     const normalizedClient = normalizeOptional(client);
     return this.isConfiguredValue(normalizedClient, normalizedField, normalizedValue)
+      || this.isApprovedValueOverride(normalizedClient, normalizedField, normalizedValue)
       || countComparableRows(this.scopeApprovedRows({ client: normalizedClient }), normalizedField, normalizedValue) > 0;
   }
 
@@ -518,18 +522,20 @@ export class UtmIntelligenceService {
     const startedAt = performance.now();
     this.refreshPromise = (async () => {
       const databaseStartedAt = performance.now();
-      const [runtimeRows, campaignStandards] = await Promise.all([
+      const [runtimeRows, campaignStandards, acknowledgedRows] = await Promise.all([
         this.loadRuntimeRowsAsync(),
-        this.campaignStandardsRepository?.listActiveProfiles?.() ?? Promise.resolve(null)
+        this.campaignStandardsRepository?.listActiveProfiles?.() ?? Promise.resolve(null),
+        this.loadAcknowledgedRowsAsync()
       ]);
       const databaseMs = performance.now() - databaseStartedAt;
       this.runtimeRows = runtimeRows;
+      this.acknowledgedRows = acknowledgedRows;
       if (campaignStandards) {
         this.rulesService.setCampaignStandards(campaignStandards);
         this.configuredValues = buildConfiguredValueMaps(this.rulesService);
       }
       const mergeStartedAt = performance.now();
-      this.data = this.mergeRuntimeData(this.runtimeRows);
+      this.data = this.mergeRuntimeData(this.runtimeRows, this.acknowledgedRows);
       const mergeMs = performance.now() - mergeStartedAt;
       this.lastRefreshAt = Date.now();
       const totalMs = performance.now() - startedAt;
@@ -578,17 +584,19 @@ export class UtmIntelligenceService {
     };
   }
 
-  mergeRuntimeData(runtimeRows = this.runtimeRows) {
+  mergeRuntimeData(runtimeRows = this.runtimeRows, acknowledgedRows = this.acknowledgedRows) {
     const staticRows = this.staticData.masterRows.filter((row) => !this.purgedClients.has(row.client));
     const activeRuntimeRows = runtimeRows.filter((row) => !this.purgedClients.has(row.client));
     const masterRows = [...staticRows, ...activeRuntimeRows];
     const valueCounts = buildValueCounts(masterRows);
     const approvedRows = [...staticRows, ...activeRuntimeRows.filter((row) => row.dictionaryApproved)];
     const approvedValueCounts = buildValueCounts(approvedRows);
+    const approvedValueOverrides = this.buildApprovedValueOverrides(acknowledgedRows, activeRuntimeRows);
     return {
       ...this.staticData,
       masterRows,
       approvedRows,
+      approvedValueOverrides,
       valueCounts,
       valueCountLookup: new Map(valueCounts.map((row) => [`${row.field}:${row.value}`, row])),
       displayValueLookup: buildDisplayValueLookup(approvedRows),
@@ -596,6 +604,23 @@ export class UtmIntelligenceService {
       maps: buildMaps(approvedRows),
       comboExamples: buildComboExamples(masterRows)
     };
+  }
+
+  buildApprovedValueOverrides(acknowledgedRows = [], runtimeRows = []) {
+    const overrides = new Map();
+    for (const row of acknowledgedRows ?? []) {
+      const [storedClient, storedField, ...extraFieldParts] = String(row.field ?? "").split("|");
+      if (extraFieldParts.length || !UTM_FIELDS.includes(storedField)) continue;
+      const client = this.rulesService.normalizeClient(storedClient) ?? normalizeOptional(storedClient);
+      const value = normalizeOptional(row.value);
+      if (!client || !value || this.purgedClients.has(client)) continue;
+      const historicalDisplay = runtimeRows.find((candidate) => candidate.client === client && candidate[storedField] === value)?.[`${storedField}Display`];
+      const displayValue = String(row.display_value ?? "").trim() || historicalDisplay || formatUtmValue(row.value);
+      const key = `${client}:${storedField}`;
+      if (!overrides.has(key)) overrides.set(key, new Map());
+      overrides.get(key).set(value, displayValue);
+    }
+    return overrides;
   }
 
   loadRuntimeRows() {
@@ -629,6 +654,13 @@ export class UtmIntelligenceService {
         .filter(Boolean);
     }
     return this.loadRuntimeRows();
+  }
+
+  async loadAcknowledgedRowsAsync() {
+    if (this.utmValueAcknowledgementRepository?.listAsync) {
+      return await this.utmValueAcknowledgementRepository.listAsync();
+    }
+    return this.utmValueAcknowledgementRepository?.list?.() ?? [];
   }
 
   canLoadRuntimeRowsSync() {
@@ -769,6 +801,14 @@ export class UtmIntelligenceService {
     return this.configuredValues.get(`${normalizedClient}:${field}`)?.has(normalizeOptional(value)) ?? false;
   }
 
+  isApprovedValueOverride(client, field, value) {
+    const normalizedClient = normalizeOptional(client);
+    const normalizedField = normalizeField(field);
+    const normalizedValue = normalizeOptional(value);
+    if (!normalizedClient || !normalizedField || !normalizedValue || this.purgedClients.has(normalizedClient)) return false;
+    return this.data.approvedValueOverrides?.get(`${normalizedClient}:${normalizedField}`)?.has(normalizedValue) ?? false;
+  }
+
   isGlobalSuggestion(field, value) {
     const normalized = normalizeOptional(value);
     return this.rulesService.getGlobalUtmSuggestions(field)
@@ -793,6 +833,7 @@ export class UtmIntelligenceService {
   displayValue(field, value, client = null) {
     const normalized = normalizeOptional(value);
     return this.configuredValues.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
+      ?? this.data.approvedValueOverrides?.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
       ?? this.data.displayValueLookup?.get(`${field}:${normalized}`)
       ?? formatUtmValue(value);
   }
@@ -834,6 +875,9 @@ export class UtmIntelligenceService {
           candidates.add(value);
         }
       }
+      for (const value of this.data.approvedValueOverrides?.get(`${filters.client}:${field}`)?.keys() ?? []) {
+        candidates.add(value);
+      }
     }
     if (field === "source" && filters.campaign) {
       for (const row of maps.campaignSource.get(filters.campaign) ?? []) {
@@ -866,6 +910,7 @@ export class UtmIntelligenceService {
     const scoped = sourceMediumMatch?.count ?? countRows(scopedRows, field, normalized, filters);
     const relation = buildRelationLabel(field, normalized, filters, maps, this.data.displayValueLookup);
     const known = this.isConfiguredValue(filters.client, field, normalized)
+      || this.isApprovedValueOverride(filters.client, field, normalized)
       || countComparableRows(approvedRows, field, normalized) > 0;
     const channelBoost = filters.channel ? this.channelValueBoost(field, normalized, filters.channel) : 0;
     const recommended = this.isRecommended(field, normalized, filters, maps);
@@ -949,7 +994,8 @@ export class UtmIntelligenceService {
     const normalizedClient = normalizeOptional(client);
     const knownValues = [...new Set([
       ...uniqueRowValues(this.scopeApprovedRows({ client: normalizedClient }), field),
-      ...(this.configuredValues.get(`${normalizedClient}:${field}`)?.keys() ?? [])
+      ...(this.configuredValues.get(`${normalizedClient}:${field}`)?.keys() ?? []),
+      ...(this.data.approvedValueOverrides?.get(`${normalizedClient}:${field}`)?.keys() ?? [])
     ])];
     if (knownValues.includes(normalized)) {
       return null;

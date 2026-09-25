@@ -99,6 +99,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository,
     requestRepository,
     campaignStandardsRepository,
+    utmValueAcknowledgementRepository,
     logger
   });
   campaignStandardsService.setUtmIntelligenceService?.(utmIntelligenceService);

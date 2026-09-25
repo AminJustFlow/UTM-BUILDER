@@ -163,12 +163,14 @@ export class UtmLibraryController {
   async handleAcknowledge(request) {
     const form = parseFormBody(request.rawBody);
     const field = normalizeTextValue(form.field).toLowerCase();
-    const value = normalizeTextValue(form.value);
+    const value = normalizeTextValue(form.value).toLowerCase();
+    const displayValue = normalizeTextValue(form.display_value) || value;
     const client = normalizeTextValue(form.client).toLowerCase();
     const warningType = normalizeTextValue(form.warning_type).toLowerCase();
 
     const validField = GOVERNANCE_FIELDS.includes(field) || /^pair:(campaign\+(source|medium|term|content)|source\+medium)$/u.test(field);
-    if (!validField || !value || !client || warningType === "possible_typo") {
+    const invalidDisplayValue = warningType === "new_value" && normalizeComparable(displayValue) !== normalizeComparable(value);
+    if (!validField || !value || !client || warningType === "possible_typo" || invalidDisplayValue) {
       return NodeResponse.redirect(`/utms?${buildQueryString({
         toast: "Could not acknowledge that value.",
         toast_level: "error"
@@ -190,18 +192,24 @@ export class UtmLibraryController {
       await (this.utmValueAcknowledgementRepository.acknowledgeAsync?.({
         field: `${client}|${field}`,
         value,
+        displayValue: warningType === "new_value" ? displayValue : null,
         userId: request?.user?.id ?? null,
         userName: request?.user?.displayName ?? null
       }) ?? this.utmValueAcknowledgementRepository.acknowledge?.({
         field: `${client}|${field}`,
         value,
+        displayValue: warningType === "new_value" ? displayValue : null,
         userId: request?.user?.id ?? null,
         userName: request?.user?.displayName ?? null
       }));
     }
 
+    this.utmIntelligenceService?.invalidateData?.();
+
     return NodeResponse.redirect(`/utms?${buildQueryString({
-      toast: `Acknowledged "${value}" for ${client}. It will no longer be flagged for review.`,
+      toast: warningType === "new_value"
+        ? `Approved "${displayValue}" for ${client}. It is now available in builder suggestions.`
+        : `Acknowledged "${value}" for ${client}. It will no longer be flagged for review.`,
       toast_level: "success"
     })}`);
   }
@@ -965,6 +973,7 @@ function renderGovernanceChip(fieldKey, item, canManage) {
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
         <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
         <input type="hidden" name="value" value="${escapeAttribute(item.value)}">
+        <input type="hidden" name="display_value" value="${escapeAttribute(item.displayValue ?? item.value)}">
         <input type="hidden" name="client" value="${escapeAttribute(item.client)}">
         <input type="hidden" name="warning_type" value="${escapeAttribute(item.type)}">
         <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(displayValue)}">${renderIcon("check")}</button>

@@ -24,42 +24,44 @@ export class UtmValueAcknowledgementRepository {
     `);
   }
 
-  acknowledge({ field, value, userId = null, userName = null, createdAt = new Date().toISOString() }) {
-    return syncRun(this.database, this.insertSql(), this.insertParams({ field, value, userId, userName, createdAt }));
+  acknowledge({ field, value, displayValue = null, userId = null, userName = null, createdAt = new Date().toISOString() }) {
+    return syncRun(this.database, this.insertSql(), this.insertParams({ field, value, displayValue, userId, userName, createdAt }));
   }
 
-  async acknowledgeAsync({ field, value, userId = null, userName = null, createdAt = new Date().toISOString() }) {
+  async acknowledgeAsync({ field, value, displayValue = null, userId = null, userName = null, createdAt = new Date().toISOString() }) {
     if (typeof this.database.runAsync !== "function") {
-      return this.acknowledge({ field, value, userId, userName, createdAt });
+      return this.acknowledge({ field, value, displayValue, userId, userName, createdAt });
     }
-    return await this.database.runAsync(this.insertSql(), this.insertParams({ field, value, userId, userName, createdAt }));
+    return await this.database.runAsync(this.insertSql(), this.insertParams({ field, value, displayValue, userId, userName, createdAt }));
   }
 
   insertSql() {
-    const isPostgres = this.database.client === "postgres";
-    const prefix = isPostgres ? "INSERT" : "INSERT OR IGNORE";
-    const conflictClause = isPostgres ? "\n      ON CONFLICT (field, value) DO NOTHING" : "";
     return `
-      ${prefix} INTO utm_value_acknowledgements (
+      INSERT INTO utm_value_acknowledgements (
         field,
         value,
+        display_value,
         acknowledged_by_user_id,
         acknowledged_by_name,
         created_at
       ) VALUES (
         :field,
         :value,
+        :display_value,
         :acknowledged_by_user_id,
         :acknowledged_by_name,
         :created_at
-      )${conflictClause}
+      )
+      ON CONFLICT (field, value) DO UPDATE SET
+        display_value = COALESCE(NULLIF(EXCLUDED.display_value, ''), utm_value_acknowledgements.display_value)
     `;
   }
 
-  insertParams({ field, value, userId, userName, createdAt }) {
+  insertParams({ field, value, displayValue, userId, userName, createdAt }) {
     return {
       field: String(field ?? "").trim(),
       value: String(value ?? "").trim(),
+      display_value: String(displayValue ?? "").trim() || null,
       acknowledged_by_user_id: userId ?? null,
       acknowledged_by_name: userName ?? null,
       created_at: createdAt
