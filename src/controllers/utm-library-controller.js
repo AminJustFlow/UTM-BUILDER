@@ -1,6 +1,6 @@
 import { NodeResponse } from "../http/response.js";
 import { friendlyActorName } from "../services/utm-library-service.js";
-import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "../services/consistency-warning-format.js";
+import { formatConsistencyWarningMessage, formatConsistencyWarningValue, resolveConsistencyDisplayValues } from "../services/consistency-warning-format.js";
 import { parseFormBody } from "./auth-page.js";
 import { BRAND_HEAD_HTML, renderIcon, renderJustFlowShellStyles, renderJustFlowSidebar, renderJustFlowThemeScript, renderJustFlowTopbar, renderLoadingStyles } from "./app-shell.js";
 
@@ -73,7 +73,7 @@ export class UtmLibraryController {
       standalone: this.standalone,
       user: request?.user ?? null,
       canManageGovernance: request?.user?.role === "admin",
-      governance: summarizeGovernance(library.items, this.utmIntelligenceService, acknowledgedSet)
+      governance: summarizeGovernance(library.items, this.utmIntelligenceService, acknowledgedSet, this.rulesService)
     };
 
     return NodeResponse.text(renderHtml(view), 200, {
@@ -960,7 +960,7 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
 }
 
 function renderGovernanceChip(fieldKey, item, canManage) {
-  const displayValue = item.displayValue ?? displayGovernanceValue(item.client, item.value, item.type);
+  const displayValue = item.labeledDisplayValue ?? item.displayValue ?? displayGovernanceValue(item.client, item.value, item.type);
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
         <input type="hidden" name="field" value="${escapeAttribute(item.storageField)}">
@@ -970,13 +970,20 @@ function renderGovernanceChip(fieldKey, item, canManage) {
         <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(displayValue)}">${renderIcon("check")}</button>
       </form>`
     : "";
-  return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.client)}: ${escapeHtml(displayValue)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
+  return `<span class="chip warning gov-chip" title="${escapeAttribute(item.message)}" data-governance-field="${escapeAttribute(fieldKey)}" data-governance-value="${escapeAttribute(item.value)}">${escapeHtml(item.clientCode)} · ${escapeHtml(displayValue)} (${item.count}) · ${escapeHtml(item.createdBy ?? "System")} · ${escapeHtml(formatDate(item.createdAt))}${acknowledgeForm}</span>`;
 }
 
 export function displayGovernanceValue(client, value, warningType = "new_value") {
   const rawValue = String(value ?? "");
   if (warningType !== "new_value") return rawValue;
   return formatConsistencyWarningValue({ type: warningType, fields: ["value"], values: { value: rawValue } });
+}
+
+export function formatGovernanceLabeledValue(warning = {}, fallbackValues = {}) {
+  const displayValues = resolveConsistencyDisplayValues(warning, fallbackValues);
+  return (warning.fields ?? [])
+    .map((field) => `${humanize(field)}: ${displayValues[field] ?? ""}`)
+    .join(" + ");
 }
 
 function renderResultCard(item, { highlightRequestId, archived = false, canManage = false }) {
@@ -1069,7 +1076,7 @@ function renderResultCard(item, { highlightRequestId, archived = false, canManag
   </article>`;
 }
 
-export function summarizeGovernance(items, utmIntelligenceService, acknowledgedSet = new Set()) {
+export function summarizeGovernance(items, utmIntelligenceService, acknowledgedSet = new Set(), rulesService = null) {
   if (!utmIntelligenceService) {
     return {
       totalNewValues: 0,
@@ -1091,8 +1098,11 @@ export function summarizeGovernance(items, utmIntelligenceService, acknowledgedS
       const key = `${client}|${storageField}|${value}`;
       const fallbackValues = governanceFallbackValues(item);
       const current = grouped.get(key) ?? {
-        client, storageField, value, type: warning.type, fields,
+        client,
+        clientCode: rulesService?.getClientCode?.(client) ?? client.toUpperCase(),
+        storageField, value, type: warning.type, fields,
         displayValue: formatConsistencyWarningValue(warning, fallbackValues),
+        labeledDisplayValue: formatGovernanceLabeledValue(warning, fallbackValues),
         message: formatConsistencyWarningMessage(warning, fallbackValues),
         count: 0, createdBy: item.createdByName, createdAt: item.createdAt
       };

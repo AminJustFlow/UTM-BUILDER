@@ -6,7 +6,7 @@ import { startUtmBuilderServer } from "../src/utm-builder-server.js";
 import { BitlyError } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
-import { displayDestinationPath, displayGovernanceValue } from "../src/controllers/utm-library-controller.js";
+import { displayDestinationPath, displayGovernanceValue, formatGovernanceLabeledValue, summarizeGovernance } from "../src/controllers/utm-library-controller.js";
 import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "../src/services/consistency-warning-format.js";
 import { formatUtmValue } from "../src/services/utm-value-format.js";
 import rules from "../config/rules.js";
@@ -137,6 +137,11 @@ if (dictionaryOnlyRules.clients().some((client) =>
 }
 if (
   dictionaryOnlyRules.getGlobalUtmSuggestions("medium").join(",") !== "QrCode"
+  || dictionaryOnlyRules.getClientCode("castle") !== "CIC"
+  || dictionaryOnlyRules.getClientCode("studleys") !== "SFG"
+  || dictionaryOnlyRules.getClientCode("gas") !== "GAS"
+  || dictionaryOnlyRules.getClientCode("bis_603") !== "BIS 603"
+  || dictionaryOnlyRules.getClientCode("woodstone") !== "WOODSTONE"
   || dictionaryOnlyRules.getSourceMedium("qr")?.medium !== "Offline"
   || dictionaryOnlyRules.normalizeChannel(null, null, false, { medium: "QrCode" }) !== "qr"
   || dictionaryOnlyRules.normalizeAssetType(null, "qr", { medium: "QrCode" }) !== "offline"
@@ -178,9 +183,38 @@ const compoundWarning = {
 };
 if (
   formatConsistencyWarningValue(compoundWarning) !== "Floral|ShopNow"
+  || formatGovernanceLabeledValue(compoundWarning) !== "Campaign: Floral + Content: ShopNow"
+  || formatGovernanceLabeledValue({
+    type: "new_combination",
+    fields: ["source", "medium", "campaign", "term", "content"],
+    values: { source: "facebook", medium: "social", campaign: "floral", term: "autumn", content: "shopnow" },
+    display_values: { source: "Facebook", medium: "Social", campaign: "Floral", term: "Autumn", content: "ShopNow" }
+  }) !== "Source: Facebook + Medium: Social + Campaign: Floral + Term: Autumn + Content: ShopNow"
   || formatConsistencyWarningMessage(compoundWarning) !== 'Campaign "Floral" with Content "ShopNow" has not been used for this client.'
 ) {
   throw new Error("Compound consistency warning formatting smoke test failed.");
+}
+
+const castleGovernance = summarizeGovernance([{
+  client: "castle",
+  requestCount: 3,
+  createdByName: "Smoke Admin",
+  createdAt: "2026-09-24T23:05:00.000Z",
+  acceptedConsistencyWarnings: [{
+    type: "new_value",
+    fields: ["source"],
+    values: { source: "laconiadailysun" },
+    display_values: { source: "LaconiaDailySun" }
+  }]
+}], {}, new Set(), dictionaryOnlyRules);
+const castleWarning = castleGovernance.fields.find((field) => field.key === "new_value")?.items?.[0];
+if (
+  castleWarning?.client !== "castle"
+  || castleWarning?.clientCode !== "CIC"
+  || castleWarning?.labeledDisplayValue !== "Source: LaconiaDailySun"
+  || castleWarning?.count !== 3
+) {
+  throw new Error("Governance client code aggregation smoke test failed.");
 }
 
 if (
@@ -1064,8 +1098,10 @@ try {
     || govWarning?.message !== 'Content "ShopNow" has never been used for this client.'
     || !govValue
     || !libraryBeforeAck.includes(govMarker)
-    || !libraryBeforeAck.includes("gas: ShopNow (1)")
-    || libraryBeforeAck.includes("gas: Shopnow (1)")
+    || !libraryBeforeAck.includes("GAS · Content: ShopNow (1)")
+    || libraryBeforeAck.includes("gas: ShopNow (1)")
+    || libraryBeforeAck.includes("GAS · Content: Shopnow (1)")
+    || !libraryBeforeAck.includes('name="client" value="gas"')
     || !libraryBeforeAck.includes('name="value" value="shopnow"')
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")

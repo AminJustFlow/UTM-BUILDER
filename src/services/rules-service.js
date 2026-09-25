@@ -116,6 +116,15 @@ export class RulesService {
     return this.clientDisplayNames.get(client) ?? this.rules.clients?.[client]?.displayName ?? title(client);
   }
 
+  getClientCode(client) {
+    const clientKey = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    const clientConfig = this.rules.clients?.[clientKey] ?? {};
+    const taxonomyKey = String(clientConfig.taxonomyKey ?? clientKey).trim();
+    const workbookClient = this.rules.workbookTaxonomy?.clients?.[taxonomyKey];
+    const configuredCode = String(clientConfig.code ?? workbookClient?.code ?? "").trim();
+    return configuredCode || clientKey.toUpperCase();
+  }
+
   setClientDisplayName(client, displayName) { this.clientDisplayNames.set(String(client), String(displayName)); }
   setClientDisplayNames(values = {}) { for (const [key, value] of Object.entries(values)) this.setClientDisplayName(key, value); }
 
