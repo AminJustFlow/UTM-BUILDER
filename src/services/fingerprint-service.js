@@ -30,5 +30,5 @@ export class FingerprintService {
 
 function normalizedMediumIdentity(value) {
   const comparable = normalizeUtmComparable(value);
-  return isCanonicalQrCodeMedium(value) ? `${comparable}:canonical-v2` : comparable;
+  return isCanonicalQrCodeMedium(value) ? `${comparable}:canonical-v3` : comparable;
 }

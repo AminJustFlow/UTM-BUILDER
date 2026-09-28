@@ -12,10 +12,10 @@ const PRESERVED_WORDS = new Map([
 
 const PRESERVED_PHRASES = new Map([
   ["linkedin", "LinkedIn"],
-  ["qrcode", "QrCode"]
+  ["qrcode", "QRCode"]
 ]);
 
-export const CANONICAL_QR_CODE_MEDIUM = "QrCode";
+export const CANONICAL_QR_CODE_MEDIUM = "QRCode";
 
 export function formatUtmValue(value) {
   const text = String(value ?? "").trim();

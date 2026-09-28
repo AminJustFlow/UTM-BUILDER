@@ -136,17 +136,17 @@ if (dictionaryOnlyRules.clients().some((client) =>
   throw new Error("Dictionary-only client rules smoke test failed.");
 }
 if (
-  dictionaryOnlyRules.getGlobalUtmSuggestions("medium").join(",") !== "QrCode"
+  dictionaryOnlyRules.getGlobalUtmSuggestions("medium").join(",") !== "QRCode"
   || dictionaryOnlyRules.getClientCode("castle") !== "CIC"
   || dictionaryOnlyRules.getClientCode("studleys") !== "SFG"
   || dictionaryOnlyRules.getClientCode("gas") !== "GAS"
   || dictionaryOnlyRules.getClientCode("bis_603") !== "BIS 603"
   || dictionaryOnlyRules.getClientCode("woodstone") !== "WOODSTONE"
   || dictionaryOnlyRules.getSourceMedium("qr")?.medium !== "Offline"
-  || dictionaryOnlyRules.normalizeChannel(null, null, false, { medium: "QrCode" }) !== "qr"
-  || dictionaryOnlyRules.normalizeAssetType(null, "qr", { medium: "QrCode" }) !== "offline"
+  || dictionaryOnlyRules.normalizeChannel(null, null, false, { medium: "QRCode" }) !== "qr"
+  || dictionaryOnlyRules.normalizeAssetType(null, "qr", { medium: "QRCode" }) !== "offline"
 ) {
-  throw new Error("Universal QrCode suggestion rules smoke test failed.");
+  throw new Error("Universal QRCode suggestion rules smoke test failed.");
 }
 if (dictionaryOnlyRules.normalizeUtmField("campaign", "News", { client: "studleys" }) !== "Inspiration") {
   throw new Error("Configured campaign alias smoke test failed.");
@@ -238,9 +238,11 @@ if (
   || formatUtmValue("ConstantContact") !== "ConstantContact"
   || formatUtmValue("LandingPage") !== "LandingPage"
   || formatUtmValue("linkedin") !== "LinkedIn"
-  || formatUtmValue("Qrcode") !== "QrCode"
-  || formatUtmValue("QRCode") !== "QrCode"
-  || formatUtmValue("QrCode") !== "QrCode"
+  || formatUtmValue("Qrcode") !== "QRCode"
+  || formatUtmValue("QRCode") !== "QRCode"
+  || formatUtmValue("QrCode") !== "QRCode"
+  || formatUtmValue("qrcode") !== "QRCode"
+  || formatUtmValue("QR Code") !== "QRCode"
   || formatUtmValue("seo") !== "SEO"
   || formatUtmValue("utm") !== "UTM"
   || formatUtmValue("ma") !== "MA"
@@ -260,15 +262,18 @@ const legacyQrShape = {
   utmTerm: "LaconiaDailySun",
   utmContent: "Scan"
 };
-const canonicalQrShape = { ...legacyQrShape, utmMedium: "QrCode" };
+const legacyCurrentQrShape = { ...legacyQrShape, utmMedium: "QrCode" };
+const canonicalQrShape = { ...legacyQrShape, utmMedium: "QRCode" };
 const fingerprintService = new FingerprintService();
 if (
   fingerprintService.generate(legacyQrShape) === fingerprintService.generate(canonicalQrShape)
+  || fingerprintService.generate(legacyCurrentQrShape) === fingerprintService.generate(canonicalQrShape)
   || fingerprintService.generateUtmIdentity(legacyQrShape) === fingerprintService.generateUtmIdentity(canonicalQrShape)
+  || fingerprintService.generateUtmIdentity(legacyCurrentQrShape) === fingerprintService.generateUtmIdentity(canonicalQrShape)
   || fingerprintService.generate({ ...legacyQrShape, utmMedium: "Social" })
     !== fingerprintService.generate({ ...legacyQrShape, utmMedium: "social" })
 ) {
-  throw new Error("Canonical QrCode identity versioning smoke test failed.");
+  throw new Error("Canonical QRCode identity versioning smoke test failed.");
 }
 
 const legacyTrackedUrl = "https://example.com/event/?utm_source=laconiaDailySUN&utm_medium=Qrcode&utm_campaign=carSHOW&utm_term=DailySUN&utm_content=SCAN";
@@ -314,22 +319,24 @@ const duplicateRepository = new RequestRepository({
 });
 await duplicateRepository.findExactUtmDuplicateAsync(canonicalQrShape);
 await duplicateRepository.findExactUtmDuplicateAsync(legacyQrShape);
+await duplicateRepository.findExactUtmDuplicateAsync(legacyCurrentQrShape);
 if (
   !duplicateQueries[0]?.sql.includes("= :medium_exact")
-  || duplicateQueries[0]?.params?.medium_exact !== "QrCode"
+  || duplicateQueries[0]?.params?.medium_exact !== "QRCode"
   || duplicateQueries[1]?.sql.includes("= :medium_exact")
+  || duplicateQueries[2]?.sql.includes("= :medium_exact")
 ) {
-  throw new Error("Canonical QrCode duplicate matching smoke test failed.");
+  throw new Error("Canonical QRCode duplicate matching smoke test failed.");
 }
 
 const qrConsistency = intelligenceService.consistencyAnalysis({
   client: "studleys",
   campaign: "Floral",
   source: "ConstantContact",
-  medium: "QrCode"
+  medium: "QRCode"
 });
 if (qrConsistency.warnings.some((warning) => warning.fields?.includes("medium")) || qrConsistency.requires_confirmation) {
-  throw new Error("Universal QrCode consistency suppression smoke test failed.");
+  throw new Error("Universal QRCode consistency suppression smoke test failed.");
 }
 
 const databasePath = "storage/database/utm-builder-smoke.sqlite";
@@ -1054,15 +1061,17 @@ try {
     || !landingPageSuggestions.items?.some((item) => item.value === "LandingPage" && item.normalized_value === "landingpage" && item.known)
     || sourceScopedMediums.items?.length !== 2
     || !sourceScopedMediums.items?.some((item) => item.normalized_value === "email" && item.relation === "Used with ConstantContact 34 times" && item.recommended === true)
-    || !sourceScopedMediums.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true)
+    || !sourceScopedMediums.items?.some((item) => item.value === "QRCode" && item.normalized_value === "qrcode" && item.known === true)
     || sourceScopedMediums.items?.some((item) => item.normalized_value === "social")
     || !unscopedMediums.items?.some((item) => item.normalized_value === "email")
     || !unscopedMediums.items?.some((item) => item.normalized_value === "social")
-    || !unscopedMediums.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true)
-    || universalMediumSuggestions.some((response) => !response.items?.some((item) => item.value === "QrCode" && item.normalized_value === "qrcode" && item.known === true))
+    || !unscopedMediums.items?.some((item) => item.value === "QRCode" && item.normalized_value === "qrcode" && item.known === true)
+    || universalMediumSuggestions.some((response) => !response.items?.some((item) => item.value === "QRCode" && item.normalized_value === "qrcode" && item.known === true))
     || filteredMediumSuggestions.items?.some((item) => item.normalized_value === "qrcode")
     || qrCodePreviewResponse.status !== 200
-    || qrCodePreview.preview?.resolved?.utm_medium !== "QrCode"
+    || qrCodePreview.preview?.resolved?.utm_medium !== "QRCode"
+    || !qrCodePreview.preview?.resolved?.final_long_url?.includes("utm_medium=QRCode")
+    || qrCodePreview.preview?.resolved?.final_long_url?.includes("utm_medium=QrCode")
     || qrCodePreview.preview?.resolved?.channel !== "qr"
     || !history.items?.length
     || existingQueryPreviewResponse.status !== 200
