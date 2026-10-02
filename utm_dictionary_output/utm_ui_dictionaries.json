@@ -85,6 +85,11 @@
         "value": "shop",
         "count": 15,
         "unique_clients": 1
+      },
+      {
+        "value": "brl",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "source": [
@@ -112,6 +117,11 @@
         "value": "linkedin",
         "count": 360,
         "unique_clients": 3
+      },
+      {
+        "value": "gsaad",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "medium": [
@@ -124,6 +134,11 @@
         "value": "email",
         "count": 360,
         "unique_clients": 3
+      },
+      {
+        "value": "qrcode",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "term": [
@@ -541,6 +556,11 @@
         "value": "visitorfeedback",
         "count": 5,
         "unique_clients": 1
+      },
+      {
+        "value": "paidadvertising",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "content": [
@@ -677,6 +697,13 @@
         "value": "linkedin",
         "count": 57,
         "unique_clients": 3
+      }
+    ],
+    "brl": [
+      {
+        "value": "gsaad",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "careers": [
@@ -1125,6 +1152,13 @@
         "unique_clients": 3
       }
     ],
+    "brl": [
+      {
+        "value": "qrcode",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
     "careers": [
       {
         "value": "social",
@@ -1340,6 +1374,13 @@
         "unique_clients": 3
       }
     ],
+    "gsaad": [
+      {
+        "value": "qrcode",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
     "instagram": [
       {
         "value": "social",
@@ -1435,6 +1476,13 @@
       {
         "value": "contactus",
         "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "brl": [
+      {
+        "value": "paidadvertising",
+        "count": 1,
         "unique_clients": 1
       }
     ],
@@ -3814,6 +3862,76 @@
           }
         ]
       }
+    },
+    "jf": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "brl",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "gsaad",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "paidadvertising",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "content": []
+      },
+      "campaign_to_sources": {
+        "brl": [
+          {
+            "value": "gsaad",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "brl": [
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "gsaad": [
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "brl": [
+          {
+            "value": "paidadvertising",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {}
     },
     "sfg": {
       "value_counts": {

@@ -1,5 +1,7 @@
 const PRESERVED_WORDS = new Map([
+  ["brl", "BRL"],
   ["cpc", "CPC"],
+  ["gsaad", "GSAAd"],
   ["gmb", "GMB"],
   ["jf", "JF"],
   ["ma", "MA"],
