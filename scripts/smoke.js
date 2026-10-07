@@ -63,7 +63,12 @@ if (
   approvedClientRowCount("gas") !== 170
   || approvedClientRowCount("sfg") !== 875
   || approvedClientRowCount("cic") !== 755
-  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,gas,sfg"
+  || approvedClientRowCount("vth") !== 1
+  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,gas,jf,sfg,vth"
+  || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
+  || !approvedDictionary.clients.vth.value_counts.medium.some((entry) => entry.value === "qrcode")
+  || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "landingpage")
+  || !approvedDictionary.clients.vth.value_counts.content.some((entry) => entry.value === "scan")
   || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || approvedDictionary.clients.gas.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || approvedDictionary.clients.sfg.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
@@ -558,7 +563,21 @@ try {
     })
   });
   const qrCodePreview = await qrCodePreviewResponse.json();
-  const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=jf")).json();
+  const unapprovedSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=not-a-client")).json();
+  const vthPreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "vth",
+      destination_url: "https://www.technologyhillnh.com/",
+      utm_source: "EventsPostcard",
+      utm_medium: "QRCode",
+      utm_campaign: "HomePage",
+      utm_term: "LandingPage",
+      utm_content: "Scan"
+    })
+  });
+  const vthPreview = await vthPreviewResponse.json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
@@ -962,6 +981,7 @@ try {
     || builderHtml.indexOf("<h3>Consistency warnings</h3>") > builderHtml.indexOf('id="campaign-label"')
     || !builderHtml.includes('<option value="gas"')
     || !builderHtml.includes('<option value="studleys"')
+    || !builderHtml.includes('<option value="vth"')
     || !builderHtml.includes("Meta Ad campaign name")
     || !builderHtml.includes('id="qr-project-picker"')
     || !builderHtml.includes('id="qr-project-search"')
@@ -1080,6 +1100,13 @@ try {
     || existingQueryPreview.preview?.resolved?.utm_campaign !== "Website"
     || !existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1&utm_source=Facebook")
     || existingQueryPreview.preview?.resolved?.final_long_url?.includes("?existing=1?utm_source=")
+    || vthPreviewResponse.status !== 200
+    || vthPreview.preview?.resolved?.utm_source !== "EventsPostcard"
+    || vthPreview.preview?.resolved?.utm_medium !== "QRCode"
+    || vthPreview.preview?.resolved?.utm_campaign !== "HomePage"
+    || vthPreview.preview?.resolved?.utm_term !== "LandingPage"
+    || vthPreview.preview?.resolved?.utm_content !== "Scan"
+    || vthPreview.preview?.resolved?.final_long_url !== "https://www.technologyhillnh.com/?utm_source=EventsPostcard&utm_medium=QRCode&utm_campaign=HomePage&utm_term=LandingPage&utm_content=Scan"
     || preservedCasePreviewResponse.status !== 200
     || preservedCasePreview.preview?.resolved?.utm_source !== "MetaAd"
     || preservedCasePreview.preview?.resolved?.utm_medium !== "Social"
@@ -1229,6 +1256,8 @@ try {
       qrProjectsUnavailableCode: qrProjectsUnavailable.error?.code,
       missingQrProjectStatus: missingQrProjectResponse.status,
       missingQrProjectCode: missingQrProject.error?.code,
+      vthPreviewStatus: vthPreviewResponse.status,
+      vthPreview: vthPreview.preview?.resolved,
       govSuggestionsBeforeAck: govSuggestionsBeforeAck.items,
       govSuggestionsAfterAck: govSuggestionsAfterAck.items,
       govSuggestionsOtherClient: govSuggestionsOtherClient.items,

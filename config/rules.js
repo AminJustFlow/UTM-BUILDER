@@ -415,6 +415,42 @@ const manualClients = {
     displayName: "Serenity",
     aliases: ["serenity"],
     domains: []
+  },
+  vth: {
+    displayName: "VTH",
+    aliases: ["vth", "technology hill", "technology hill nh"],
+    domains: ["technologyhillnh.com"],
+    guidance: {
+      summary: "Use the approved VTH campaign values below for the Events postcard QR code.",
+      fields: {
+        campaign: {
+          label: "Campaign",
+          help: "Reporting campaign or category.",
+          placeholder: "HomePage"
+        }
+      },
+      campaignProfiles: [
+        {
+          priority: 1,
+          campaign: "HomePage",
+          guideline: "Use for the VTH Events postcard QR code linking to the website home page.",
+          source: "EventsPostcard",
+          medium: "QRCode",
+          fields: {
+            term: {
+              label: "Campaign Term — Publication Name",
+              help: "Enter the publication carrying the advertisement.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Campaign Content — Issue Name",
+              help: "Enter the publication issue or edition.",
+              placeholder: "Scan"
+            }
+          }
+        }
+      ]
+    }
   }
 };
 

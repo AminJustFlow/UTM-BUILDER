@@ -5058,6 +5058,50 @@
           }
         ]
       }
+    },
+    "vth": {
+      "value_counts": {
+        "campaign": [
+          { "value": "homepage", "count": 1, "unique_clients": 1 }
+        ],
+        "source": [
+          { "value": "eventspostcard", "count": 1, "unique_clients": 1 }
+        ],
+        "medium": [
+          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+        ],
+        "term": [
+          { "value": "landingpage", "count": 1, "unique_clients": 1 }
+        ],
+        "content": [
+          { "value": "scan", "count": 1, "unique_clients": 1 }
+        ]
+      },
+      "campaign_to_sources": {
+        "homepage": [
+          { "value": "eventspostcard", "count": 1, "unique_clients": 1 }
+        ]
+      },
+      "campaign_to_mediums": {
+        "homepage": [
+          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+        ]
+      },
+      "source_to_mediums": {
+        "eventspostcard": [
+          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+        ]
+      },
+      "campaign_to_terms": {
+        "homepage": [
+          { "value": "landingpage", "count": 1, "unique_clients": 1 }
+        ]
+      },
+      "campaign_to_contents": {
+        "homepage": [
+          { "value": "scan", "count": 1, "unique_clients": 1 }
+        ]
+      }
     }
   }
 }
