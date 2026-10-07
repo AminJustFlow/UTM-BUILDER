@@ -323,7 +323,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   }, { logger, slowRequestMs: config.app.slowRequestMs });
 }
 
-function resolveConfig(projectRoot) {
+export function resolveConfig(projectRoot) {
   const databaseClient = String(process.env.DATABASE_CLIENT ?? baseConfig.database.client ?? "sqlite").toLowerCase() === "postgres" ? "postgres" : "sqlite";
   return {
     app: {

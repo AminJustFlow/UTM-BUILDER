@@ -841,6 +841,15 @@ export class UtmIntelligenceService {
       ?? formatUtmValue(value);
   }
 
+  authoritativeDisplayValue(field, value, client = null) {
+    const normalized = normalizeOptional(value);
+    if (!normalized || !UTM_FIELDS.includes(field)) return null;
+    return this.configuredValues.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
+      ?? this.data.approvedValueOverrides?.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
+      ?? this.data.displayValueLookup?.get(`${field}:${normalized}`)
+      ?? null;
+  }
+
   scopeRows(filters = {}) {
     return this.data.masterRows.filter((row) => {
       if (filters.client && row.client !== filters.client) {
@@ -1414,7 +1423,9 @@ function buildDisplayValueLookup(rows) {
       const normalized = row[field];
       if (!normalized) continue;
       const display = row[`${field}Display`] || formatUtmValue(normalized);
-      if (!lookup.has(`${field}:${normalized}`)) lookup.set(`${field}:${normalized}`, display);
+      const key = `${field}:${normalized}`;
+      if (!lookup.has(key)) lookup.set(key, display);
+      else if (lookup.get(key) !== display) lookup.set(key, null);
     }
   }
   return lookup;

@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { startUtmBuilderServer } from "../src/utm-builder-server.js";
-import { BitlyError } from "../src/services/bitly-service.js";
+import { BitlyError, BitlyService, normalizeBitlyId } from "../src/services/bitly-service.js";
 import { LinkGenerationService } from "../src/services/link-generation-service.js";
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
 import { displayDestinationPath, displayGovernanceValue, formatGovernanceLabeledValue, summarizeGovernance } from "../src/controllers/utm-library-controller.js";
@@ -16,6 +16,22 @@ import { UtmIntelligenceService } from "../src/services/utm-intelligence-service
 import { FingerprintService } from "../src/services/fingerprint-service.js";
 import { UtmLibraryService } from "../src/services/utm-library-service.js";
 import { RequestRepository } from "../src/repositories/request-repository.js";
+
+const bitlyUpdateCalls = [];
+const bitlyUpdateService = new BitlyService({
+  async request(method, url, options) {
+    bitlyUpdateCalls.push({ method, url, options });
+    return { statusCode: 200, json: () => ({ id: "bit.ly/abc123", link: "https://bit.ly/abc123", long_url: options.json.long_url }) };
+  }
+}, { accessToken: "smoke-token", apiBase: "https://api-ssl.bitly.com/v4", timeoutMs: 1000 });
+await bitlyUpdateService.updateDestination({ shortUrl: "https://bit.ly/abc123", longUrl: "https://example.com/?utm_term=BecomeASponsor" });
+if (
+  normalizeBitlyId(null, "https://bit.ly/abc123/") !== "bit.ly/abc123"
+  || normalizeBitlyId(null, "https://example.com/abc123") !== ""
+  || bitlyUpdateCalls[0]?.method !== "PATCH"
+  || !bitlyUpdateCalls[0]?.url.endsWith("/bitlinks/bit.ly/abc123")
+  || bitlyUpdateCalls[0]?.options?.json?.long_url !== "https://example.com/?utm_term=BecomeASponsor"
+) throw new Error("Bitly destination update smoke test failed.");
 
 let intelligenceHistoryLoads = 0;
 let intelligenceStandardsLoads = 0;

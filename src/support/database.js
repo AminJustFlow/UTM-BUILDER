@@ -159,6 +159,10 @@ export class SqliteDatabase extends BaseDatabase {
       throw error;
     }
   }
+
+  async close() {
+    this.sqlite.close();
+  }
 }
 
 export class PostgresDatabase extends BaseDatabase {

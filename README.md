@@ -104,6 +104,22 @@ Set `LOAD_TEST_PROFILE=recommendations` to exercise only the Builder page and th
 
 On the application server, run `bash scripts/load-test-monitor.sh 900 30` at the same time. It writes 30-second CPU, memory, swap, disk, service-state, and recent-error samples to `storage/load-tests/server-metrics.csv` without reading request or user data.
 
+## Repair historical UTM capitalization
+
+Take a database backup, then generate and review a signed dry-run plan:
+
+```bash
+npm run repair-utm-casing -- --dry-run --report storage/reports/utm-casing-plan.json
+```
+
+Apply that exact plan only after reviewing its JSON and CSV reports:
+
+```bash
+npm run repair-utm-casing -- --apply --plan storage/reports/utm-casing-plan.json --backup-confirmed
+```
+
+Apply mode refuses stale or edited plans. Managed Bitly destinations are updated before their local records; failures and conflicts remain unchanged and are listed in the result report. Archived records are reported but not modified. Direct QR codes without a Bitly target are listed for manual review.
+
 ## Publish as its own repository
 
 Copy this directory outside the parent project, then run:

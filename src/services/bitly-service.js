@@ -72,4 +72,47 @@ export class BitlyService {
       payload: body
     };
   }
+
+  async updateDestination({ bitlyId = null, shortUrl = null, longUrl }) {
+    if (!this.config.accessToken) {
+      throw new BitlyError("BITLY_ACCESS_TOKEN is not configured.", { code: "BITLY_NOT_CONFIGURED" });
+    }
+    const id = normalizeBitlyId(bitlyId, shortUrl);
+    if (!id) throw new BitlyError("A valid Bitly ID or bit.ly URL is required.", { code: "BITLY_INVALID_ID" });
+    let response;
+    try {
+      const encodedId = id.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+      response = await this.httpClient.request("PATCH", `${this.config.apiBase.replace(/\/$/u, "")}/bitlinks/${encodedId}`, {
+        headers: { Authorization: `Bearer ${this.config.accessToken}` },
+        json: { long_url: longUrl },
+        timeoutMs: this.config.timeoutMs,
+        retries: 2
+      });
+    } catch (error) {
+      throw new BitlyError("Bitly update failed before a response was received.", {
+        code: error?.name === "AbortError" ? "BITLY_TIMEOUT" : "BITLY_NETWORK_ERROR", cause: error
+      });
+    }
+    if (response.statusCode >= 400) {
+      const body = response.json();
+      throw new BitlyError(`Bitly update failed with status ${response.statusCode}.`, {
+        statusCode: response.statusCode, code: body.message ?? null, responseBody: body
+      });
+    }
+    const body = response.json();
+    return { id: body.id ?? id, link: body.link ?? shortUrl ?? `https://${id}`, longUrl: body.long_url ?? longUrl, payload: body };
+  }
+}
+
+export function normalizeBitlyId(bitlyId, shortUrl) {
+  const explicit = String(bitlyId ?? "").trim().replace(/^https?:\/\//iu, "").replace(/^\/+|\/+$/gu, "");
+  if (explicit.includes("/")) return explicit;
+  try {
+    const parsed = new URL(String(shortUrl ?? "").trim());
+    if (parsed.hostname.toLowerCase() !== "bit.ly") return "";
+    const path = parsed.pathname.replace(/^\/+|\/+$/gu, "");
+    return path ? `bit.ly/${path}` : "";
+  } catch {
+    return "";
+  }
 }
