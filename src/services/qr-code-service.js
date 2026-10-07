@@ -90,7 +90,6 @@ export class QrCodeService {
       medium,
       term,
       content,
-      fingerprint,
       timezone: this.config.timezone
     });
     const pdf = await this.requestPdf(targetUrl, filename, projectId);
@@ -153,7 +152,6 @@ export function buildQrFilename({
   medium,
   term,
   content,
-  fingerprint,
   timezone = "America/New_York"
 }) {
   const date = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "2-digit", month: "2-digit", day: "2-digit" }).format(new Date(createdAt));
@@ -165,8 +163,7 @@ export function buildQrFilename({
     sanitize(source, "Source", 24),
     sanitize(medium, "Medium", 24),
     sanitize(term, "", 24),
-    sanitize(content, "", 24),
-    sanitize(fingerprint, "00000000", 8).toLowerCase()
+    sanitize(content, "", 24)
   ];
   return parts.filter(Boolean).join("-");
 }

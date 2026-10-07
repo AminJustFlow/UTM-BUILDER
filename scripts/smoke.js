@@ -98,25 +98,25 @@ const qrPng = await qrService.readAsset("abcdef1234567890", "png");
 if (
   buildQrFilename({
     createdAt: "2026-08-12T12:00:00Z", clientCode: "CIC", campaign: "HomePage", source: "EventsPostcard",
-    medium: "QRCode", term: "LandingPage", content: "Scan", fingerprint: "abcdef1234567890", timezone: "America/New_York"
-  }) !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12"
+    medium: "QRCode", term: "LandingPage", content: "Scan", timezone: "America/New_York"
+  }) !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan"
   || buildQrFilename({
     createdAt: "2026-08-12T12:00:00Z", clientCode: "SFG", campaign: "Spring Sale!", source: "Post Card",
-    medium: "QRCode", term: "", content: "", fingerprint: "12345678different", timezone: "America/New_York"
-  }) !== "260812-SFG-SpringSale-PostCard-QRCode-12345678"
+    medium: "QRCode", term: "", content: "", timezone: "America/New_York"
+  }) !== "260812-SFG-SpringSale-PostCard-QRCode"
   || buildQrFilename({
     createdAt: "2026-08-12T12:00:00Z", clientCode: "ClientCodeThatIsTooLong", campaign: "Café Campaign Value That Is Far Too Long",
     source: "Source Value That Is Far Too Long", medium: "Medium Value That Is Far Too Long", term: "Term Value That Is Far Too Long",
-    content: "Content Value That Is Far Too Long", fingerprint: "FEDCBA9876543210", timezone: "America/New_York"
-  }) !== "260812-CLIENTCODETHATIS-CafeCampaignValueThatIsF-SourceValueThatIsFarTooL-MediumValueThatIsFarTooL-TermValueThatIsFarTooLon-ContentValueThatIsFarToo-fedcba98"
+    content: "Content Value That Is Far Too Long", timezone: "America/New_York"
+  }) !== "260812-CLIENTCODETHATIS-CafeCampaignValueThatIsF-SourceValueThatIsFarTooL-MediumValueThatIsFarTooL-TermValueThatIsFarTooLon-ContentValueThatIsFarToo"
   || qrGenerated.qrUrl !== "/qr-assets/abcdef1234567890/pdf"
   || qrGenerated.qrPreviewUrl !== null
-  || qrPdf?.filename !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12.pdf"
+  || qrPdf?.filename !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan.pdf"
   || qrPng !== null
   || qrCalls.length !== 1
     || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
     || call.options.json.type !== "URL" || call.options.json.dynamic !== true || call.options.json.colors.transparent !== true
-    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12" || call.options.json.idproject !== 7)
+    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan" || call.options.json.idproject !== 7)
 ) {
   throw new Error("QR Stuff generation smoke test failed.");
 }
