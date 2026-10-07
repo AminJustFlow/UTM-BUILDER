@@ -89,20 +89,34 @@ const qrService = new QrCodeService({
   timezone: "America/New_York"
 });
 const qrGenerated = await qrService.generate("https://example.com/tracked", {
-  fingerprint: "smoke-fingerprint", client: "gas", campaign: "Spring Sale!", projectId: 7, projectName: "GAS Campaigns", createdAt: "2026-08-12T12:00:00Z"
+  fingerprint: "abcdef1234567890", clientCode: "CIC", campaign: "HomePage", source: "EventsPostcard",
+  medium: "QRCode", term: "LandingPage", content: "Scan", projectId: 7, projectName: "CIC Campaigns",
+  createdAt: "2026-08-12T12:00:00Z"
 });
-const qrPdf = await qrService.readAsset("smoke-fingerprint", "pdf");
-const qrPng = await qrService.readAsset("smoke-fingerprint", "png");
+const qrPdf = await qrService.readAsset("abcdef1234567890", "pdf");
+const qrPng = await qrService.readAsset("abcdef1234567890", "png");
 if (
-  buildQrFilename("2026-08-12T12:00:00Z", "gas", "Spring Sale!", "America/New_York") !== "260812-GAS-SpringSale"
-  || qrGenerated.qrUrl !== "/qr-assets/smoke-fingerprint/pdf"
+  buildQrFilename({
+    createdAt: "2026-08-12T12:00:00Z", clientCode: "CIC", campaign: "HomePage", source: "EventsPostcard",
+    medium: "QRCode", term: "LandingPage", content: "Scan", fingerprint: "abcdef1234567890", timezone: "America/New_York"
+  }) !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12"
+  || buildQrFilename({
+    createdAt: "2026-08-12T12:00:00Z", clientCode: "SFG", campaign: "Spring Sale!", source: "Post Card",
+    medium: "QRCode", term: "", content: "", fingerprint: "12345678different", timezone: "America/New_York"
+  }) !== "260812-SFG-SpringSale-PostCard-QRCode-12345678"
+  || buildQrFilename({
+    createdAt: "2026-08-12T12:00:00Z", clientCode: "ClientCodeThatIsTooLong", campaign: "Café Campaign Value That Is Far Too Long",
+    source: "Source Value That Is Far Too Long", medium: "Medium Value That Is Far Too Long", term: "Term Value That Is Far Too Long",
+    content: "Content Value That Is Far Too Long", fingerprint: "FEDCBA9876543210", timezone: "America/New_York"
+  }) !== "260812-CLIENTCODETHATIS-CafeCampaignValueThatIsF-SourceValueThatIsFarTooL-MediumValueThatIsFarTooL-TermValueThatIsFarTooLon-ContentValueThatIsFarToo-fedcba98"
+  || qrGenerated.qrUrl !== "/qr-assets/abcdef1234567890/pdf"
   || qrGenerated.qrPreviewUrl !== null
-  || qrPdf?.filename !== "260812-GAS-SpringSale.pdf"
+  || qrPdf?.filename !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12.pdf"
   || qrPng !== null
   || qrCalls.length !== 1
     || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
     || call.options.json.type !== "URL" || call.options.json.dynamic !== true || call.options.json.colors.transparent !== true
-    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-GAS-SpringSale" || call.options.json.idproject !== 7)
+    || call.options.json.format !== "pdf" || call.options.json.name !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan-abcdef12" || call.options.json.idproject !== 7)
 ) {
   throw new Error("QR Stuff generation smoke test failed.");
 }
@@ -657,7 +671,7 @@ try {
   const clientNewResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client: "jf", destination_url: "https://example.com/client-new-combination",
+      client: "not-a-client", destination_url: "https://example.com/client-new-combination",
       utm_source: "facebook", utm_medium: "social", utm_campaign: "website",
       utm_term: "jfclientspecificterm", utm_content: "jfclientspecificcontent"
     })
@@ -665,7 +679,7 @@ try {
   const clientNew = await clientNewResponse.json();
   const unapprovedPreviewResponse = await af("/new/preview.json", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ client: "jf", destination_url: "https://justflownh.com/", utm_source: "facebook", utm_medium: "social", utm_campaign: "website" })
+    body: JSON.stringify({ client: "not-a-client", destination_url: "https://example.com/unapproved-client", utm_source: "facebook", utm_medium: "social", utm_campaign: "website" })
   });
   const unapprovedPreview = await unapprovedPreviewResponse.json();
   const typoContext = await (await af("/new/utm-intelligence/context.json?client=gas&campaign=websit&source=facebook&medium=social")).json();
@@ -1431,6 +1445,90 @@ async function verifyBitlyFailureClassification() {
     || Object.hasOwn(supplementedFields ?? {}, "final_long_url")
   ) {
     throw new Error("Missing short-link generation must omit jf_fp without rewriting the existing record.");
+  }
+
+  let generatedQrContext = null;
+  const descriptiveQrService = new LinkGenerationService({
+    generatedLinkRepository: {
+      async findByFingerprintAsync() { return null; },
+      async createAsync() { return 1; }
+    },
+    bitlyService: {
+      async shorten() { return { link: "https://bit.ly/descriptive-qr", id: "bitly/descriptive-qr", payload: {} }; }
+    },
+    qrCodeService: {
+      async generate(_targetUrl, context) {
+        generatedQrContext = context;
+        return { qrUrl: "/qr-assets/descriptive-qr-fingerprint/pdf", qrPreviewUrl: null };
+      }
+    },
+    rulesService: {
+      getClientCode(client) { return client === "castle" ? "CIC" : String(client).toUpperCase(); }
+    }
+  });
+  await descriptiveQrService.generate({
+    ...mockNormalized(),
+    client: "castle",
+    utmCampaign: "HomePage",
+    canonicalCampaign: "HomePage",
+    utmSource: "EventsPostcard",
+    utmMedium: "QRCode",
+    utmTerm: "LandingPage",
+    utmContent: "Scan"
+  }, "descriptive-qr-fingerprint", { qrProjectId: 7, qrProjectName: "CIC Campaigns" });
+  if (
+    generatedQrContext?.clientCode !== "CIC"
+    || generatedQrContext?.campaign !== "HomePage"
+    || generatedQrContext?.source !== "EventsPostcard"
+    || generatedQrContext?.medium !== "QRCode"
+    || generatedQrContext?.term !== "LandingPage"
+    || generatedQrContext?.content !== "Scan"
+    || generatedQrContext?.fingerprint !== "descriptive-qr-fingerprint"
+  ) {
+    throw new Error("New QR generation must receive canonical client and complete UTM filename context.");
+  }
+
+  let supplementedQrContext = null;
+  let supplementedQrFields = null;
+  const descriptiveSupplementService = new LinkGenerationService({
+    generatedLinkRepository: {
+      async updateByFingerprintAsync(_fingerprint, fields) { supplementedQrFields = fields; }
+    },
+    bitlyService: { async shorten() { throw new Error("Bitly must not run for QR-only supplementation."); } },
+    qrCodeService: {
+      isManagedUrl() { return false; },
+      async generate(_targetUrl, context) {
+        supplementedQrContext = context;
+        return { qrUrl: "/qr-assets/supplemented-qr-fingerprint/pdf", qrPreviewUrl: null };
+      }
+    },
+    rulesService: { getClientCode() { return "SFG"; } }
+  });
+  const supplementedQr = await descriptiveSupplementService.supplement({
+    fingerprint: "supplemented-qr-fingerprint",
+    client: "studleys",
+    final_long_url: "https://example.com/tracked",
+    short_url: "https://bit.ly/tracked",
+    qr_url: null,
+    utm_campaign: "Floral",
+    canonical_campaign: "Floral",
+    utm_source: "Postcard",
+    utm_medium: "QRCode",
+    utm_term: "LandingPage",
+    utm_content: "Scan",
+    created_at: "2026-10-07T12:00:00.000Z"
+  }, { generateQr: true, qrProjectId: 9, qrProjectName: "SFG Campaigns" });
+  if (
+    supplementedQr.qrUrl !== "/qr-assets/supplemented-qr-fingerprint/pdf"
+    || supplementedQrFields?.qr_url !== "/qr-assets/supplemented-qr-fingerprint/pdf"
+    || supplementedQrContext?.clientCode !== "SFG"
+    || supplementedQrContext?.campaign !== "Floral"
+    || supplementedQrContext?.source !== "Postcard"
+    || supplementedQrContext?.medium !== "QRCode"
+    || supplementedQrContext?.term !== "LandingPage"
+    || supplementedQrContext?.content !== "Scan"
+  ) {
+    throw new Error("Missing QR generation must receive stored client and complete UTM filename context.");
   }
 
   const unexpected = new Error("database-style unexpected failure");

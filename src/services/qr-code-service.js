@@ -66,12 +66,33 @@ export class QrCodeService {
     return (await this.listProjects()).find((project) => project.id === id) ?? null;
   }
 
-  async generate(targetUrl, { fingerprint, client, campaign, projectId, projectName = null, createdAt = new Date() }) {
+  async generate(targetUrl, {
+    fingerprint,
+    clientCode,
+    campaign,
+    source,
+    medium,
+    term,
+    content,
+    projectId,
+    projectName = null,
+    createdAt = new Date()
+  }) {
     if (!this.config.apiKey) throw new QrCodeError("QR Stuff is not configured.", { code: "QR_STUFF_NOT_CONFIGURED" });
     const safeFingerprint = String(fingerprint ?? "").replace(/[^a-zA-Z0-9_-]/gu, "");
     if (!safeFingerprint) throw new QrCodeError("A valid fingerprint is required.", { code: "QR_INVALID_FINGERPRINT" });
 
-    const filename = buildQrFilename(createdAt, client, campaign, this.config.timezone);
+    const filename = buildQrFilename({
+      createdAt,
+      clientCode,
+      campaign,
+      source,
+      medium,
+      term,
+      content,
+      fingerprint,
+      timezone: this.config.timezone
+    });
     const pdf = await this.requestPdf(targetUrl, filename, projectId);
     const directory = path.join(this.config.storagePath, safeFingerprint);
     const temporary = `${directory}.tmp-${process.pid}-${Date.now()}`;
@@ -124,14 +145,33 @@ export class QrCodeService {
   }
 }
 
-export function buildQrFilename(value, client, campaign, timezone = "America/New_York") {
-  const date = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "2-digit", month: "2-digit", day: "2-digit" }).format(new Date(value));
+export function buildQrFilename({
+  createdAt,
+  clientCode,
+  campaign,
+  source,
+  medium,
+  term,
+  content,
+  fingerprint,
+  timezone = "America/New_York"
+}) {
+  const date = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "2-digit", month: "2-digit", day: "2-digit" }).format(new Date(createdAt));
   const yymmdd = date.replace(/-/gu, "");
-  const clientCode = sanitize(client, "CLIENT").toUpperCase();
-  return `${yymmdd}-${clientCode}-${sanitize(campaign, "Campaign")}`;
+  const parts = [
+    yymmdd,
+    sanitize(clientCode, "CLIENT", 16).toUpperCase(),
+    sanitize(campaign, "Campaign", 24),
+    sanitize(source, "Source", 24),
+    sanitize(medium, "Medium", 24),
+    sanitize(term, "", 24),
+    sanitize(content, "", 24),
+    sanitize(fingerprint, "00000000", 8).toLowerCase()
+  ];
+  return parts.filter(Boolean).join("-");
 }
 
-function sanitize(value, fallback) {
+function sanitize(value, fallback, maxLength) {
   const cleaned = String(value ?? "").normalize("NFKD").replace(/[^a-zA-Z0-9]+/gu, "");
-  return cleaned || fallback;
+  return (cleaned || fallback).slice(0, maxLength);
 }

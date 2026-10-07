@@ -7,12 +7,14 @@ export class LinkGenerationService {
     generatedLinkRepository,
     bitlyService,
     qrCodeService,
+    rulesService = null,
     urlService = new UrlService(),
     logger = null
   }) {
     this.generatedLinkRepository = generatedLinkRepository;
     this.bitlyService = bitlyService;
     this.qrCodeService = qrCodeService;
+    this.rulesService = rulesService;
     this.urlService = urlService;
     this.logger = logger;
   }
@@ -209,7 +211,11 @@ export class LinkGenerationService {
     if (generateQr && (!qrUrl || legacyQr)) {
       const qr = await this.generateQr(shortUrl || finalLongUrl, {
         client: existing.client,
-        utmCampaign: existing.utm_campaign || existing.canonical_campaign
+        utmCampaign: existing.utm_campaign || existing.canonical_campaign,
+        utmSource: existing.utm_source,
+        utmMedium: existing.utm_medium,
+        utmTerm: existing.utm_term,
+        utmContent: existing.utm_content
       }, fingerprint, existing.created_at, { qrProjectId, qrProjectName });
       qrUrl = qr.qrUrl ?? "";
       qrFailure = Boolean(qr.error);
@@ -301,8 +307,12 @@ export class LinkGenerationService {
       }
       return await this.qrCodeService.generate(targetUrl, {
         fingerprint,
-        client: normalized.client,
+        clientCode: this.rulesService?.getClientCode?.(normalized.client) ?? String(normalized.client ?? "CLIENT").toUpperCase(),
         campaign: normalized.utmCampaign || normalized.canonicalCampaign,
+        source: normalized.utmSource,
+        medium: normalized.utmMedium,
+        term: normalized.utmTerm,
+        content: normalized.utmContent,
         projectId: qrProjectId,
         projectName: qrProjectName,
         createdAt

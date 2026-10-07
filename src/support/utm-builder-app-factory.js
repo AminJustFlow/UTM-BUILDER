@@ -91,6 +91,7 @@ export async function createUtmBuilderApplication(projectRoot) {
     generatedLinkRepository,
     bitlyService: new BitlyService(new HttpClient(), config.bitly),
     qrCodeService,
+    rulesService,
     logger
   });
   const utmIntelligenceService = new UtmIntelligenceService({
