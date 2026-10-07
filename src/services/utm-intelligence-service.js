@@ -232,6 +232,7 @@ export class UtmIntelligenceService {
 
   consistencyAnalysis(input = {}, acknowledgedRows = []) {
     this.refreshData();
+    if (isTrue(input.external_domain ?? input.externalDomain)) return emptyConsistency();
     const filters = this.normalizeSelection(input);
     const displayFilters = this.displaySelection(input);
     const client = filters.client;
@@ -470,9 +471,10 @@ export class UtmIntelligenceService {
       source: normalized.utmSource,
       medium: normalized.utmMedium,
       term: normalized.utmTerm,
-      content: normalized.utmContent
+      content: normalized.utmContent,
+      external_domain: normalized.externalDomain
     };
-    const duplicateWarnings = [
+    const duplicateWarnings = normalized.externalDomain ? [] : [
       this.findNearDuplicate("campaign", normalizeOptional(submitted.utm_campaign), filters.client),
       this.findNearDuplicate("source", normalizeOptional(submitted.utm_source), filters.client),
       this.findNearDuplicate("medium", normalizeOptional(submitted.utm_medium), filters.client),
@@ -1292,6 +1294,10 @@ function extractDestinationUrl(finalLongUrl) {
 
 function emptyConsistency() {
   return { warnings: [], requires_confirmation: false, fingerprint: null };
+}
+
+function isTrue(value) {
+  return value === true || value === 1 || String(value ?? "").trim().toLowerCase() === "true" || value === "1";
 }
 
 function topValues(rows, field, limit = 3) {

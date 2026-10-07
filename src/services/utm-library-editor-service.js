@@ -594,6 +594,9 @@ export class UtmLibraryEditorService {
   }
 
   async analyzeConsistency(normalized) {
+    if (normalized.externalDomain) {
+      return { warnings: [], requires_confirmation: false, fingerprint: null };
+    }
     if (!this.utmIntelligenceService) {
       return { warnings: [], requires_confirmation: false, fingerprint: null };
     }
@@ -607,7 +610,8 @@ export class UtmLibraryEditorService {
       source: normalized.utmSource,
       medium: normalized.utmMedium,
       term: normalized.utmTerm,
-      content: normalized.utmContent
+      content: normalized.utmContent,
+      external_domain: normalized.externalDomain
     }, acknowledgements);
   }
 

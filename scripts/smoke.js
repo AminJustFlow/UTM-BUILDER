@@ -639,6 +639,13 @@ try {
       utm_source: "Facebook", utm_medium: "Social", utm_campaign: "Website" })
   });
   const internalOverride = await internalOverrideResponse.json();
+  const externalCreateResponse = await af("/new", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "jf", destination_url: "https://greatwaters.org/external-create-smoke",
+      external_domain: true, utm_source: "", utm_medium: "", utm_campaign: "IgnoredCampaign",
+      utm_term: "IgnoredTerm", utm_content: "IgnoredContent" })
+  });
+  const externalCreated = await externalCreateResponse.json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
@@ -1195,10 +1202,18 @@ try {
     || externalPreview.preview?.resolved?.utm_term !== ""
     || externalPreview.preview?.resolved?.utm_content !== ""
     || externalPreview.preview?.resolved?.final_long_url !== "https://greatwaters.org/?utm_source=CustomSourceKey&utm_medium=External"
+    || externalPreview.preview?.context?.consistency?.warnings?.length !== 0
+    || externalPreview.preview?.context?.consistency?.requires_confirmation !== false
     || inferredExternalResponse.status !== 200
     || inferredExternal.preview?.resolved?.final_long_url !== "https://greatwaters.org/?utm_source=CustomSourceKey&utm_medium=External"
     || internalOverrideResponse.status !== 200
     || !internalOverride.preview?.resolved?.final_long_url?.includes("utm_campaign=Website")
+    || externalCreateResponse.status !== 200
+    || externalCreated.result?.utm_source !== "CustomSourceKey"
+    || externalCreated.result?.utm_medium !== "External"
+    || externalCreated.result?.utm_campaign !== ""
+    || externalCreated.result?.utm_term !== ""
+    || externalCreated.result?.utm_content !== ""
     || preservedCasePreviewResponse.status !== 200
     || preservedCasePreview.preview?.resolved?.utm_source !== "MetaAd"
     || preservedCasePreview.preview?.resolved?.utm_medium !== "Social"
@@ -1218,7 +1233,7 @@ try {
     || createAttempt.firstBody.error?.code !== "consistency_confirmation_required"
     || !createAttempt.firstBody.error?.consistency_warning_fingerprint
     || !createAttempt.firstBody.error?.consistency_warnings?.every((warning) => warning.type && warning.severity && Array.isArray(warning.fields) && Array.isArray(warning.recommendations))
-    || created.result?.request_id !== 1
+    || created.result?.request_id !== 2
     || familiarResponse.status !== 200
     || clientNewResponse.status !== 422
     || clientNew.error?.code !== "unapproved_client"
@@ -1361,10 +1376,13 @@ try {
       externalKeyUpdateStatus: externalKeyUpdateResponse.status,
       builderHasExternalKey: builderWithExternalKey.includes("CustomSourceKey"),
       externalPreview: externalPreview.preview?.resolved,
+      externalPreviewConsistency: externalPreview.preview?.context?.consistency,
       inferredExternalStatus: inferredExternalResponse.status,
       inferredExternal: inferredExternal.preview?.resolved,
       internalOverrideStatus: internalOverrideResponse.status,
       internalOverride: internalOverride.preview?.resolved,
+      externalCreateStatus: externalCreateResponse.status,
+      externalCreated: externalCreated.result,
       customCasePreviewStatus: customCasePreviewResponse.status,
       customCasePreview: customCasePreview.preview?.resolved,
       govSuggestionsBeforeAck: govSuggestionsBeforeAck.items,
