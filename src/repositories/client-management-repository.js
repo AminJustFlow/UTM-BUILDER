@@ -35,7 +35,13 @@ export class ClientManagementRepository {
       user_id: actor?.id ?? null, user_name: actor?.displayName ?? null, created_at: timestamp, updated_at: timestamp };
     if (existing) {
       await this.database.runAsync(`UPDATE client_management SET external_source_key=:external_source_key,
-        updated_by_user_id=:user_id,updated_by_name=:user_name,updated_at=:updated_at WHERE client_key=:client_key`, params);
+        updated_by_user_id=:user_id,updated_by_name=:user_name,updated_at=:updated_at WHERE client_key=:client_key`, {
+          client_key: params.client_key,
+          external_source_key: params.external_source_key,
+          user_id: params.user_id,
+          user_name: params.user_name,
+          updated_at: params.updated_at
+        });
     } else {
       await this.database.runAsync(`INSERT INTO client_management
         (client_key,display_name,external_source_key,purged,updated_by_user_id,updated_by_name,created_at,updated_at)

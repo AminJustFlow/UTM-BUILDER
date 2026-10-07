@@ -618,6 +618,10 @@ try {
     method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ client_key: "jf", external_source_key: "custom source key" }).toString()
   });
+  const externalKeySecondUpdateResponse = await af("/clients/external-source-key", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "jf", external_source_key: "custom source key" }).toString()
+  });
   const builderWithExternalKey = await (await af("/new")).text();
   const externalPreviewResponse = await af("/new/preview.json", {
     method: "POST", headers: { "Content-Type": "application/json" },
@@ -1199,6 +1203,7 @@ try {
     || externalPreviewResponse.status !== 200
     || externalPreview.preview?.resolved?.external_domain !== true
     || externalKeyUpdateResponse.status !== 302
+    || externalKeySecondUpdateResponse.status !== 302
     || !builderWithExternalKey.includes("CustomSourceKey")
     || externalPreview.preview?.resolved?.utm_source !== "CustomSourceKey"
     || externalPreview.preview?.resolved?.utm_medium !== "External"
@@ -1378,6 +1383,7 @@ try {
       vthPreview: vthPreview.preview?.resolved,
       externalPreviewStatus: externalPreviewResponse.status,
       externalKeyUpdateStatus: externalKeyUpdateResponse.status,
+      externalKeySecondUpdateStatus: externalKeySecondUpdateResponse.status,
       builderHasExternalKey: builderWithExternalKey.includes("CustomSourceKey"),
       externalPreview: externalPreview.preview?.resolved,
       externalPreviewConsistency: externalPreview.preview?.context?.consistency,
