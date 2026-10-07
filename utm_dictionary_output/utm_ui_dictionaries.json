@@ -27,12 +27,12 @@
         "unique_clients": 1
       },
       {
-        "value": "dine",
-        "count": 60,
+        "value": "programsandevents",
+        "count": 61,
         "unique_clients": 1
       },
       {
-        "value": "programsandevents",
+        "value": "dine",
         "count": 60,
         "unique_clients": 1
       },
@@ -43,8 +43,8 @@
       },
       {
         "value": "homepage",
-        "count": 55,
-        "unique_clients": 3
+        "count": 56,
+        "unique_clients": 4
       },
       {
         "value": "landscaping",
@@ -95,7 +95,7 @@
     "source": [
       {
         "value": "constantcontact",
-        "count": 360,
+        "count": 361,
         "unique_clients": 3
       },
       {
@@ -119,6 +119,11 @@
         "unique_clients": 3
       },
       {
+        "value": "eventspostcard",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
         "value": "gsaad",
         "count": 1,
         "unique_clients": 1
@@ -132,20 +137,20 @@
       },
       {
         "value": "email",
-        "count": 360,
+        "count": 361,
         "unique_clients": 3
       },
       {
         "value": "qrcode",
-        "count": 1,
-        "unique_clients": 1
+        "count": 2,
+        "unique_clients": 2
       }
     ],
     "term": [
       {
         "value": "landingpage",
-        "count": 265,
-        "unique_clients": 3
+        "count": 266,
+        "unique_clients": 4
       },
       {
         "value": "caregiver",
@@ -463,6 +468,11 @@
         "unique_clients": 1
       },
       {
+        "value": "christmasatthecastle",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
         "value": "boardofdirectors",
         "count": 15,
         "unique_clients": 1
@@ -474,11 +484,6 @@
       },
       {
         "value": "castleweddings",
-        "count": 15,
-        "unique_clients": 1
-      },
-      {
-        "value": "christmasatthecastle",
         "count": 15,
         "unique_clients": 1
       },
@@ -667,6 +672,16 @@
       {
         "value": "twilighttours",
         "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "purchase",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "scan",
+        "count": 1,
         "unique_clients": 1
       }
     ]
@@ -866,6 +881,11 @@
         "value": "linkedin",
         "count": 11,
         "unique_clients": 3
+      },
+      {
+        "value": "eventspostcard",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "houseplants": [
@@ -952,7 +972,7 @@
     "programsandevents": [
       {
         "value": "constantcontact",
-        "count": 12,
+        "count": 13,
         "unique_clients": 1
       },
       {
@@ -1229,6 +1249,11 @@
         "value": "email",
         "count": 11,
         "unique_clients": 3
+      },
+      {
+        "value": "qrcode",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "houseplants": [
@@ -1275,7 +1300,7 @@
       },
       {
         "value": "email",
-        "count": 12,
+        "count": 13,
         "unique_clients": 1
       }
     ],
@@ -1356,8 +1381,15 @@
     "constantcontact": [
       {
         "value": "email",
-        "count": 360,
+        "count": 361,
         "unique_clients": 3
+      }
+    ],
+    "eventspostcard": [
+      {
+        "value": "qrcode",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "facebook": [
@@ -1619,8 +1651,8 @@
     "homepage": [
       {
         "value": "landingpage",
-        "count": 55,
-        "unique_clients": 3
+        "count": 56,
+        "unique_clients": 4
       }
     ],
     "houseplants": [
@@ -1711,12 +1743,12 @@
     ],
     "programsandevents": [
       {
-        "value": "calendarofevents",
-        "count": 15,
+        "value": "christmasatthecastle",
+        "count": 16,
         "unique_clients": 1
       },
       {
-        "value": "christmasatthecastle",
+        "value": "calendarofevents",
         "count": 15,
         "unique_clients": 1
       },
@@ -2047,6 +2079,11 @@
         "value": "shop",
         "count": 5,
         "unique_clients": 1
+      },
+      {
+        "value": "scan",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "houseplants": [
@@ -2119,6 +2156,11 @@
       {
         "value": "twilighttours",
         "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "purchase",
+        "count": 1,
         "unique_clients": 1
       }
     ],
@@ -2260,12 +2302,12 @@
             "unique_clients": 1
           },
           {
-            "value": "dine",
-            "count": 60,
+            "value": "programsandevents",
+            "count": 61,
             "unique_clients": 1
           },
           {
-            "value": "programsandevents",
+            "value": "dine",
             "count": 60,
             "unique_clients": 1
           },
@@ -2283,7 +2325,7 @@
         "source": [
           {
             "value": "constantcontact",
-            "count": 151,
+            "count": 152,
             "unique_clients": 1
           },
           {
@@ -2315,7 +2357,7 @@
           },
           {
             "value": "email",
-            "count": 151,
+            "count": 152,
             "unique_clients": 1
           }
         ],
@@ -2446,6 +2488,11 @@
             "unique_clients": 1
           },
           {
+            "value": "christmasatthecastle",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
             "value": "boardofdirectors",
             "count": 15,
             "unique_clients": 1
@@ -2457,11 +2504,6 @@
           },
           {
             "value": "castleweddings",
-            "count": 15,
-            "unique_clients": 1
-          },
-          {
-            "value": "christmasatthecastle",
             "count": 15,
             "unique_clients": 1
           },
@@ -2601,6 +2643,11 @@
             "value": "twilighttours",
             "count": 5,
             "unique_clients": 1
+          },
+          {
+            "value": "purchase",
+            "count": 1,
+            "unique_clients": 1
           }
         ]
       },
@@ -2689,7 +2736,7 @@
         "programsandevents": [
           {
             "value": "constantcontact",
-            "count": 12,
+            "count": 13,
             "unique_clients": 1
           },
           {
@@ -2840,7 +2887,7 @@
           },
           {
             "value": "email",
-            "count": 12,
+            "count": 13,
             "unique_clients": 1
           }
         ],
@@ -2885,7 +2932,7 @@
         "constantcontact": [
           {
             "value": "email",
-            "count": 151,
+            "count": 152,
             "unique_clients": 1
           }
         ],
@@ -2987,12 +3034,12 @@
         ],
         "programsandevents": [
           {
-            "value": "calendarofevents",
-            "count": 15,
+            "value": "christmasatthecastle",
+            "count": 16,
             "unique_clients": 1
           },
           {
-            "value": "christmasatthecastle",
+            "value": "calendarofevents",
             "count": 15,
             "unique_clients": 1
           },
@@ -3225,6 +3272,11 @@
           {
             "value": "twilighttours",
             "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "purchase",
+            "count": 1,
             "unique_clients": 1
           }
         ],
@@ -5062,44 +5114,84 @@
     "vth": {
       "value_counts": {
         "campaign": [
-          { "value": "homepage", "count": 1, "unique_clients": 1 }
+          {
+            "value": "homepage",
+            "count": 1,
+            "unique_clients": 1
+          }
         ],
         "source": [
-          { "value": "eventspostcard", "count": 1, "unique_clients": 1 }
+          {
+            "value": "eventspostcard",
+            "count": 1,
+            "unique_clients": 1
+          }
         ],
         "medium": [
-          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
         ],
         "term": [
-          { "value": "landingpage", "count": 1, "unique_clients": 1 }
+          {
+            "value": "landingpage",
+            "count": 1,
+            "unique_clients": 1
+          }
         ],
         "content": [
-          { "value": "scan", "count": 1, "unique_clients": 1 }
+          {
+            "value": "scan",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "campaign_to_sources": {
         "homepage": [
-          { "value": "eventspostcard", "count": 1, "unique_clients": 1 }
+          {
+            "value": "eventspostcard",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "campaign_to_mediums": {
         "homepage": [
-          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "source_to_mediums": {
         "eventspostcard": [
-          { "value": "qrcode", "count": 1, "unique_clients": 1 }
+          {
+            "value": "qrcode",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "campaign_to_terms": {
         "homepage": [
-          { "value": "landingpage", "count": 1, "unique_clients": 1 }
+          {
+            "value": "landingpage",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "campaign_to_contents": {
         "homepage": [
-          { "value": "scan", "count": 1, "unique_clients": 1 }
+          {
+            "value": "scan",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       }
     }

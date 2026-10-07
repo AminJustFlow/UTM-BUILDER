@@ -72,7 +72,7 @@ const approvedClientRowCount = (client) => (approvedDictionary.clients?.[client]
 if (
   approvedClientRowCount("gas") !== 170
   || approvedClientRowCount("sfg") !== 875
-  || approvedClientRowCount("cic") !== 755
+  || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("vth") !== 1
   || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,gas,jf,sfg,vth"
   || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
@@ -80,6 +80,7 @@ if (
   || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "landingpage")
   || !approvedDictionary.clients.vth.value_counts.content.some((entry) => entry.value === "scan")
   || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
+  || !approvedDictionary.clients.cic.value_counts.content.some((entry) => entry.value === "purchase")
   || approvedDictionary.clients.gas.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || approvedDictionary.clients.sfg.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
 ) {

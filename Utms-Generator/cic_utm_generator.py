@@ -134,7 +134,22 @@ DESTINATION_RULES: tuple[DestinationRule, ...] = (
 )
 
 EXPECTED_DESTINATION_COUNT = 43
-EXPECTED_ROW_COUNT = 755
+CURATED_LINKS: tuple[dict[str, str], ...] = (
+    {
+        "label": "Christmas at the Castle purchase",
+        "destination_url": "https://www.castleintheclouds.org/christmas-at-the-castle/",
+        "source": "ConstantContact",
+        "medium": "Email",
+        "campaign": "ProgramsAndEvents",
+        "term": "ChristmasAtTheCastle",
+        "content": "Purchase",
+        "short_url": "https://bit.ly/3UQOcp0",
+        "creation_date": "2026-10-07T00:00:00.000Z",
+    },
+)
+
+
+EXPECTED_ROW_COUNT = 756
 
 
 def utc_timestamp() -> str:
@@ -208,6 +223,38 @@ def generate_rows(start_id: int, timestamp: str) -> list[dict[str, str | int]]:
                     ),
                 })
                 request_id += 1
+    for item in CURATED_LINKS:
+        destination = normalize_destination(item["destination_url"])
+        rows.append({
+            "request_id": request_id,
+            "status": "completed",
+            "client": CLIENT,
+            "channel": item["source"],
+            "asset_type": item["medium"].lower(),
+            "campaign_label": item["campaign"],
+            "canonical_campaign": item["campaign"],
+            "utm_source": item["source"],
+            "utm_medium": item["medium"],
+            "utm_campaign": item["campaign"],
+            "utm_term": item["term"],
+            "utm_content": item["content"],
+            "destination_url": destination,
+            "final_long_url": build_final_url(
+                destination,
+                item["source"],
+                item["medium"],
+                item["campaign"],
+                item["term"],
+                item["content"],
+            ),
+            "short_url": item["short_url"],
+            "qr_url": "",
+            "request_count": 1,
+            "first_seen_at": item["creation_date"],
+            "last_seen_at": item["creation_date"],
+            "original_message": f"CIC curated link | {item['label']}",
+        })
+        request_id += 1
     return rows
 
 
