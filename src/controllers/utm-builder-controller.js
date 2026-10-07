@@ -28,15 +28,19 @@ export class UtmBuilderController {
 
   async handleHtml(request = {}) {
     const duplicateRequestId = positiveInteger(request?.query?.duplicate_request_id, null);
-    const duplicateItem = duplicateRequestId
-      ? await this.utmLibraryService?.getByRequestIdAsync?.(duplicateRequestId)
+    const editRequestId = positiveInteger(request?.query?.edit_request_id, null);
+    if (editRequestId && request?.user?.role !== "admin") return NodeResponse.text("Forbidden: administrator access is required.", 403);
+    const selectedRequestId = editRequestId || duplicateRequestId;
+    const duplicateItem = selectedRequestId
+      ? await this.utmLibraryService?.getByRequestIdAsync?.(selectedRequestId)
       : null;
-    if (duplicateRequestId && !duplicateItem) {
-      return NodeResponse.text("The link selected for duplication was not found.", 404, {
+    if (selectedRequestId && !duplicateItem) {
+      return NodeResponse.text(editRequestId ? "The link selected for editing was not found." : "The link selected for duplication was not found.", 404, {
         "Content-Type": "text/plain; charset=utf-8"
       });
     }
-    if (duplicateItem && !this.utmIntelligenceService.isApprovedClient(duplicateItem.client)) {
+    if (editRequestId && duplicateItem?.archivedAt) return NodeResponse.text("Restore this archived link before editing it.", 409);
+    if (duplicateItem && !editRequestId && !this.utmIntelligenceService.isApprovedClient(duplicateItem.client)) {
       return NodeResponse.text("This link's client is not yet available in the approved UTM dictionary.", 422, {
         "Content-Type": "text/plain; charset=utf-8"
       });
@@ -51,6 +55,10 @@ export class UtmBuilderController {
             ? await this.campaignStandardsService.getEffectiveGuidance(clientKey)
             : this.rulesService.getClientGuidance(clientKey)
         })));
+    if (editRequestId && duplicateItem && !clients.some((client) => client.key === duplicateItem.client)) {
+      clients.push({ key: duplicateItem.client, displayName: this.rulesService.getClientDisplayName(duplicateItem.client),
+        domains: this.rulesService.getClientDomains(duplicateItem.client), externalSourceKey: this.rulesService.getExternalSourceKey(duplicateItem.client), guidance: {} });
+    }
     const view = {
       clients: clients.sort((left, right) => left.displayName.localeCompare(right.displayName)),
       channels: this.rulesService.createChannelCatalog()
@@ -62,10 +70,10 @@ export class UtmBuilderController {
           hint: buildChannelHint(channel)
         }))
         .sort((left, right) => left.displayName.localeCompare(right.displayName)),
-      mode: duplicateItem ? "duplicate" : "create",
+      mode: editRequestId ? "edit" : duplicateItem ? "duplicate" : "create",
       standalone: this.standalone,
       user: request?.user ?? null,
-      formDefaults: buildFormDefaults(duplicateItem, { duplicate: Boolean(duplicateItem) })
+      formDefaults: buildFormDefaults(duplicateItem, { duplicate: Boolean(duplicateItem && !editRequestId) })
     };
 
     return NodeResponse.text(renderUtmBuilderHtml(view), 200, {
@@ -78,6 +86,7 @@ export class UtmBuilderController {
     if (!parsedBody.ok) {
       return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
     }
+    if (parsedBody.value.original_request_id && request.user?.role !== "admin") return NodeResponse.json({ status: "error", error: { code: "forbidden", message: "Administrator access is required." } }, 403);
     if (!this.isApprovedSubmission(parsedBody.value)) {
       return this.unapprovedClientResponse();
     }
@@ -113,6 +122,19 @@ export class UtmBuilderController {
       })}`,
       result: serializeResult(result)
     });
+  }
+
+  async handleEdit(request) {
+    const parsedBody = request.parseJson();
+    if (!parsedBody.ok) return this.badRequest(parsedBody.errorCode, parsedBody.errorMessage);
+    if (!this.isApprovedSubmission(parsedBody.value)) return this.unapprovedClientResponse();
+    const result = await this.utmLibraryEditorService.editVersion(parsedBody.value, request.user);
+    if (!result.ok) return NodeResponse.json({ status: "error", error: {
+      code: result.code, message: result.message, warnings: result.warnings ?? [], missing_fields: result.missingFields ?? [], existing: result.existing ?? null
+    } }, result.statusCode ?? 500);
+    return NodeResponse.json({ status: "ok", request_id: result.requestId,
+      library_url: `/utms?${buildQueryString({ highlight_request_id: result.requestId, toast: "Link updated. The previous version was archived.", toast_level: "success" })}`,
+      result: serializeResult(result) });
   }
 
   async handleQrProjects(request = {}) {
@@ -350,7 +372,11 @@ function buildFormDefaults(item, { duplicate = false } = {}) {
     utm_term: item.utmTerm ?? "",
     utm_content: item.utmContent ?? "",
     campaign_label: item.campaignLabel ?? "",
-    external_domain: Boolean(item.externalDomain)
+    external_domain: Boolean(item.externalDomain),
+    channel: item.channel ?? "",
+    asset_type: item.assetType ?? "link",
+    short_url: item.shortUrl ?? "",
+    qr_url: item.qrUrl ?? ""
   };
 }
 

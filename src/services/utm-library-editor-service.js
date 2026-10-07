@@ -51,6 +51,155 @@ export class UtmLibraryEditorService {
     });
   }
 
+  async editVersion(input = {}, actor = null) {
+    if (actor?.role !== "admin") return { ok: false, statusCode: 403, code: "forbidden", message: "Administrator access is required." };
+    const originalRequestId = positiveInteger(input.original_request_id, null);
+    const existing = originalRequestId ? await this.requestRepository.findByIdAsync(originalRequestId) : null;
+    if (!existing || existing.archived_at) return { ok: false, statusCode: 404, code: "request_not_found", message: "That active library link was not found." };
+    await this.utmIntelligenceService?.refreshDataAsync?.();
+    const parsed = ParsedLinkRequest.fromObject({
+      client: normalizeOptional(input.client), channel: normalizeOptional(input.channel), campaign_label: normalizeOptional(input.campaign_label),
+      utm_source: normalizeNullable(input.utm_source), utm_medium: normalizeNullable(input.utm_medium), utm_campaign: normalizeNullable(input.utm_campaign),
+      utm_term: normalizeNullable(input.utm_term), utm_content: normalizeNullable(input.utm_content), destination_url: normalizeOptional(input.destination_url),
+      needs_qr: false, external_domain: Object.prototype.hasOwnProperty.call(input, "external_domain") ? Boolean(input.external_domain) : undefined,
+      confidence: 1, warnings: [], missing_fields: []
+    }, "utm_library_admin_editor", { original_request_id: originalRequestId });
+    const decision = this.requestNormalizer.normalize(parsed);
+    if (!decision.normalizedRequest) return { ok: false, statusCode: 422, code: "validation_failed", message: decision.message, warnings: decision.warnings, missingFields: decision.missingFields };
+    const normalized = decision.normalizedRequest;
+    if (normalizeOptional(input.channel)) {
+      normalized.channel = normalizeOptional(input.channel);
+      normalized.channelDisplayName = normalizeOptional(input.channel);
+    }
+    if (normalizeOptional(input.asset_type)) normalized.assetType = normalizeOptional(input.asset_type);
+    const fingerprint = this.fingerprintService.generate(normalized);
+    const identityKey = this.fingerprintService.generateUtmIdentity(normalized);
+    const oldFingerprint = normalizeOptional(existing.fingerprint);
+    const duplicate = await this.requestRepository.findExactUtmDuplicateAsync(normalized);
+    if (duplicate && normalizeOptional(duplicate.fingerprint) !== oldFingerprint) return duplicateFailure(duplicate);
+
+    const oldPayload = safeJsonObject(existing.normalized_payload);
+    const oldTrackedUrl = normalizeOptional(existing.final_long_url ?? oldPayload.final_long_url) ?? "";
+    const oldShortUrl = normalizeOptional(existing.short_url) ?? "";
+    const oldQrUrl = normalizeOptional(existing.qr_url);
+    const bitlyAction = ["repoint", "manual", "generate"].includes(input.bitly_action) ? input.bitly_action : "repoint";
+    const qrAction = ["keep", "upload", "remove"].includes(input.qr_action) ? input.qr_action : "keep";
+    let shortUrl = oldShortUrl;
+    let bitlyId = existing.bitly_id ?? null;
+    let bitlyPayload = safeJsonObject(existing.bitly_payload);
+    let repointed = false;
+    let generatedNewBitly = false;
+    let uploadedRevision = null;
+    const trackedChanged = oldTrackedUrl !== normalized.finalLongUrl;
+
+    if (qrAction === "keep" && oldQrUrl && (["manual", "generate"].includes(bitlyAction) || (!oldShortUrl && trackedChanged))) {
+      return { ok: false, statusCode: 422, code: "stale_qr", message: "Upload a replacement QR PDF or remove the QR because its destination would become stale." };
+    }
+
+    if (bitlyAction === "manual") {
+      shortUrl = validHttpUrl(input.manual_short_url);
+      if (!shortUrl) return { ok: false, statusCode: 422, code: "invalid_short_url", message: "Enter a valid HTTP or HTTPS replacement Bitly URL." };
+      const owner = await this.generatedLinkRepository.findByShortUrlAsync(shortUrl);
+      if (owner && normalizeOptional(owner.fingerprint) !== oldFingerprint) return { ok: false, statusCode: 409, code: "short_url_conflict", message: "That short URL already belongs to another active link." };
+      bitlyId = null; bitlyPayload = { source: "admin_manual_replacement" };
+    } else if (bitlyAction === "generate") {
+      try {
+        const generated = await this.linkGenerationService.bitlyService.shorten(normalized.finalLongUrl);
+        shortUrl = generated.link; bitlyId = generated.id; bitlyPayload = generated.payload;
+        generatedNewBitly = true;
+      } catch (error) { return assetFailure("bitly_generation_failed", error); }
+    } else if (oldShortUrl && trackedChanged) {
+      try {
+        const updated = await this.linkGenerationService.bitlyService.updateDestination({ bitlyId, shortUrl: oldShortUrl, longUrl: normalized.finalLongUrl });
+        shortUrl = updated.link || oldShortUrl; bitlyId = updated.id ?? bitlyId; bitlyPayload = updated.payload ?? bitlyPayload; repointed = true;
+      } catch (error) { return assetFailure("bitly_repoint_failed", error); }
+    }
+
+    if (qrAction === "keep" && oldQrUrl) {
+      const changedBitly = bitlyAction === "manual" || bitlyAction === "generate";
+      const staleDirectQr = !oldShortUrl && trackedChanged;
+      if (changedBitly || staleDirectQr) {
+        if (repointed) await this.compensateBitly(existing, oldTrackedUrl);
+        return { ok: false, statusCode: 422, code: "stale_qr", message: "Upload a replacement QR PDF or remove the QR because its destination would become stale." };
+      }
+    }
+
+    let qrUrl = qrAction === "remove" ? null : oldQrUrl;
+    if (qrAction === "upload") {
+      uploadedRevision = crypto.randomUUID();
+      try {
+        qrUrl = (await this.qrCodeService.storeUploadedPdf({ fingerprint, revision: uploadedRevision, base64: input.qr_pdf_base64, filename: input.qr_pdf_name })).qrUrl;
+      } catch (error) {
+        if (repointed) await this.compensateBitly(existing, oldTrackedUrl);
+        if (generatedNewBitly) await this.linkGenerationService.bitlyService.archive({ bitlyId, shortUrl }).catch(() => {});
+        return assetFailure(error.code ?? "qr_upload_failed", error);
+      }
+    }
+
+    const timestamp = new Date().toISOString();
+    const database = this.requestRepository.database;
+    const activeVersions = oldFingerprint
+      ? await database.allAsync("SELECT id FROM requests WHERE fingerprint=:fingerprint AND archived_at IS NULL", { fingerprint: oldFingerprint })
+      : [{ id: originalRequestId }];
+    const targetGeneratedBefore = await this.generatedLinkRepository.findByFingerprintAsync(fingerprint);
+    const oldGeneratedBefore = oldFingerprint !== fingerprint ? await this.generatedLinkRepository.findByFingerprintAsync(oldFingerprint) : targetGeneratedBefore;
+    let createdGenerated = false;
+    let requestId = null;
+    try {
+      for (const row of activeVersions) await database.runAsync("UPDATE requests SET archived_at=:at, archived_by_user_id=:user_id, archived_by_name=:name, updated_at=:at WHERE id=:id", { at: timestamp, user_id: actor.id ?? null, name: actor.displayName ?? null, id: row.id });
+      requestId = await this.requestRepository.createIncomingAsync({
+        requestUuid: crypto.randomUUID(), deliveryKey: `utm-admin-edit:${crypto.randomUUID()}`, status: "received",
+        originalMessage: buildOriginalMessage(normalized, "Admin library edit", originalRequestId),
+        rawPayload: { source: "utm_library_admin_editor", original_request_id: originalRequestId, bitly_action: bitlyAction, qr_action: qrAction },
+        sourceUserId: actorSourceId(actor, "utm_library_admin_editor"), sourceUserName: actorSourceName(actor, "UTM Library Admin"), dictionaryApproved: true,
+        createdAt: timestamp, updatedAt: timestamp
+      });
+      await this.requestRepository.updateAsync(requestId, {
+        status: shortUrl ? "completed" : "completed_without_short_link", parsed_payload: parsed.toJSON(), normalized_payload: normalized.toJSON(),
+        fingerprint, utm_identity_key: identityKey, final_long_url: normalized.finalLongUrl, short_url: shortUrl || null,
+        bitly_id: bitlyId, bitly_payload: bitlyPayload, qr_url: qrUrl, warnings: normalized.warnings, missing_fields: []
+      });
+      const generatedFields = {
+        client: normalized.client, channel: normalized.channel, asset_type: normalized.assetType,
+        normalized_destination_url: normalized.normalizedDestinationUrl, canonical_campaign: normalized.canonicalCampaign,
+        utm_source: normalized.utmSource, utm_medium: normalized.utmMedium, utm_campaign: normalized.utmCampaign,
+        utm_term: normalized.utmTerm, utm_content: normalized.utmContent, final_long_url: normalized.finalLongUrl,
+        short_url: shortUrl || "", qr_url: qrUrl, bitly_id: bitlyId, bitly_payload: bitlyPayload, updated_at: timestamp
+      };
+      if (targetGeneratedBefore) await this.generatedLinkRepository.updateByFingerprintAsync(fingerprint, generatedFields);
+      else {
+        await this.generatedLinkRepository.createAsync({ fingerprint, client: normalized.client, channel: normalized.channel, assetType: normalized.assetType,
+        normalizedDestinationUrl: normalized.normalizedDestinationUrl, canonicalCampaign: normalized.canonicalCampaign,
+        utmSource: normalized.utmSource, utmMedium: normalized.utmMedium, utmCampaign: normalized.utmCampaign, utmTerm: normalized.utmTerm,
+        utmContent: normalized.utmContent, finalLongUrl: normalized.finalLongUrl, shortUrl: shortUrl || "", qrUrl, bitlyId, bitlyPayload, createdAt: timestamp, updatedAt: timestamp });
+        createdGenerated = true;
+      }
+      if (oldFingerprint !== fingerprint && bitlyAction === "repoint" && oldShortUrl) await this.generatedLinkRepository.updateByFingerprintAsync(oldFingerprint, { short_url: "", bitly_id: null, bitly_payload: {} });
+      await this.recordAudit({ fingerprint, requestId, action: "admin_edited", actor, sourceUserId: actorSourceId(actor, "utm_library_admin_editor"), sourceUserName: actorSourceName(actor, "UTM Library Admin"),
+        summary: JSON.stringify({ from_fingerprint: oldFingerprint || null, to_fingerprint: fingerprint,
+          before: marketingSnapshot(oldPayload, existing), after: marketingSnapshot(normalized.toJSON(), { short_url: shortUrl, qr_url: qrUrl }),
+          bitly_action: bitlyAction, qr_action: qrAction }) });
+      this.utmIntelligenceService?.invalidateData?.();
+      return { ok: true, requestId, fingerprint, status: shortUrl ? "completed" : "completed_without_short_link", normalized,
+        result: { shortUrl: shortUrl || null, qrUrl, reusedExisting: false } };
+    } catch (error) {
+      if (requestId) await this.requestRepository.deleteByIdAsync(requestId).catch(() => {});
+      for (const row of activeVersions) await database.runAsync("UPDATE requests SET archived_at=NULL, archived_by_user_id=NULL, archived_by_name=NULL WHERE id=:id", { id: row.id }).catch(() => {});
+      if (createdGenerated) await this.generatedLinkRepository.deleteByFingerprintAsync(fingerprint).catch(() => {});
+      else if (targetGeneratedBefore) await this.generatedLinkRepository.updateByFingerprintAsync(fingerprint, generatedRestoreFields(targetGeneratedBefore)).catch(() => {});
+      if (oldFingerprint !== fingerprint && oldGeneratedBefore) await this.generatedLinkRepository.updateByFingerprintAsync(oldFingerprint, generatedRestoreFields(oldGeneratedBefore)).catch(() => {});
+      if (uploadedRevision) await this.qrCodeService.removeUploadedRevision(fingerprint, uploadedRevision).catch(() => {});
+      if (repointed) await this.compensateBitly(existing, oldTrackedUrl);
+      if (generatedNewBitly) await this.linkGenerationService.bitlyService.archive({ bitlyId, shortUrl }).catch(() => {});
+      return { ok: false, statusCode: 500, code: "edit_failed", message: "The replacement version could not be saved. The prior version remains active." };
+    }
+  }
+
+  async compensateBitly(existing, oldTrackedUrl) {
+    try { await this.linkGenerationService.bitlyService.updateDestination({ bitlyId: existing.bitly_id, shortUrl: existing.short_url, longUrl: oldTrackedUrl }); }
+    catch (error) { this.logger?.error?.("Bitly edit compensation failed.", { error_message: error.message, short_url: existing.short_url }); }
+  }
+
   async supplementAssets(input = {}, actor = null) {
     const requestId = positiveInteger(input.request_id, null);
     const generateShort = Boolean(input.generate_short);
@@ -691,6 +840,39 @@ function safeJsonObject(value) {
   } catch {
     return {};
   }
+}
+
+function validHttpUrl(value) {
+  try {
+    const parsed = new URL(String(value ?? "").trim());
+    return ["http:", "https:"].includes(parsed.protocol) && parsed.hostname ? parsed.toString() : null;
+  } catch { return null; }
+}
+
+function assetFailure(code, error) {
+  return { ok: false, statusCode: Number(error?.statusCode) >= 400 && Number(error.statusCode) < 500 ? 422 : 502,
+    code, message: error?.message || "The requested asset change could not be completed." };
+}
+
+function generatedRestoreFields(row) {
+  return {
+    client: row.client, channel: row.channel, asset_type: row.asset_type,
+    normalized_destination_url: row.normalized_destination_url, canonical_campaign: row.canonical_campaign,
+    utm_source: row.utm_source, utm_medium: row.utm_medium, utm_campaign: row.utm_campaign,
+    utm_term: row.utm_term, utm_content: row.utm_content, final_long_url: row.final_long_url,
+    short_url: row.short_url, qr_url: row.qr_url, bitly_id: row.bitly_id,
+    bitly_payload: safeJsonObject(row.bitly_payload), updated_at: row.updated_at
+  };
+}
+
+function marketingSnapshot(payload, record = {}) {
+  return {
+    client: payload.client ?? "", channel: payload.channel ?? "", asset_type: payload.asset_type ?? "",
+    destination_url: payload.destination_url ?? payload.normalized_destination_url ?? "",
+    utm_source: payload.utm_source ?? "", utm_medium: payload.utm_medium ?? "", utm_campaign: payload.utm_campaign ?? "",
+    utm_term: payload.utm_term ?? "", utm_content: payload.utm_content ?? "",
+    short_url: record.short_url ?? "", qr_url: record.qr_url ?? ""
+  };
 }
 
 function removeShortLinkWarnings(value) {

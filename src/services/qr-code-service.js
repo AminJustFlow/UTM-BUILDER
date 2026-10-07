@@ -20,7 +20,40 @@ export class QrCodeService {
   }
 
   isManagedUrl(value) {
-    return /^\/qr-assets\/[^/]+\/pdf$/u.test(String(value ?? ""));
+    return /^\/qr-assets\/[^/]+\/(?:[^/]+\/)?pdf$/u.test(String(value ?? ""));
+  }
+
+  async storeUploadedPdf({ fingerprint, revision, base64, filename }) {
+    const safeFingerprint = safePart(fingerprint);
+    const safeRevision = safePart(revision);
+    if (!safeFingerprint || !safeRevision) throw new QrCodeError("A valid fingerprint and revision are required.", { code: "QR_UPLOAD_INVALID_PATH" });
+    const encoded = String(base64 ?? "").replace(/^data:application\/pdf;base64,/iu, "");
+    let body;
+    try { body = Buffer.from(encoded, "base64"); } catch { body = Buffer.alloc(0); }
+    if (!body.length || body.length > 10 * 1024 * 1024) throw new QrCodeError("Replacement QR PDF must be between 1 byte and 10 MB.", { code: "QR_UPLOAD_SIZE_INVALID" });
+    if (body.subarray(0, 5).toString("ascii") !== "%PDF-") throw new QrCodeError("Replacement QR file is not a valid PDF.", { code: "QR_UPLOAD_INVALID_PDF" });
+    const safeFilename = String(filename ?? "replacement-qr.pdf").replace(/\.pdf$/iu, "").replace(/[^a-zA-Z0-9_-]+/gu, "-").replace(/^-+|-+$/gu, "").slice(0, 120) || "replacement-qr";
+    const directory = path.join(this.config.storagePath, safeFingerprint, safeRevision);
+    const temporary = `${directory}.tmp-${process.pid}-${Date.now()}`;
+    await fs.mkdir(temporary, { recursive: true });
+    try {
+      await Promise.all([
+        fs.writeFile(path.join(temporary, "qr.pdf"), body),
+        fs.writeFile(path.join(temporary, "metadata.json"), JSON.stringify({ filename: safeFilename, uploaded: true }))
+      ]);
+      await fs.mkdir(path.dirname(directory), { recursive: true });
+      await fs.rename(temporary, directory);
+    } catch (error) {
+      await fs.rm(temporary, { recursive: true, force: true });
+      throw error;
+    }
+    return { qrUrl: `/qr-assets/${safeFingerprint}/${safeRevision}/pdf`, directory };
+  }
+
+  async removeUploadedRevision(fingerprint, revision) {
+    const safeFingerprint = safePart(fingerprint);
+    const safeRevision = safePart(revision);
+    if (safeFingerprint && safeRevision) await fs.rm(path.join(this.config.storagePath, safeFingerprint, safeRevision), { recursive: true, force: true });
   }
 
   async listProjects({ force = false } = {}) {
@@ -142,6 +175,24 @@ export class QrCodeService {
       return { body, filename: `${metadata.filename}.${format}` };
     } catch { return null; }
   }
+
+  async readRevisionAsset(fingerprint, revision, format) {
+    const safeFingerprint = safePart(fingerprint);
+    const safeRevision = safePart(revision);
+    if (!safeFingerprint || !safeRevision || format !== "pdf") return null;
+    try {
+      const directory = path.join(this.config.storagePath, safeFingerprint, safeRevision);
+      const [body, metadata] = await Promise.all([
+        fs.readFile(path.join(directory, "qr.pdf")),
+        fs.readFile(path.join(directory, "metadata.json"), "utf8").then(JSON.parse)
+      ]);
+      return { body, filename: `${metadata.filename}.pdf` };
+    } catch { return null; }
+  }
+}
+
+function safePart(value) {
+  return String(value ?? "").replace(/[^a-zA-Z0-9_-]/gu, "");
 }
 
 export function buildQrFilename({

@@ -508,6 +508,7 @@ export class UtmLibraryService {
       lastCreatedAt: overrides.lastCreatedAt ?? row.last_created_at ?? row.created_at,
       createdByName: friendlyActorName(row.source_user_name),
       createdAt: row.created_at ?? overrides.firstCreatedAt ?? row.first_created_at,
+      archivedAt: row.archived_at ?? null,
       reusedExisting: Number(row.reused_existing ?? 0) === 1
     };
   }

@@ -102,6 +102,44 @@ export class BitlyService {
     const body = response.json();
     return { id: body.id ?? id, link: body.link ?? shortUrl ?? `https://${id}`, longUrl: body.long_url ?? longUrl, payload: body };
   }
+
+  async updateDestination({ bitlyId = null, shortUrl = null, longUrl }) {
+    if (!this.config.accessToken) throw new BitlyError("BITLY_ACCESS_TOKEN is not configured.", { code: "BITLY_NOT_CONFIGURED" });
+    const id = bitlyIdentifier(bitlyId, shortUrl);
+    if (!id) throw new BitlyError("The existing Bitly URL cannot be managed by this account.", { code: "BITLY_INVALID_ID" });
+    const encodedId = id.split("/").map(encodeURIComponent).join("/");
+    let response;
+    try {
+      response = await this.httpClient.request("PATCH", `${this.config.apiBase.replace(/\/$/u, "")}/bitlinks/${encodedId}`, {
+        headers: { Authorization: `Bearer ${this.config.accessToken}` }, json: { long_url: longUrl }, timeoutMs: this.config.timeoutMs, retries: 2
+      });
+    } catch (error) {
+      throw new BitlyError("Bitly update failed before a response was received.", { code: error?.name === "AbortError" ? "BITLY_TIMEOUT" : "BITLY_NETWORK_ERROR", cause: error });
+    }
+    const body = response.json();
+    if (response.statusCode >= 400) throw new BitlyError(`Bitly update failed with status ${response.statusCode}.`, { statusCode: response.statusCode, code: body.message ?? null, responseBody: body });
+    return { link: body.link ?? shortUrl, id: body.id ?? id, payload: body };
+  }
+
+  async archive({ bitlyId = null, shortUrl = null }) {
+    if (!this.config.accessToken) return;
+    const id = bitlyIdentifier(bitlyId, shortUrl);
+    if (!id) return;
+    const encodedId = id.split("/").map(encodeURIComponent).join("/");
+    await this.httpClient.request("PATCH", `${this.config.apiBase.replace(/\/$/u, "")}/bitlinks/${encodedId}`, {
+      headers: { Authorization: `Bearer ${this.config.accessToken}` }, json: { archived: true }, timeoutMs: this.config.timeoutMs, retries: 1
+    });
+  }
+}
+
+function bitlyIdentifier(bitlyId, shortUrl) {
+  const explicit = String(bitlyId ?? "").trim().replace(/^https?:\/\//iu, "").replace(/^\/+|\/+$/gu, "");
+  if (explicit.includes("/")) return explicit;
+  try {
+    const parsed = new URL(String(shortUrl ?? ""));
+    const path = parsed.pathname.replace(/^\/+|\/+$/gu, "");
+    return parsed.hostname && path ? `${parsed.hostname}/${path}` : "";
+  } catch { return ""; }
 }
 
 export function normalizeBitlyId(bitlyId, shortUrl) {

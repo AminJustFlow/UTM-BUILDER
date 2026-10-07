@@ -122,6 +122,11 @@ const qrGenerated = await qrService.generate("https://example.com/tracked", {
 });
 const qrPdf = await qrService.readAsset("abcdef1234567890", "pdf");
 const qrPng = await qrService.readAsset("abcdef1234567890", "png");
+const uploadedQr = await qrService.storeUploadedPdf({ fingerprint: "abcdef1234567890", revision: "revision-1", base64: Buffer.from("%PDF-uploaded").toString("base64"), filename: "Replacement QR.pdf" });
+const uploadedQrPdf = await qrService.readRevisionAsset("abcdef1234567890", "revision-1", "pdf");
+let invalidQrUploadCode = null;
+try { await qrService.storeUploadedPdf({ fingerprint: "abcdef1234567890", revision: "revision-2", base64: Buffer.from("not-pdf").toString("base64"), filename: "bad.pdf" }); }
+catch (error) { invalidQrUploadCode = error.code; }
 if (
   buildQrFilename({
     createdAt: "2026-08-12T12:00:00Z", clientCode: "CIC", campaign: "HomePage", source: "EventsPostcard",
@@ -140,6 +145,10 @@ if (
   || qrGenerated.qrPreviewUrl !== null
   || qrPdf?.filename !== "260812-CIC-HomePage-EventsPostcard-QRCode-LandingPage-Scan.pdf"
   || qrPng !== null
+  || uploadedQr.qrUrl !== "/qr-assets/abcdef1234567890/revision-1/pdf"
+  || uploadedQrPdf?.filename !== "Replacement-QR.pdf"
+  || uploadedQrPdf?.body?.toString() !== "%PDF-uploaded"
+  || invalidQrUploadCode !== "QR_UPLOAD_INVALID_PDF"
   || qrCalls.length !== 1
     || qrCalls.some((call) => call.method !== "POST" || call.options.headers.Authorization !== "Bearer test-api-key"
     || call.options.json.type !== "URL" || call.options.json.dynamic !== true || call.options.json.colors.transparent !== true
@@ -790,6 +799,8 @@ try {
   const exactDuplicate = await duplicateResponseExact.json();
   const duplicatePage = await af(`/new?duplicate_request_id=${created.result?.request_id}`);
   const duplicateHtml = await duplicatePage.text();
+  const adminEditPage = await af(`/new?edit_request_id=${created.result?.request_id}`);
+  const adminEditHtml = await adminEditPage.text();
   const missingDuplicatePage = await af("/new?duplicate_request_id=99999999");
   const staleConsistencyResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" },
@@ -1011,6 +1022,9 @@ try {
     body: new URLSearchParams({ username: "smokeuser", password: "smoke-user-pass-123" }).toString()
   });
   sessionCookie = cookieValue(regularLogin, "jf_app_session");
+  const forbiddenEditPage = await af(`/new?edit_request_id=${created.result?.request_id}`);
+  const forbiddenEditSave = await af("/utms/edit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ original_request_id: created.result?.request_id }) });
+  const regularLibraryHtml = await (await af("/utms")).text();
   const regularAttempt = await createWithConsistencyConfirmation({
     client: "gas", destination_url: "https://example.com/regular-overlay",
     utm_source: "facebook", utm_medium: "social", utm_campaign: "regularhistorycampaign",
@@ -1019,6 +1033,17 @@ try {
   const regularSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=regularhistorycampaign")).json();
   const regularHistory = await (await af("/new/utm-intelligence/history.json?client=gas&campaign=regularhistorycampaign")).json();
   sessionCookie = adminSessionCookie;
+  const editResponse = await af("/utms/edit", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      original_request_id: regularAttempt.body.result?.request_id,
+      client: "gas", destination_url: "https://example.com/regular-overlay", channel: "facebook", asset_type: "social",
+      utm_source: "Facebook", utm_medium: "Social", utm_campaign: "RegularHistoryCampaign",
+      utm_term: "", utm_content: "Edited", external_domain: false,
+      bitly_action: "repoint", qr_action: "remove"
+    })
+  });
+  const edited = await editResponse.json();
+  const editedLibrary = await (await af(`/utms.json?search=regular-overlay`)).json();
   const passwordChange = await af("/account/password", {
     method: "POST",
     redirect: "manual",
@@ -1332,6 +1357,14 @@ try {
     || duplicatePage.status !== 200
     || !duplicateHtml.includes("Create Duplicate")
     || !duplicateHtml.includes('name="duplicated_from_request_id"')
+    || adminEditPage.status !== 200
+    || !adminEditHtml.includes("Admin editing and assets")
+    || !adminEditHtml.includes('id="bitly_action"')
+    || !adminEditHtml.includes('id="qr_pdf"')
+    || forbiddenEditPage.status !== 403
+    || forbiddenEditSave.status !== 403
+    || !supplementedLibraryHtml.includes("Edit Link")
+    || regularLibraryHtml.includes("Edit Link")
     || missingDuplicatePage.status !== 404
     || staleConsistencyResponse.status !== 409
     || staleConsistency.error?.code !== "consistency_confirmation_required"
@@ -1426,6 +1459,10 @@ try {
     || suggestionsAfterClientPurge.items?.length
     || regularLogin.status !== 302
     || regularAttempt.response.status !== 200
+    || editResponse.status !== 200
+    || edited.result?.utm_content !== "Edited"
+    || edited.result?.request_id === regularAttempt.body.result?.request_id
+    || !editedLibrary.items?.some((item) => item.requestId === edited.result?.request_id && item.utmContent === "Edited")
     || regularSuggestions.items?.length
     || !regularHistory.items?.some((item) => item.campaign === "regularhistorycampaign")
     || passwordChange.status !== 302

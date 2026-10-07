@@ -302,6 +302,16 @@ export async function createUtmBuilderApplication(projectRoot) {
       "X-Content-Type-Options": "nosniff"
     });
   }));
+  router.add("GET", "/qr-assets/:fingerprint/:revision/:format", protect(async (request) => {
+    const format = String(request.params.format ?? "").toLowerCase();
+    const asset = await qrCodeService.readRevisionAsset(request.params.fingerprint, request.params.revision, format);
+    if (!asset) return NodeResponse.text("QR asset not found.", 404);
+    return NodeResponse.binary(asset.body, 200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `${request.query.inline !== "1" ? "attachment" : "inline"}; filename="${asset.filename}"`,
+      "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"
+    });
+  }));
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));
@@ -310,6 +320,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/utms/governance/acknowledge", requireAdmin((request) => utmLibraryController.handleAcknowledge(request)));
   router.add("POST", "/utms/archive", requireAdmin((request) => utmLibraryController.handleArchive(request)));
   router.add("POST", "/utms/restore", requireAdmin((request) => utmLibraryController.handleRestore(request)));
+  router.add("POST", "/utms/edit", requireAdmin((request) => utmBuilderController.handleEdit(request)));
   router.add("GET", "/imports", requireAdmin((request) => utmImportController.handleHtml(request)));
   router.add("POST", "/imports", requireAdmin((request) => utmImportController.handleImport(request)));
 

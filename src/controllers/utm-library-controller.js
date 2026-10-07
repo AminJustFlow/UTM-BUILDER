@@ -18,7 +18,8 @@ const AUDIT_ACTION_LABELS = {
   supplemented: "Generated missing asset",
   archived: "Archived",
   restored: "Restored",
-  consistency_override: "Consistency override"
+  consistency_override: "Consistency override",
+  admin_edited: "Admin edit"
 };
 
 const SORT_LABELS = {
@@ -1036,6 +1037,7 @@ function renderResultCard(item, { highlightRequestId, archived = false, canManag
       <div class="details-actions">
         <div class="mini-actions">
           <a class="mini-button" href="/new?duplicate_request_id=${escapeAttribute(item.requestId)}">Duplicate</a>
+          ${canManage && !archived ? `<a class="mini-button" href="/new?edit_request_id=${escapeAttribute(item.requestId)}">Edit Link</a>` : ""}
           ${!canManage ? "" : archived
             ? `<button type="button" class="button mini-button" data-restore-request-id="${escapeAttribute(item.requestId)}">Restore Link</button>`
             : `<button type="button" class="danger-button mini" data-archive-request-id="${escapeAttribute(item.requestId)}">Archive Link</button>`}

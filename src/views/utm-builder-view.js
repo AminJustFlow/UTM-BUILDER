@@ -95,14 +95,14 @@ export function renderUtmBuilderHtml(view) {
                         ${clientOptions}
                       </select>
                     </label>
-                    <label class="checkbox-row full">
-                      <input type="checkbox" name="needs_qr" id="needs_qr"${defaults.needs_qr ? " checked" : ""}>
+                    <label class="checkbox-row full"${mode === "edit" ? " hidden" : ""}>
+                      <input type="checkbox" name="needs_qr" id="needs_qr"${mode !== "edit" && defaults.needs_qr ? " checked" : ""}>
                       <span>${mode === "edit" ? "Create a QR code for this version." : "Create a QR code too."}</span>
                     </label>
-                    <div class="field full" id="qr-project-picker"${defaults.needs_qr ? "" : " hidden"}>
+                    <div class="field full" id="qr-project-picker"${mode === "edit" || !defaults.needs_qr ? " hidden" : ""}>
                       <span>QR Stuff project</span>
                       <input type="search" id="qr-project-search" placeholder="Search project names" autocomplete="off">
-                      <select id="qr_project_id" name="qr_project_id"${defaults.needs_qr ? " required" : ""} disabled>
+                      <select id="qr_project_id" name="qr_project_id"${mode !== "edit" && defaults.needs_qr ? " required" : ""} disabled>
                         <option value="">Loading QR Stuff projects...</option>
                       </select>
                       <div class="helper-copy" id="qr-project-status">Choose the project where this QR code should be created.</div>
@@ -112,6 +112,17 @@ export function renderUtmBuilderHtml(view) {
                   <input type="hidden" name="campaign_label" id="campaign_label" value="${escapeAttribute(defaults.campaign_label ?? "")}">
                   <input type="hidden" name="original_request_id" id="original_request_id" value="${escapeAttribute(defaults.original_request_id ?? "")}">
                   <input type="hidden" name="duplicated_from_request_id" id="duplicated_from_request_id" value="${escapeAttribute(defaults.duplicated_from_request_id ?? "")}">
+
+                  ${mode === "edit" ? `<div class="inline-divider"><div><h3>Admin editing and assets</h3><div class="meta">The current version will be archived after its replacement is saved.</div></div></div>
+                  <div class="form-grid">
+                    <label class="field"><span>Channel</span><input type="text" id="edit_channel" value="${escapeAttribute(defaults.channel ?? "")}" required></label>
+                    <label class="field"><span>Asset type</span><input type="text" id="edit_asset_type" value="${escapeAttribute(defaults.asset_type ?? "link")}" required></label>
+                    <label class="field full"><span>Bitly action</span><select id="bitly_action"><option value="repoint">Keep and repoint existing Bitly</option><option value="manual">Replace with a supplied short URL</option><option value="generate">Generate a new Bitly</option></select></label>
+                    <label class="field full" id="manual-short-shell" hidden><span>Replacement short URL</span><input type="url" id="manual_short_url" placeholder="https://bit.ly/example"></label>
+                    <label class="field full"><span>QR action</span><select id="qr_action"><option value="keep">Keep current QR PDF</option><option value="upload">Upload replacement PDF</option><option value="remove">Remove QR</option></select></label>
+                    <label class="field full" id="qr-upload-shell" hidden><span>Replacement QR PDF (maximum 10 MB)</span><input type="file" id="qr_pdf" accept="application/pdf,.pdf"></label>
+                    <div class="helper-copy full">Current Bitly: ${escapeHtml(defaults.short_url || "None")} · Current QR: ${escapeHtml(defaults.qr_url || "None")}</div>
+                  </div>` : ""}
 
                   <div class="inline-divider">
                     <div>
@@ -234,7 +245,7 @@ export function renderUtmBuilderHtml(view) {
       </div>
     </main>
   </div>
-  <script>${renderClientScript(view.clients)}</script>
+  <script>${renderClientScript(view.clients, mode)}</script>
 </body>
 </html>`;
 }
@@ -274,8 +285,9 @@ function renderStyles() {
   `;
 }
 
-function renderClientScript(clients = []) {
+function renderClientScript(clients = [], mode = "create") {
   return `(function(){
+    const EDIT_MODE=${JSON.stringify(mode === "edit")};
     const UTM_FIELDS=${JSON.stringify(UTM_FIELDS)};
     const DEFAULT_FIELD_GUIDANCE=${serializeJson(Object.fromEntries(FIELD_GUIDANCE.map((field)=>[field.key,{label:field.label,help:field.meaning,placeholder:field.example}])))};
     const CLIENT_GUIDANCE=${serializeJson(Object.fromEntries(clients.map((client)=>[client.key,client.guidance||{}])))};
@@ -297,6 +309,7 @@ function renderClientScript(clients = []) {
     const originalRequestInput=document.getElementById("original_request_id");
     const duplicatedFromInput=document.getElementById("duplicated_from_request_id");
     const campaignLabelInput=document.getElementById("campaign_label");
+    const editChannel=document.getElementById("edit_channel"),editAssetType=document.getElementById("edit_asset_type"),bitlyAction=document.getElementById("bitly_action"),manualShortShell=document.getElementById("manual-short-shell"),manualShortUrl=document.getElementById("manual_short_url"),qrAction=document.getElementById("qr_action"),qrUploadShell=document.getElementById("qr-upload-shell"),qrPdf=document.getElementById("qr_pdf");
     const channelSummary=document.getElementById("channel-summary");
     const advancedSummary=document.getElementById("advanced-summary");
     const clientGuidance=document.getElementById("client-guidance");
@@ -345,6 +358,8 @@ function renderClientScript(clients = []) {
     async function loadQrProjects(force){qrProjectSelect.disabled=false;qrProjectSelect.innerHTML='<option value="">Loading QR Stuff projects...</option>';qrProjectStatus.textContent='Loading QR Stuff projects...';qrProjectRetry.hidden=true;try{const response=await fetch('/new/qr-projects.json'+(force?'?refresh=1':''),{headers:{Accept:'application/json'}});const body=await response.json();if(!response.ok||body.status!=='ok'){throw new Error(body&&body.error&&body.error.message?body.error.message:'Unable to load QR Stuff projects.')}qrProjects=Array.isArray(body.projects)?body.projects:[];qrProjectsLoaded=true;renderQrProjects();if(!qrProjects.length){qrProjectStatus.textContent='No QR Stuff projects are available.'}}catch(error){qrProjectsLoaded=false;qrProjectSelect.disabled=false;qrProjectSelect.innerHTML='<option value="">Projects unavailable</option>';qrProjectStatus.textContent=error.message||'Unable to load QR Stuff projects.';qrProjectRetry.hidden=false}}
     function updateQrProjectPicker(){qrProjectPicker.hidden=!qrInput.checked;qrProjectSelect.required=qrInput.checked;if(qrInput.checked&&!qrProjectsLoaded){loadQrProjects(false)}}
     function payloadForSubmit(){const payload=payloadForPreview();if(originalRequestInput&&originalRequestInput.value.trim()){payload.original_request_id=originalRequestInput.value.trim()}if(duplicatedFromInput&&duplicatedFromInput.value.trim()){payload.duplicated_from_request_id=duplicatedFromInput.value.trim()}if(campaignLabelInput&&campaignLabelInput.value.trim()){payload.campaign_label=campaignLabelInput.value.trim()}if(state.confirmedConsistencyFingerprint){payload.consistency_warning_fingerprint=state.confirmedConsistencyFingerprint}return payload}
+    async function addEditAssets(payload){if(!EDIT_MODE)return payload;payload.channel=editChannel.value.trim();payload.asset_type=editAssetType.value.trim();payload.bitly_action=bitlyAction.value;payload.manual_short_url=manualShortUrl.value.trim();payload.qr_action=qrAction.value;if(payload.qr_action==="upload"){const file=qrPdf.files[0];if(!file)throw new Error("Choose a replacement QR PDF.");if(file.size>10*1024*1024)throw new Error("Replacement QR PDF must be 10 MB or smaller.");payload.qr_pdf_name=file.name;payload.qr_pdf_base64=await fileToBase64(file)}return payload}
+    function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||"").split(",").pop()||"");reader.onerror=()=>reject(new Error("Unable to read the replacement QR PDF."));reader.readAsDataURL(file)})}
     function updateChannelSummary(){const medium=inputNodes.medium.value.trim().toLowerCase();const source=inputNodes.source.value.trim().toLowerCase();if(medium==="qrcode"||medium==="qr_code"||medium==="offline"){channelSummary.textContent="Channel is assigned as QR from Medium.";return}if(medium==="website"||medium==="domain"||medium==="email"||medium==="pr"){channelSummary.textContent="Channel is assigned automatically from Medium.";return}if(source==="facebook"||source==="instagram"||source==="linked_in"||source==="linkedin"){channelSummary.textContent="Channel is assigned automatically from Source.";return}channelSummary.textContent="Channel is assigned automatically from Source and Medium."}
     function updateAdvancedSummary(){const activeFields=UTM_FIELDS.filter((field)=>inputNodes[field].value.trim());advancedSummary.textContent=activeFields.length?"UTM values entered for: "+activeFields.join(", "):"No UTM values entered yet."}
     function activeCampaignProfile(guidance){const selected=comparableUtmValue(inputNodes.campaign.value);if(!selected){return null}return(guidance.campaignProfiles||[]).find((profile)=>[profile.campaign,profile.displayName].concat(profile.aliases||[]).some((value)=>comparableUtmValue(value)===selected))||null}
@@ -378,10 +393,11 @@ function renderClientScript(clients = []) {
     qrInput.addEventListener("change",()=>{updateQrProjectPicker();debouncedRefresh()});
     qrProjectSearch.addEventListener("input",renderQrProjects);
     qrProjectRetry.addEventListener("click",()=>loadQrProjects(true));
+    if(EDIT_MODE){bitlyAction.addEventListener("change",()=>{manualShortShell.hidden=bitlyAction.value!=="manual";manualShortUrl.required=bitlyAction.value==="manual"});qrAction.addEventListener("change",()=>{qrUploadShell.hidden=qrAction.value!=="upload";qrPdf.required=qrAction.value==="upload"})}
     UTM_FIELDS.forEach((field)=>{inputNodes[field].addEventListener("focus",()=>{loadSuggestions(field,inputNodes[field].value.trim(),true).catch((error)=>{if(error&&error.name!=="AbortError"){showStatus(error.message,"error")}})});inputNodes[field].addEventListener("input",()=>{state.confirmedConsistencyFingerprint=null;state.pendingConsistencyFingerprint=null;updateAdvancedSummary();updateChannelSummary();if(field==="campaign"){updateClientGuidance()}debouncedSuggestionLoads[field]()})});
     UTM_FIELDS.forEach((field)=>{inputNodes[field].addEventListener("blur",async()=>{const formattedValue=formatUtmInput(inputNodes[field].value);if(formattedValue!==inputNodes[field].value){inputNodes[field].value=formattedValue;state.confirmedConsistencyFingerprint=null;state.pendingConsistencyFingerprint=null;updateAdvancedSummary();updateChannelSummary();if(field==="campaign"){updateClientGuidance()}}try{await loadSuggestions(field,formattedValue,false);renderLoadedSuggestions();await refreshContextAndPreview()}catch(error){debouncedRefresh();showStatus(error.message,"error")}})});
     form.addEventListener("reset",()=>{window.setTimeout(()=>{state.externalOverride=null;state.externalActive=false;state.externalDetectionKey="";closeAllSuggestions();showStatus("","");resultShell.classList.remove("visible");updateQrProjectPicker();updateDestinationQueryNotice();detectExternalMode();updateChannelSummary();updateAdvancedSummary();updateClientGuidance();UTM_FIELDS.forEach((field)=>renderSuggestions(field,[],""));refreshContextAndPreview().catch(()=>{})},0)});
-    form.addEventListener("submit",async(event)=>{event.preventDefault();if(!form.reportValidity()||state.submitting){return}if(state.activeRecommendationField){state.queuedSubmission=true;showStatus("Finishing recommended values…","");return}state.submitting=true;const payload=payloadForSubmit();const editing=Boolean(payload.original_request_id);showStatus(editing?"Saving changes...":"Creating link...","");submitButton.disabled=true;try{const body=await fetchJson("/new",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});renderResult(body.result);showStatus(body.result.status==="completed_without_short_link"?(body.result.short_link_warning||"Tracked link saved without a short link."):(editing?"Changes saved.":"Link created."),body.result.status==="completed_without_short_link"?"warning":"success")}catch(error){showSubmitError(error,editing?"Unable to save changes right now.":"Unable to create the link right now.")}finally{state.submitting=false;submitButton.disabled=Boolean(state.activeRecommendationField)}});
+    form.addEventListener("submit",async(event)=>{event.preventDefault();if(!form.reportValidity()||state.submitting){return}if(state.activeRecommendationField){state.queuedSubmission=true;showStatus("Finishing recommended values…","");return}state.submitting=true;let payload=payloadForSubmit();const editing=EDIT_MODE;showStatus(editing?"Saving changes...":"Creating link...","");submitButton.disabled=true;try{payload=await addEditAssets(payload);const body=await fetchJson(editing?"/utms/edit":"/new",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});renderResult(body.result);showStatus(body.result.status==="completed_without_short_link"?(body.result.short_link_warning||"Tracked link saved without a short link."):(editing?"Changes saved. The previous version was archived.":"Link created."),body.result.status==="completed_without_short_link"?"warning":"success")}catch(error){showSubmitError(error,editing?"Unable to save changes right now.":"Unable to create the link right now.")}finally{state.submitting=false;submitButton.disabled=Boolean(state.activeRecommendationField)}});
     function renderResult(payload){document.getElementById("result-title").textContent=payload.message;document.getElementById("result-subtitle").textContent=payload.client_display_name+" | "+payload.channel_display_name;document.getElementById("result-links").innerHTML=[renderLinkItem("Tracked link",payload.tracked_url,"Tracked link not available."),renderLinkItem("Short link",payload.short_url,"Short link not available for this link."),renderLinkItem("QR code",payload.qr_url,"QR code not requested for this link.")].join("");document.getElementById("result-utm-grid").innerHTML=[["Source",payload.utm_source],["Medium",payload.utm_medium],["Campaign",payload.utm_campaign],["Term",payload.utm_term===""?"Not set":payload.utm_term],["Content",payload.utm_content===""?"Not set":payload.utm_content]].map((entry)=>'<div class="utm-item"><strong>'+escapeHtml(entry[0])+'</strong><div class="utm-value">'+escapeHtml(entry[1]||"Not set")+'</div></div>').join("");document.getElementById("result-actions").innerHTML=[payload.tracked_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.tracked_url)+'">Copy tracked link</button>':"",payload.short_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.short_url)+'">Copy short link</button>':"",payload.qr_url?'<button type="button" class="mini-button" data-copy="'+escapeAttribute(payload.qr_url)+'">Copy QR link</button>':"",payload.library_url?'<a class="ghost-button" href="'+escapeAttribute(payload.library_url)+'">Open in library</a>':""].join("");document.getElementById("result-warnings").innerHTML=(payload.warnings||[]).map((warning)=>'<span class="pill warning">'+escapeHtml(warning)+'</span>').join("");resultShell.classList.add("visible");resultShell.scrollIntoView({behavior:"smooth",block:"start"})}
     const renderResultBase=renderResult;
     renderResult=function(payload){const cleanUtms=state.currentConsistencyWarnings.length===0&&!(payload.warnings||[]).length;document.getElementById("result-celebration").hidden=!cleanUtms;renderResultBase(payload);if(payload.qr_url){const qrAction=[...document.querySelectorAll("#result-actions [data-copy]")].find((node)=>node.getAttribute("data-copy")===payload.qr_url);if(qrAction){qrAction.outerHTML='<a class="mini-button" href="'+escapeAttribute(payload.qr_url)+'">Download QR PDF</a>'}}if(cleanUtms){document.getElementById("result-title").textContent="UTM success!"}};
