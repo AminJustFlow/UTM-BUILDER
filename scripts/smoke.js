@@ -849,6 +849,13 @@ try {
     body: csv
   });
   const duplicate = await duplicateResponse.json();
+  const replacementCsv = csv.replace("https://bit.ly/example", "https://bit.ly/replacement");
+  const replacementResponse = await af("/imports", {
+    method: "POST",
+    headers: { "Content-Type": "text/csv" },
+    body: replacementCsv
+  });
+  const replacement = await replacementResponse.json();
   const aliasCsv = [
     csv.split("\n")[0],
     '"2","completed","SFG","Facebook","social","houseplants","houseplants","facebook","social","houseplants","patio","shop","https://studleys.com/product-category/houseplants/patio/","https://studleys.com/product-category/houseplants/patio/?utm_source=facebook&utm_medium=social&utm_campaign=houseplants&utm_term=patio&utm_content=shop","","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","SFG alias import"',
@@ -1316,6 +1323,7 @@ try {
     || concurrentStatuses.join(",") !== "200,409"
     || imported.summary?.imported !== 1
     || duplicate.summary?.skipped !== 1
+    || replacement.summary?.imported !== 1
     || aliasImported.summary?.imported !== 2
     || sfgAliasItem?.client !== "studleys"
     || cicAliasItem?.client !== "castle"
@@ -1328,6 +1336,7 @@ try {
     || importedItem?.utmCampaign !== "Website"
     || importedItem?.utmTerm !== "LandingPage"
     || importedItem?.utmContent !== "ShopNow"
+    || importedItem?.shortUrl !== "https://bit.ly/replacement"
     || !importedItem?.finalLongUrl?.includes("ref=smoke&utm_source=Facebook&utm_medium=Social&utm_campaign=Website&utm_term=LandingPage&utm_content=ShopNow")
     || !importedItem?.finalLongUrl?.endsWith("#section")
     || historyResponse.status !== 200

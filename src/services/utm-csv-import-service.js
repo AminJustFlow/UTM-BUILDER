@@ -55,6 +55,60 @@ export class UtmCsvImportService {
         const fingerprint = createFingerprint(values);
         const existing = await this.requestRepository.findExactUtmDuplicateAsync(identityShape);
         if (existing) {
+          const incomingShortUrl = text(values.shortUrl);
+          const existingShortUrl = text(existing.short_url);
+          if (incomingShortUrl && normalizeShortUrl(incomingShortUrl) !== normalizeShortUrl(existingShortUrl)) {
+            const shortUrlOwner = await (this.generatedLinkRepository.findByShortUrlAsync?.(incomingShortUrl)
+              ?? this.generatedLinkRepository.findByShortUrl(incomingShortUrl));
+            if (shortUrlOwner && shortUrlOwner.fingerprint !== existing.fingerprint) {
+              throw new Error(`Short URL ${incomingShortUrl} is already assigned to another tracked link.`);
+            }
+            const timestamp = validIso(row.last_seen_at) ?? validIso(row.first_seen_at) ?? new Date().toISOString();
+            const importedBitlyPayload = { source: "utm_csv_import", imported_short_url: true };
+            await (this.requestRepository.updateAsync?.(existing.id, {
+              status: "completed",
+              short_url: incomingShortUrl,
+              bitly_id: null,
+              bitly_payload: importedBitlyPayload,
+              updated_at: timestamp
+            }) ?? this.requestRepository.update(existing.id, {
+              status: "completed",
+              short_url: incomingShortUrl,
+              bitly_id: null,
+              bitly_payload: importedBitlyPayload,
+              updated_at: timestamp
+            }));
+            if (existing.fingerprint) {
+              await (this.generatedLinkRepository.updateByFingerprintAsync?.(existing.fingerprint, {
+                short_url: incomingShortUrl,
+                bitly_id: null,
+                bitly_payload: importedBitlyPayload,
+                updated_at: timestamp
+              }) ?? this.generatedLinkRepository.updateByFingerprint(existing.fingerprint, {
+                short_url: incomingShortUrl,
+                bitly_id: null,
+                bitly_payload: importedBitlyPayload,
+                updated_at: timestamp
+              }));
+            }
+            if (this.linkAuditRepository) {
+              try {
+                await this.linkAuditRepository.record({
+                  fingerprint: existing.fingerprint,
+                  requestId: existing.id,
+                  action: "short_url_updated",
+                  actorUserId: sourceUserId,
+                  actorUserName: sourceUserName,
+                  summary: `Updated imported short URL to ${incomingShortUrl}.`,
+                  createdAt: timestamp
+                });
+              } catch {
+                // Audit logging is best-effort.
+              }
+            }
+            summary.imported += 1;
+            continue;
+          }
           summary.skipped += 1;
           continue;
         }
@@ -219,6 +273,10 @@ function createFingerprint(values) {
     term: values.utmTerm,
     content: values.utmContent
   })).digest("hex");
+}
+
+function normalizeShortUrl(value) {
+  return text(value).toLowerCase().replace(/\/+$/, "");
 }
 
 function parseCsv(value) {
