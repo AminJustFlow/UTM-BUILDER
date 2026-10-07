@@ -1,6 +1,6 @@
 import { NormalizedLinkRequest } from "../domain/normalized-link-request.js";
 import { WorkflowDecision } from "../domain/workflow-decision.js";
-import { formatUtmValue } from "./utm-value-format.js";
+import { formatUserEnteredUtmValue, formatUtmValue } from "./utm-value-format.js";
 import { sanitizeOptionalUtmValue } from "./utm-value-sanitizer.js";
 
 export class RequestNormalizer {
@@ -101,11 +101,11 @@ export class RequestNormalizer {
     }
     const finalWarnings = [...new Set(sanitizedWarnings)];
     const formattedUtm = {
-      source: this.formatResolvedUtmValue("source", utm.source, client),
-      medium: this.formatResolvedUtmValue("medium", utm.medium, client),
-      campaign: this.formatResolvedUtmValue("campaign", utm.campaign, client),
-      term: this.formatResolvedUtmValue("term", sanitizedTerm, client),
-      content: this.formatResolvedUtmValue("content", sanitizedContent, client)
+      source: this.formatResolvedUtmValue("source", utm.source, client, guidedBuilderMode),
+      medium: this.formatResolvedUtmValue("medium", utm.medium, client, guidedBuilderMode),
+      campaign: this.formatResolvedUtmValue("campaign", utm.campaign, client, guidedBuilderMode),
+      term: this.formatResolvedUtmValue("term", sanitizedTerm, client, guidedBuilderMode),
+      content: this.formatResolvedUtmValue("content", sanitizedContent, client, guidedBuilderMode)
     };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
@@ -154,7 +154,10 @@ export class RequestNormalizer {
     ].some((value) => Boolean(String(value ?? "").trim()));
   }
 
-  formatResolvedUtmValue(field, value, client) {
+  formatResolvedUtmValue(field, value, client, preserveUserCasing = false) {
+    if (preserveUserCasing) {
+      return formatUserEnteredUtmValue(value);
+    }
     return this.utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
   }
 

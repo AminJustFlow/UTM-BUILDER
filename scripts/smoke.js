@@ -8,7 +8,7 @@ import { LinkGenerationService } from "../src/services/link-generation-service.j
 import { ConsistencyNotificationService } from "../src/services/consistency-notification-service.js";
 import { displayDestinationPath, displayGovernanceValue, formatGovernanceLabeledValue, summarizeGovernance } from "../src/controllers/utm-library-controller.js";
 import { formatConsistencyWarningMessage, formatConsistencyWarningValue } from "../src/services/consistency-warning-format.js";
-import { formatUtmValue } from "../src/services/utm-value-format.js";
+import { formatUserEnteredUtmValue, formatUtmValue } from "../src/services/utm-value-format.js";
 import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
@@ -253,6 +253,19 @@ if (
   || formatUtmValue("ma") !== "MA"
 ) {
   throw new Error("PascalCase UTM formatting smoke test failed.");
+}
+
+if (
+  formatUserEnteredUtmValue("TestValue") !== "TestValue"
+  || formatUserEnteredUtmValue("spring campaign") !== "SpringCampaign"
+  || formatUserEnteredUtmValue("event-postcard") !== "EventPostcard"
+  || formatUserEnteredUtmValue("  internalCAPValue  ") !== "InternalCAPValue"
+  || formatUserEnteredUtmValue("qrcode") !== "QRCode"
+  || formatUserEnteredUtmValue("linkedin") !== "LinkedIn"
+  || formatUserEnteredUtmValue("utm") !== "UTM"
+  || formatUserEnteredUtmValue("gmb") !== "GMB"
+) {
+  throw new Error("Case-preserving guided UTM formatting smoke test failed.");
 }
 
 const legacyQrShape = {
@@ -607,6 +620,20 @@ try {
     })
   });
   const preservedCasePreview = await preservedCasePreviewResponse.json();
+  const customCasePreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "gas",
+      destination_url: "https://example.com/custom-case",
+      utm_source: "TestSourceValue",
+      utm_medium: "TestMediumValue",
+      utm_campaign: "TestCampaignValue",
+      utm_term: "TestTermValue",
+      utm_content: "TestContentValue"
+    })
+  });
+  const customCasePreview = await customCasePreviewResponse.json();
   const createAttempt = await createWithConsistencyConfirmation({
       client: "gas",
       destination_url: "https://example.com/bitly-degradation-smoke",
@@ -1000,6 +1027,9 @@ try {
     || !builderHtml.includes("new AbortController()")
     || !builderHtml.includes("debouncedSuggestionLoads")
     || !builderHtml.includes("requestId!==suggestionRequestIds[field]")
+    || !builderHtml.includes('data-new-value="true"')
+    || !builderHtml.includes("token.charAt(0).toUpperCase()+token.slice(1)")
+    || builderHtml.includes("cachedKnown")
     || !builderHtml.includes("state.activeRecommendationField")
     || !builderHtml.includes("state.queuedSubmission=true")
     || !builderHtml.includes("Finishing recommended values…")
@@ -1114,6 +1144,13 @@ try {
     || preservedCasePreview.preview?.resolved?.utm_term !== "MA"
     || preservedCasePreview.preview?.resolved?.utm_content !== "Springfield"
     || !preservedCasePreview.preview?.resolved?.final_long_url?.includes("utm_term=MA")
+    || customCasePreviewResponse.status !== 200
+    || customCasePreview.preview?.resolved?.utm_source !== "TestSourceValue"
+    || customCasePreview.preview?.resolved?.utm_medium !== "TestMediumValue"
+    || customCasePreview.preview?.resolved?.utm_campaign !== "TestCampaignValue"
+    || customCasePreview.preview?.resolved?.utm_term !== "TestTermValue"
+    || customCasePreview.preview?.resolved?.utm_content !== "TestContentValue"
+    || customCasePreview.preview?.resolved?.final_long_url !== "https://example.com/custom-case?utm_source=TestSourceValue&utm_medium=TestMediumValue&utm_campaign=TestCampaignValue&utm_term=TestTermValue&utm_content=TestContentValue"
     || createResponse.status !== 200
     || createAttempt.firstResponse.status !== 409
     || createAttempt.firstBody.error?.code !== "consistency_confirmation_required"
@@ -1258,6 +1295,8 @@ try {
       missingQrProjectCode: missingQrProject.error?.code,
       vthPreviewStatus: vthPreviewResponse.status,
       vthPreview: vthPreview.preview?.resolved,
+      customCasePreviewStatus: customCasePreviewResponse.status,
+      customCasePreview: customCasePreview.preview?.resolved,
       govSuggestionsBeforeAck: govSuggestionsBeforeAck.items,
       govSuggestionsAfterAck: govSuggestionsAfterAck.items,
       govSuggestionsOtherClient: govSuggestionsOtherClient.items,
