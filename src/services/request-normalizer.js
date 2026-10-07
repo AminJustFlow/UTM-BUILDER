@@ -39,12 +39,24 @@ export class RequestNormalizer {
       missingFields.push("client");
     }
 
+    const externalDomain = guidedBuilderMode && client && normalizedDestination
+      ? (parsed.externalDomain === null ? this.rulesService.isExternalDestination(client, normalizedDestination) : parsed.externalDomain)
+      : false;
+    if (externalDomain) {
+      parsed.utmSource = String(parsed.utmSource ?? "").trim() || this.rulesService.getExternalSourceKey(client);
+      parsed.utmMedium = String(parsed.utmMedium ?? "").trim() || "External";
+      parsed.utmCampaign = "";
+      parsed.utmTerm = "";
+      parsed.utmContent = "";
+      parsed.campaignLabel = null;
+    }
+
     let channel = this.rulesService.normalizeChannel(parsed.channel, parsed.assetType, parsed.needsQr, {
       client,
       source: parsed.utmSource,
       medium: parsed.utmMedium
     });
-    if (!channel && guidedBuilderMode && explicitStructuredUtms) {
+    if (!channel && guidedBuilderMode && (explicitStructuredUtms || externalDomain)) {
       channel = "custom";
     }
     if (!channel) {
@@ -55,7 +67,7 @@ export class RequestNormalizer {
       source: parsed.utmSource,
       medium: parsed.utmMedium
     });
-    if (!assetType && guidedBuilderMode && explicitStructuredUtms) {
+    if (!assetType && guidedBuilderMode && (explicitStructuredUtms || externalDomain)) {
       assetType = "custom";
     }
     if (!assetType) {
@@ -81,12 +93,14 @@ export class RequestNormalizer {
     const utm = this.rulesService.resolveUtmParameters(client, channel, parsedForResolution);
     const effectiveWarnings = this.removeResolvedUtmWarnings(uniqueWarnings, utm);
     const effectiveMissingFields = this.removeResolvedUtmMissingFields(uniqueMissing, utm);
-    if (!utm.source || !utm.medium || !utm.campaign) {
+    if (!utm.source || !utm.medium || (!externalDomain && !utm.campaign)) {
       return new WorkflowDecision({
         status: "clarify",
         warnings: effectiveWarnings,
-        missingFields: ["utm_source", "utm_medium", "utm_campaign"],
-        message: "I could not resolve the full UTM set for that request. Please restate it or provide explicit source, medium, and campaign values."
+        missingFields: externalDomain ? ["utm_source", "utm_medium"] : ["utm_source", "utm_medium", "utm_campaign"],
+        message: externalDomain
+          ? "I could not resolve source and medium for that external-domain request."
+          : "I could not resolve the full UTM set for that request. Please restate it or provide explicit source, medium, and campaign values."
       });
     }
 
@@ -103,9 +117,9 @@ export class RequestNormalizer {
     const formattedUtm = {
       source: this.formatResolvedUtmValue("source", utm.source, client, guidedBuilderMode),
       medium: this.formatResolvedUtmValue("medium", utm.medium, client, guidedBuilderMode),
-      campaign: this.formatResolvedUtmValue("campaign", utm.campaign, client, guidedBuilderMode),
-      term: this.formatResolvedUtmValue("term", sanitizedTerm, client, guidedBuilderMode),
-      content: this.formatResolvedUtmValue("content", sanitizedContent, client, guidedBuilderMode)
+      campaign: externalDomain ? "" : this.formatResolvedUtmValue("campaign", utm.campaign, client, guidedBuilderMode),
+      term: externalDomain ? "" : this.formatResolvedUtmValue("term", sanitizedTerm, client, guidedBuilderMode),
+      content: externalDomain ? "" : this.formatResolvedUtmValue("content", sanitizedContent, client, guidedBuilderMode)
     };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
@@ -135,6 +149,7 @@ export class RequestNormalizer {
         utmCampaign: formattedUtm.campaign,
         utmTerm: formattedUtm.term,
         utmContent: formattedUtm.content,
+        externalDomain,
         finalLongUrl,
         needsQr: parsed.needsQr || channel === "qr",
         confidence: parsed.confidence,

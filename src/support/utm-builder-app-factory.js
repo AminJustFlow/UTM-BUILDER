@@ -267,6 +267,7 @@ export async function createUtmBuilderApplication(projectRoot) {
   router.add("POST", "/users/notification-settings", requireAdmin((request) => userAdminController.handleNotificationSettings(request)));
   router.add("GET", "/clients", requireAdmin((request) => clientManagementController.handleHtml(request)));
   router.add("POST", "/clients/rename", requireAdmin((request) => clientManagementController.handleRename(request)));
+  router.add("POST", "/clients/external-source-key", requireAdmin((request) => clientManagementController.handleExternalSourceKey(request)));
   router.add("POST", "/clients/purge", requireAdmin((request) => clientManagementController.handlePurge(request)));
   router.add("GET", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleHtml(request)));
   router.add("POST", "/standards", requireAdmin((request) => campaignStandardsAdminController.handleCreate(request)));

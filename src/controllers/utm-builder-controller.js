@@ -45,6 +45,8 @@ export class UtmBuilderController {
       .map(async (clientKey) => ({
           key: clientKey,
           displayName: this.rulesService.getClientDisplayName(clientKey),
+          domains: this.rulesService.getClientDomains(clientKey),
+          externalSourceKey: this.rulesService.getExternalSourceKey(clientKey),
           guidance: this.campaignStandardsService
             ? await this.campaignStandardsService.getEffectiveGuidance(clientKey)
             : this.rulesService.getClientGuidance(clientKey)
@@ -234,6 +236,7 @@ export class UtmBuilderController {
       utm_content: normalizeNullable(input.utm_content),
       destination_url: normalizeOptional(input.destination_url),
       needs_qr: Boolean(input.needs_qr),
+      external_domain: explicitBoolean(input, "external_domain"),
       confidence: 1,
       warnings: [],
       missing_fields: []
@@ -308,6 +311,7 @@ function serializeResult(result) {
     utm_campaign: normalized.utmCampaign,
     utm_term: normalized.utmTerm,
     utm_content: normalized.utmContent,
+    external_domain: normalized.externalDomain,
     warnings: [...normalized.warnings, ...(result.qrWarning ? [result.qrWarning] : [])],
     short_link_warning: result.degradedMessage ?? null,
     degradation_reason: result.degradedReason ?? null,
@@ -329,7 +333,8 @@ function buildFormDefaults(item, { duplicate = false } = {}) {
       utm_medium: "",
       utm_term: "",
       utm_content: "",
-      campaign_label: ""
+      campaign_label: "",
+      external_domain: false
     };
   }
 
@@ -344,7 +349,8 @@ function buildFormDefaults(item, { duplicate = false } = {}) {
     utm_medium: item.utmMedium ?? "",
     utm_term: item.utmTerm ?? "",
     utm_content: item.utmContent ?? "",
-    campaign_label: item.campaignLabel ?? ""
+    campaign_label: item.campaignLabel ?? "",
+    external_domain: Boolean(item.externalDomain)
   };
 }
 
@@ -385,6 +391,10 @@ function normalizeNullable(value) {
     return null;
   }
   return String(value).trim();
+}
+
+function explicitBoolean(input, key) {
+  return Object.prototype.hasOwnProperty.call(input ?? {}, key) ? Boolean(input[key]) : undefined;
 }
 
 function positiveInteger(value, fallback) {

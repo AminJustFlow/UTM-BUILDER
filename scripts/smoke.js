@@ -396,10 +396,19 @@ function cookieValue(response, name) {
 
 const instance = await startUtmBuilderServer(process.cwd());
 let sessionCookie = "";
-const af = (path, options = {}) => fetch(`${base}${path}`, {
-  ...options,
-  headers: { ...(options.headers ?? {}), Cookie: sessionCookie }
-});
+const af = (path, options = {}) => {
+  const adjusted = { ...options };
+  if (["/new", "/new/preview.json"].includes(path) && typeof adjusted.body === "string"
+    && String(adjusted.headers?.["Content-Type"] ?? "").includes("application/json")) {
+    const payload = JSON.parse(adjusted.body);
+    if (!Object.prototype.hasOwnProperty.call(payload, "external_domain")) payload.external_domain = false;
+    adjusted.body = JSON.stringify(payload);
+  }
+  return fetch(`${base}${path}`, {
+    ...adjusted,
+    headers: { ...(adjusted.headers ?? {}), Cookie: sessionCookie }
+  });
+};
 async function createWithConsistencyConfirmation(payload) {
   const firstResponse = await af("/new", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
@@ -605,6 +614,31 @@ try {
     })
   });
   const vthPreview = await vthPreviewResponse.json();
+  const externalKeyUpdateResponse = await af("/clients/external-source-key", {
+    method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_key: "jf", external_source_key: "custom source key" }).toString()
+  });
+  const builderWithExternalKey = await (await af("/new")).text();
+  const externalPreviewResponse = await af("/new/preview.json", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "jf", destination_url: "https://greatwaters.org/", external_domain: true,
+      utm_source: "", utm_medium: "", utm_campaign: "ShouldDisappear",
+      utm_term: "ShouldDisappear", utm_content: "ShouldDisappear"
+    })
+  });
+  const externalPreview = await externalPreviewResponse.json();
+  const inferredExternalResponse = await fetch(`${base}/new/preview.json`, {
+    method: "POST", headers: { "Content-Type": "application/json", Cookie: sessionCookie },
+    body: JSON.stringify({ client: "jf", destination_url: "https://greatwaters.org/" })
+  });
+  const inferredExternal = await inferredExternalResponse.json();
+  const internalOverrideResponse = await af("/new/preview.json", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "jf", destination_url: "https://greatwaters.org/", external_domain: false,
+      utm_source: "Facebook", utm_medium: "Social", utm_campaign: "Website" })
+  });
+  const internalOverride = await internalOverrideResponse.json();
   const history = await (await af("/new/utm-intelligence/history.json?client=gas")).json();
   const existingQueryPreviewResponse = await af("/new/preview.json", {
     method: "POST",
@@ -1151,6 +1185,20 @@ try {
     || vthPreview.preview?.resolved?.utm_term !== "LandingPage"
     || vthPreview.preview?.resolved?.utm_content !== "Scan"
     || vthPreview.preview?.resolved?.final_long_url !== "https://www.technologyhillnh.com/?utm_source=EventsPostcard&utm_medium=QRCode&utm_campaign=HomePage&utm_term=LandingPage&utm_content=Scan"
+    || externalPreviewResponse.status !== 200
+    || externalPreview.preview?.resolved?.external_domain !== true
+    || externalKeyUpdateResponse.status !== 302
+    || !builderWithExternalKey.includes("CustomSourceKey")
+    || externalPreview.preview?.resolved?.utm_source !== "CustomSourceKey"
+    || externalPreview.preview?.resolved?.utm_medium !== "External"
+    || externalPreview.preview?.resolved?.utm_campaign !== ""
+    || externalPreview.preview?.resolved?.utm_term !== ""
+    || externalPreview.preview?.resolved?.utm_content !== ""
+    || externalPreview.preview?.resolved?.final_long_url !== "https://greatwaters.org/?utm_source=CustomSourceKey&utm_medium=External"
+    || inferredExternalResponse.status !== 200
+    || inferredExternal.preview?.resolved?.final_long_url !== "https://greatwaters.org/?utm_source=CustomSourceKey&utm_medium=External"
+    || internalOverrideResponse.status !== 200
+    || !internalOverride.preview?.resolved?.final_long_url?.includes("utm_campaign=Website")
     || preservedCasePreviewResponse.status !== 200
     || preservedCasePreview.preview?.resolved?.utm_source !== "MetaAd"
     || preservedCasePreview.preview?.resolved?.utm_medium !== "Social"
@@ -1309,6 +1357,14 @@ try {
       missingQrProjectCode: missingQrProject.error?.code,
       vthPreviewStatus: vthPreviewResponse.status,
       vthPreview: vthPreview.preview?.resolved,
+      externalPreviewStatus: externalPreviewResponse.status,
+      externalKeyUpdateStatus: externalKeyUpdateResponse.status,
+      builderHasExternalKey: builderWithExternalKey.includes("CustomSourceKey"),
+      externalPreview: externalPreview.preview?.resolved,
+      inferredExternalStatus: inferredExternalResponse.status,
+      inferredExternal: inferredExternal.preview?.resolved,
+      internalOverrideStatus: internalOverrideResponse.status,
+      internalOverride: internalOverride.preview?.resolved,
       customCasePreviewStatus: customCasePreviewResponse.status,
       customCasePreview: customCasePreview.preview?.resolved,
       govSuggestionsBeforeAck: govSuggestionsBeforeAck.items,

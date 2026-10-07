@@ -14,6 +14,7 @@ export class NormalizedLinkRequest {
     utmCampaign,
     utmTerm,
     utmContent,
+    externalDomain = false,
     finalLongUrl,
     needsQr,
     confidence,
@@ -33,6 +34,7 @@ export class NormalizedLinkRequest {
     this.utmCampaign = utmCampaign;
     this.utmTerm = utmTerm;
     this.utmContent = utmContent;
+    this.externalDomain = externalDomain;
     this.finalLongUrl = finalLongUrl;
     this.needsQr = needsQr;
     this.confidence = confidence;
@@ -55,6 +57,7 @@ export class NormalizedLinkRequest {
       utm_campaign: this.utmCampaign,
       utm_term: this.utmTerm,
       utm_content: this.utmContent,
+      external_domain: this.externalDomain,
       final_long_url: this.finalLongUrl,
       needs_qr: this.needsQr,
       confidence: this.confidence,

@@ -9,6 +9,7 @@ export class ParsedLinkRequest {
     utmCampaign = null,
     utmTerm = null,
     utmContent = null,
+    externalDomain = null,
     destinationUrl = null,
     needsQr = false,
     confidence = 0,
@@ -26,6 +27,7 @@ export class ParsedLinkRequest {
     this.utmCampaign = utmCampaign;
     this.utmTerm = utmTerm;
     this.utmContent = utmContent;
+    this.externalDomain = externalDomain;
     this.destinationUrl = destinationUrl;
     this.needsQr = needsQr;
     this.confidence = confidence;
@@ -46,6 +48,9 @@ export class ParsedLinkRequest {
       utmCampaign: data.utm_campaign ?? data.utmCampaign ?? data.campaign ?? null,
       utmTerm: data.utm_term ?? data.utmTerm ?? data.term ?? null,
       utmContent: data.utm_content ?? data.utmContent ?? data.content ?? null,
+      externalDomain: data.external_domain === undefined && data.externalDomain === undefined
+        ? null
+        : Boolean(data.external_domain ?? data.externalDomain),
       destinationUrl: data.destination_url ?? data.destinationUrl ?? null,
       needsQr: Boolean(data.needs_qr ?? data.needsQr ?? false),
       confidence: Number(data.confidence ?? 0),
@@ -67,6 +72,7 @@ export class ParsedLinkRequest {
       utm_campaign: this.utmCampaign,
       utm_term: this.utmTerm,
       utm_content: this.utmContent,
+      external_domain: this.externalDomain,
       destination_url: this.destinationUrl,
       needs_qr: this.needsQr,
       confidence: this.confidence,

@@ -491,6 +491,7 @@ export class UtmLibraryService {
       utmCampaign: storedUtmValue(extractedUtms, normalized, "utm_campaign"),
       utmTerm: storedUtmValue(extractedUtms, normalized, "utm_term"),
       utmContent: storedUtmValue(extractedUtms, normalized, "utm_content"),
+      externalDomain: normalized.external_domain === true,
       destinationUrl: normalized.destination_url ?? normalized.normalized_destination_url ?? "",
       normalizedDestinationUrl: normalized.normalized_destination_url ?? "",
       finalLongUrl,

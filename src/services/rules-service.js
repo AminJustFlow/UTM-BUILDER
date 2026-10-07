@@ -6,6 +6,7 @@ export class RulesService {
   constructor(rules) {
     this.rules = rules;
     this.clientDisplayNames = new Map();
+    this.clientExternalSourceKeys = new Map();
     this.runtimeCampaignStandards = null;
     this.sourceChannels = buildSourceChannelMap(rules);
     this.campaignVocabulary = buildCampaignVocabulary(rules);
@@ -123,6 +124,38 @@ export class RulesService {
     const workbookClient = this.rules.workbookTaxonomy?.clients?.[taxonomyKey];
     const configuredCode = String(clientConfig.code ?? workbookClient?.code ?? "").trim();
     return configuredCode || clientKey.toUpperCase();
+  }
+
+  getClientDomains(client) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    return [...(this.rules.clients?.[key]?.domains ?? [])];
+  }
+
+  isExternalDestination(client, destinationUrl) {
+    const key = this.normalizeClient(client);
+    if (!key || !destinationUrl) return false;
+    let host;
+    try { host = normalizeHost(new URL(destinationUrl).hostname); } catch { return false; }
+    return !this.getClientDomains(key).some((domain) => {
+      const expected = normalizeHost(domain);
+      return expected && (host === expected || host.endsWith(`.${expected}`));
+    });
+  }
+
+  getExternalSourceKey(client) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    return this.clientExternalSourceKeys.get(key) ?? this.getClientCode(key);
+  }
+
+  setExternalSourceKey(client, value) {
+    const key = String(client ?? "").trim().toLowerCase();
+    const source = String(value ?? "").trim();
+    if (source) this.clientExternalSourceKeys.set(key, source);
+    else this.clientExternalSourceKeys.delete(key);
+  }
+
+  setExternalSourceKeys(values = {}) {
+    for (const [key, value] of Object.entries(values)) this.setExternalSourceKey(key, value);
   }
 
   setClientDisplayName(client, displayName) { this.clientDisplayNames.set(String(client), String(displayName)); }
@@ -1169,6 +1202,10 @@ function escapeRegExp(value) {
 
 function normalizeComparable(value) {
   return slug(String(value)).replace(/_/gu, "");
+}
+
+function normalizeHost(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/^www\./u, "").replace(/\.$/u, "");
 }
 
 function findBestTypoMatch(input, candidates) {

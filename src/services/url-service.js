@@ -24,7 +24,7 @@ export class UrlService {
 
     const existingEntries = [...parsed.searchParams.entries()];
     const utmEntries = UTM_KEYS
-      .filter((key) => utmParams[key] !== undefined && utmParams[key] !== null)
+      .filter((key) => utmParams[key] !== undefined && utmParams[key] !== null && String(utmParams[key]).trim() !== "")
       .map((key) => [key, String(utmParams[key])]);
 
     parsed.search = buildSearch([...existingEntries, ...utmEntries]);

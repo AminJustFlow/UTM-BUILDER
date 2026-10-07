@@ -6,6 +6,7 @@ export function buildGuidedBuilderValidation(decision, input = {}) {
   const hasCampaign = Boolean(String(input.utm_campaign ?? input.campaign ?? "").trim());
   const hasDestination = Boolean(String(input.destination_url ?? input.destinationUrl ?? "").trim());
   const hasClient = Boolean(String(input.client ?? "").trim());
+  const externalDomain = input.external_domain === true;
 
   if (missingFields.includes("destination_url") || !hasDestination) {
     return {
@@ -47,7 +48,7 @@ export function buildGuidedBuilderValidation(decision, input = {}) {
     };
   }
 
-  if (!hasCampaign) {
+  if (!externalDomain && !hasCampaign) {
     return {
       message: "Choose a campaign bucket to keep reporting consistent before creating the link.",
       warnings,

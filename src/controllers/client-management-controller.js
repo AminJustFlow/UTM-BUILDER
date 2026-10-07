@@ -12,6 +12,10 @@ export class ClientManagementController {
     const form = parseFormBody(request.rawBody);
     return redirect(await this.service.rename(form.client_key, form.display_name, request.user));
   }
+  async handleExternalSourceKey(request) {
+    const form = parseFormBody(request.rawBody);
+    return redirect(await this.service.updateExternalSourceKey(form.client_key, form.external_source_key, request.user));
+  }
   async handlePurge(request) {
     const form = parseFormBody(request.rawBody);
     return redirect(await this.service.purge(form.client_key, form.confirmation, request.user));
@@ -28,5 +32,5 @@ function renderPage({ clients, user, toast, level }) {
 }
 
 function renderClient(client) {
-  return `<section class="card client-card"><h3>${escapeHtml(client.displayName)}</h3><div class="client-key">Internal key: ${escapeHtml(client.key)}</div><form class="form" method="post" action="/clients/rename"><input type="hidden" name="client_key" value="${escapeAttribute(client.key)}"><label>Visible client name</label><input name="display_name" value="${escapeAttribute(client.displayName)}" maxlength="100" required><div class="meta">Renaming changes only the visible name. The internal key and existing UTM data stay unchanged.</div><button class="btn btn-primary" type="submit">Update visible name</button></form><form class="form danger" method="post" action="/clients/purge" onsubmit="return confirmPurge(this,'${escapeAttribute(client.key)}')"><input type="hidden" name="client_key" value="${escapeAttribute(client.key)}"><input type="hidden" name="confirmation"><div class="warning">Irreversible: removes UTMs, generated links, dictionary values, standards, history, and stored QR assets.</div><button class="btn" type="submit">Permanently purge client</button></form></section>`;
+  return `<section class="card client-card"><h3>${escapeHtml(client.displayName)}</h3><div class="client-key">Internal key: ${escapeHtml(client.key)}</div><form class="form" method="post" action="/clients/rename"><input type="hidden" name="client_key" value="${escapeAttribute(client.key)}"><label>Visible client name</label><input name="display_name" value="${escapeAttribute(client.displayName)}" maxlength="100" required><div class="meta">Renaming changes only the visible name. The internal key and existing UTM data stay unchanged.</div><button class="btn btn-primary" type="submit">Update visible name</button></form><form class="form" method="post" action="/clients/external-source-key"><input type="hidden" name="client_key" value="${escapeAttribute(client.key)}"><label>External Source Key</label><input name="external_source_key" value="${escapeAttribute(client.externalSourceKey)}" maxlength="100" required><div class="meta">Used as utm_source for links to external domains. Capitalization follows the UTM standard.</div><button class="btn btn-primary" type="submit">Update External Source Key</button></form><form class="form danger" method="post" action="/clients/purge" onsubmit="return confirmPurge(this,'${escapeAttribute(client.key)}')"><input type="hidden" name="client_key" value="${escapeAttribute(client.key)}"><input type="hidden" name="confirmation"><div class="warning">Irreversible: removes UTMs, generated links, dictionary values, standards, history, and stored QR assets.</div><button class="btn" type="submit">Permanently purge client</button></form></section>`;
 }

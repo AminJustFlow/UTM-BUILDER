@@ -493,6 +493,7 @@ export class UtmIntelligenceService {
         utm_campaign: normalized.utmCampaign,
         utm_term: normalized.utmTerm,
         utm_content: normalized.utmContent,
+        external_domain: normalized.externalDomain,
         final_long_url: normalized.finalLongUrl,
         needs_qr: normalized.needsQr,
         warnings: [...new Set([...(normalized.warnings ?? []), ...duplicateWarnings])]

@@ -28,6 +28,21 @@ export class ClientManagementRepository {
     }
   }
 
+  async upsertExternalSourceKey({ clientKey, externalSourceKey, displayName, actor, timestamp }) {
+    const existing = await this.database.getAsync("SELECT client_key FROM client_management WHERE client_key=:client_key", { client_key: clientKey });
+    const params = { client_key: clientKey, external_source_key: externalSourceKey, display_name: displayName,
+      purged: this.database.client === "postgres" ? false : 0,
+      user_id: actor?.id ?? null, user_name: actor?.displayName ?? null, created_at: timestamp, updated_at: timestamp };
+    if (existing) {
+      await this.database.runAsync(`UPDATE client_management SET external_source_key=:external_source_key,
+        updated_by_user_id=:user_id,updated_by_name=:user_name,updated_at=:updated_at WHERE client_key=:client_key`, params);
+    } else {
+      await this.database.runAsync(`INSERT INTO client_management
+        (client_key,display_name,external_source_key,purged,updated_by_user_id,updated_by_name,created_at,updated_at)
+        VALUES (:client_key,:display_name,:external_source_key,:purged,:user_id,:user_name,:created_at,:updated_at)`, params);
+    }
+  }
+
   async purgeClient(clientKey, actor, displayName) {
     const clientExpression = this.database.client === "postgres"
       ? "LOWER(COALESCE(normalized_payload::jsonb ->> 'client',''))"

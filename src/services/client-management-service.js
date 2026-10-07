@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { formatUserEnteredUtmValue } from "./utm-value-format.js";
 
 export class ClientManagementService {
   constructor({ repository, rulesService, utmIntelligenceService, qrStoragePath }) {
@@ -8,11 +9,21 @@ export class ClientManagementService {
   async initialize() {
     const rows = await this.repository.list();
     this.rulesService.setClientDisplayNames(Object.fromEntries(rows.filter((r) => !asBoolean(r.purged) && r.display_name).map((r) => [r.client_key, r.display_name])));
+    this.rulesService.setExternalSourceKeys(Object.fromEntries(rows.filter((r) => !asBoolean(r.purged) && r.external_source_key).map((r) => [r.client_key, r.external_source_key])));
     this.utmIntelligenceService.setPurgedClients(rows.filter((r) => asBoolean(r.purged)).map((r) => r.client_key));
   }
   async list() {
     const settings = new Map((await this.repository.list()).map((r) => [r.client_key, r]));
-    return this.utmIntelligenceService.approvedClients().map((key) => ({ key, displayName: this.rulesService.getClientDisplayName(key), purged: asBoolean(settings.get(key)?.purged) })).filter((c) => !c.purged);
+    return this.utmIntelligenceService.approvedClients().map((key) => ({ key, displayName: this.rulesService.getClientDisplayName(key), externalSourceKey: this.rulesService.getExternalSourceKey(key), purged: asBoolean(settings.get(key)?.purged) })).filter((c) => !c.purged);
+  }
+  async updateExternalSourceKey(clientKey, externalSourceKey, actor) {
+    const key = String(clientKey ?? "").trim().toLowerCase();
+    const value = formatUserEnteredUtmValue(externalSourceKey);
+    if (!this.rulesService.clients().includes(key)) return { ok: false, message: "Select a valid client." };
+    if (!value || value.length > 100) return { ok: false, message: "External Source Key must be between 1 and 100 characters." };
+    await this.repository.upsertExternalSourceKey({ clientKey: key, externalSourceKey: value, displayName: this.rulesService.getClientDisplayName(key), actor, timestamp: new Date().toISOString() });
+    this.rulesService.setExternalSourceKey(key, value);
+    return { ok: true, message: `External Source Key updated to “${value}”.` };
   }
   async rename(clientKey, displayName, actor) {
     const key = String(clientKey ?? "").trim().toLowerCase();

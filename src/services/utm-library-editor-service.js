@@ -338,6 +338,7 @@ export class UtmLibraryEditorService {
       utm_content: normalizeNullable(input.utm_content),
       destination_url: normalizeOptional(input.destination_url),
       needs_qr: Boolean(input.needs_qr),
+      external_domain: Object.prototype.hasOwnProperty.call(input, "external_domain") ? Boolean(input.external_domain) : undefined,
       confidence: 1,
       warnings: [],
       missing_fields: []
@@ -363,7 +364,9 @@ export class UtmLibraryEditorService {
     const normalized = decision.normalizedRequest;
     const fingerprint = this.fingerprintService.generate(normalized);
     const utmIdentityKey = this.fingerprintService.generateUtmIdentity(normalized);
-    const existingDuplicate = await this.requestRepository.findExactUtmDuplicateAsync(normalized);
+    const existingDuplicate = normalized.externalDomain
+      ? null
+      : await this.requestRepository.findExactUtmDuplicateAsync(normalized);
     if (existingDuplicate) {
       return duplicateFailure(existingDuplicate);
     }
@@ -405,6 +408,7 @@ export class UtmLibraryEditorService {
           utm_content: input.utm_content ?? null,
           destination_url: input.destination_url ?? null,
           needs_qr: Boolean(input.needs_qr),
+          external_domain: normalized.externalDomain,
           qr_project_id: input.qr_project_id ?? null,
           qr_project_name: input.qr_project_name ?? null
         }
@@ -436,6 +440,7 @@ export class UtmLibraryEditorService {
           utm_content: input.utm_content ?? null,
           destination_url: input.destination_url ?? null,
           needs_qr: Boolean(input.needs_qr),
+          external_domain: normalized.externalDomain,
           qr_project_id: input.qr_project_id ?? null,
           qr_project_name: input.qr_project_name ?? null
         }
