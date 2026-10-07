@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { formatUtmValue } from "./utm-value-format.js";
+import { formatUserEnteredUtmValue, formatUtmValue } from "./utm-value-format.js";
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const DEFAULT_SUGGESTION_LIMIT = 8;
@@ -252,13 +252,13 @@ export class UtmIntelligenceService {
         ?? this.findNearDuplicateForRows(field, value, this.data.approvedRows);
       const recommendationRows = clientRows.length ? clientRows : this.data.approvedRows;
       const globalExactCount = countComparableRows(this.data.approvedRows, field, value);
-      const displayValue = displayFilters[field] || formatUtmValue(value);
+      const displayValue = displayFilters[field] || this.displayValue(field, value, client);
       const displayNear = this.displayValue(field, near, client);
       const recommendations = near
         ? [{ field, value: displayNear, normalized_value: near, usage_count: countComparableRows(recommendationRows, field, near) }]
         : globalExactCount
           ? [{ field, value: displayValue, normalized_value: value, usage_count: globalExactCount }]
-        : topValues(recommendationRows, field, 3).map((entry) => ({ field, ...entry }));
+        : topValues(recommendationRows, field, 3, (candidate) => this.displayValue(field, candidate, client)).map((entry) => ({ field, ...entry }));
       warnings.push({
         type: near ? "possible_typo" : "new_value",
         severity: "warning",
@@ -296,7 +296,7 @@ export class UtmIntelligenceService {
           display_values: Object.fromEntries(fields.map((field) => [field, displayFilters[field] || this.displayValue(field, filters[field])])),
           message: `${fields.map((field) => `${title(field)} "${displayFilters[field] || this.displayValue(field, filters[field])}"`).join(" with ")} has not been used for this client.`,
           usage_count: 0,
-          recommendations: topValues(relatedRows, target, 3).map((entry) => ({ field: target, ...entry })),
+          recommendations: topValues(relatedRows, target, 3, (candidate) => this.displayValue(target, candidate, client)).map((entry) => ({ field: target, ...entry })),
           requires_confirmation: true
         });
       }
@@ -618,7 +618,7 @@ export class UtmIntelligenceService {
       const value = normalizeOptional(row.value);
       if (!client || !value || this.purgedClients.has(client)) continue;
       const historicalDisplay = runtimeRows.find((candidate) => candidate.client === client && candidate[storedField] === value)?.[`${storedField}Display`];
-      const displayValue = String(row.display_value ?? "").trim() || historicalDisplay || formatUtmValue(row.value);
+      const displayValue = String(row.display_value ?? "").trim() || historicalDisplay || formatUserEnteredUtmValue(row.value);
       const key = `${client}:${storedField}`;
       if (!overrides.has(key)) overrides.set(key, new Map());
       overrides.get(key).set(value, displayValue);
@@ -690,11 +690,11 @@ export class UtmIntelligenceService {
       campaign,
       term,
       content,
-      sourceDisplay: formatUtmValue(row.utm_source),
-      mediumDisplay: formatUtmValue(row.utm_medium),
-      campaignDisplay: formatUtmValue(row.utm_campaign || row.canonical_campaign),
-      termDisplay: formatUtmValue(row.utm_term),
-      contentDisplay: formatUtmValue(row.utm_content),
+      sourceDisplay: authoritativeDisplay(row.utm_source),
+      mediumDisplay: authoritativeDisplay(row.utm_medium),
+      campaignDisplay: authoritativeDisplay(row.utm_campaign || row.canonical_campaign),
+      termDisplay: authoritativeDisplay(row.utm_term),
+      contentDisplay: authoritativeDisplay(row.utm_content),
       client: normalizeOptional(row.client),
       channel: normalizeOptional(row.channel),
       creationDate,
@@ -749,11 +749,11 @@ export class UtmIntelligenceService {
       campaign,
       term,
       content,
-      sourceDisplay: formatUtmValue(row.source),
-      mediumDisplay: formatUtmValue(row.medium),
-      campaignDisplay: formatUtmValue(row.campaign),
-      termDisplay: formatUtmValue(row.term),
-      contentDisplay: formatUtmValue(row.content),
+      sourceDisplay: authoritativeDisplay(row.source),
+      mediumDisplay: authoritativeDisplay(row.medium),
+      campaignDisplay: authoritativeDisplay(row.campaign),
+      termDisplay: authoritativeDisplay(row.term),
+      contentDisplay: authoritativeDisplay(row.content),
       client,
       channel,
       creationDate,
@@ -790,11 +790,11 @@ export class UtmIntelligenceService {
 
   displaySelection(input = {}) {
     return {
-      campaign: formatUtmValue(input.campaign ?? input.utm_campaign),
-      source: formatUtmValue(input.source ?? input.utm_source),
-      medium: formatUtmValue(input.medium ?? input.utm_medium),
-      term: formatUtmValue(input.term ?? input.utm_term),
-      content: formatUtmValue(input.content ?? input.utm_content)
+      campaign: formatUserEnteredUtmValue(input.campaign ?? input.utm_campaign),
+      source: formatUserEnteredUtmValue(input.source ?? input.utm_source),
+      medium: formatUserEnteredUtmValue(input.medium ?? input.utm_medium),
+      term: formatUserEnteredUtmValue(input.term ?? input.utm_term),
+      content: formatUserEnteredUtmValue(input.content ?? input.utm_content)
     };
   }
 
@@ -1026,8 +1026,8 @@ export class UtmIntelligenceService {
     return {
       field,
       entered: normalized,
-      similar_to: formatUtmValue(best),
-      message: `This ${field} looks close to existing "${formatUtmValue(best)}".`
+      similar_to: this.displayValue(field, best, client),
+      message: `This ${field} looks close to existing "${this.displayValue(field, best, client)}".`
     };
   }
 }
@@ -1300,14 +1300,14 @@ function isTrue(value) {
   return value === true || value === 1 || String(value ?? "").trim().toLowerCase() === "true" || value === "1";
 }
 
-function topValues(rows, field, limit = 3) {
+function topValues(rows, field, limit = 3, display = formatUtmValue) {
   const counts = new Map();
   rows.forEach((row) => {
     const value = normalizeOptional(row[field]);
     if (value) counts.set(value, (counts.get(value) ?? 0) + 1);
   });
   return [...counts.entries()]
-    .map(([value, usage_count]) => ({ value: formatUtmValue(value), normalized_value: value, usage_count }))
+    .map(([value, usage_count]) => ({ value: display(value), normalized_value: value, usage_count }))
     .sort((left, right) => right.usage_count - left.usage_count || left.value.localeCompare(right.value))
     .slice(0, limit);
 }
@@ -1368,6 +1368,10 @@ function normalizeOptional(value) {
   return normalized;
 }
 
+function authoritativeDisplay(value) {
+  return String(value ?? "").trim();
+}
+
 function buildConfiguredValueMaps(rulesService) {
   const maps = new Map();
   for (const client of rulesService.clients()) {
@@ -1381,6 +1385,16 @@ function buildConfiguredValueMaps(rulesService) {
       registerConfiguredValue(maps, client, "source", profile.source);
       registerConfiguredValue(maps, client, "medium", profile.medium);
     }
+    const taxonomy = rulesService.getClientAuthoritativeTaxonomy(client);
+    for (const [field, collection] of Object.entries({
+      source: taxonomy.sources,
+      medium: taxonomy.mediums,
+      campaign: taxonomy.campaigns,
+      term: taxonomy.terms,
+      content: taxonomy.contents
+    })) {
+      for (const value of collection ?? []) registerConfiguredValue(maps, client, field, value);
+    }
   }
   return maps;
 }
@@ -1390,7 +1404,7 @@ function registerConfiguredValue(maps, client, field, value) {
   if (!normalized) return;
   const key = `${normalizeOptional(client)}:${field}`;
   if (!maps.has(key)) maps.set(key, new Map());
-  maps.get(key).set(normalized, formatUtmValue(value));
+  maps.get(key).set(normalized, formatUserEnteredUtmValue(value));
 }
 
 function buildDisplayValueLookup(rows) {

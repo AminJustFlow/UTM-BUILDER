@@ -52,6 +52,16 @@ await intelligenceService.refreshDataAsync();
 if (intelligenceHistoryLoads !== 2 || intelligenceStandardsLoads !== 2) {
   throw new Error("UTM intelligence invalidation smoke test failed.");
 }
+if (
+  intelligenceService.displayValue("source", "catcrackcard", "castle") !== "CATCRackCard"
+  || intelligenceService.displayValue("campaign", "catc25", "castle") !== "CATC25"
+  || intelligenceService.displayValue("content", "redirecturl", "soc") !== "RedirectURL"
+  || intelligenceService.displayValue("medium", "sms", "gas") !== "SMS"
+  || intelligenceService.displayValue("term", "2fa", "studleys") !== "2FA"
+  || intelligenceService.displayValue("term", "lnaprep", "nam") !== "LNAPrep"
+) {
+  throw new Error("Authoritative workbook capitalization smoke test failed.");
+}
 
 const approvedDictionary = JSON.parse(fs.readFileSync(
   new URL("../utm_dictionary_output/utm_ui_dictionaries.json", import.meta.url),
@@ -278,6 +288,13 @@ if (
   || formatUserEnteredUtmValue("linkedin") !== "LinkedIn"
   || formatUserEnteredUtmValue("utm") !== "UTM"
   || formatUserEnteredUtmValue("gmb") !== "GMB"
+  || formatUserEnteredUtmValue("BecomeAMember") !== "BecomeAMember"
+  || formatUserEnteredUtmValue("BecomeASponsor") !== "BecomeASponsor"
+  || formatUserEnteredUtmValue("DIYWedding") !== "DIYWedding"
+  || formatUserEnteredUtmValue("FAQ") !== "FAQ"
+  || formatUserEnteredUtmValue("FAQs") !== "FAQs"
+  || formatUserEnteredUtmValue("WeddingALaCarte") !== "WeddingALaCarte"
+  || formatUserEnteredUtmValue("CATC") !== "CATC"
 ) {
   throw new Error("Case-preserving guided UTM formatting smoke test failed.");
 }
@@ -570,6 +587,9 @@ try {
   const suggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas")).json();
   const cicCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=castle")).json();
   const cicTermSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=castle&campaign=Visit&query=HikingWalkingTrails")).json();
+  const cicMemberSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=castle&campaign=Support&query=BecomeAMember")).json();
+  const cicCatcSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=castle&campaign=ProgramsAndEvents&term=ChristmasAtTheCastle&query=CATC")).json();
+  const cicCTagSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=term&client=castle&campaign=Support&query=C-TAG")).json();
   const approvedCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=about")).json();
   const configuredCampaignSuggestions = await (await af("/new/utm-intelligence/suggestions.json?field=campaign&client=gas&query=SmokeCampaignCopy")).json();
   const configuredCampaignContext = await (await af("/new/utm-intelligence/context.json?client=studleys&campaign=Inspiration&source=ConstantContact&medium=Email&term=LandingPage&content=ShopNow")).json();
@@ -614,6 +634,13 @@ try {
     })
   });
   const vthPreview = await vthPreviewResponse.json();
+  const authoritativeCasePreviewResponse = await af("/new/preview.json", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client: "castle", destination_url: "https://www.castleintheclouds.org/membership/",
+      external_domain: false, utm_source: "Facebook", utm_medium: "Social", utm_campaign: "Support",
+      utm_term: "BecomeAMember", utm_content: "CATC" })
+  });
+  const authoritativeCasePreview = await authoritativeCasePreviewResponse.json();
   const externalKeyUpdateResponse = await af("/clients/external-source-key", {
     method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ client_key: "jf", external_source_key: "custom source key" }).toString()
@@ -1169,6 +1196,9 @@ try {
     || !cicCampaignSuggestions.items?.some((item) => item.value === "Visit" && item.normalized_value === "visit" && item.known)
     || cicCampaignSuggestions.items?.some((item) => item.value === "Floral")
     || !cicTermSuggestions.items?.some((item) => item.value === "HikingWalkingTrails" && item.normalized_value === "hikingwalkingtrails" && item.known)
+    || !cicMemberSuggestions.items?.some((item) => item.value === "BecomeAMember" && item.normalized_value === "becomeamember" && item.known)
+    || !cicCatcSuggestions.items?.some((item) => item.value === "CATC" && item.normalized_value === "catc" && item.known)
+    || !cicCTagSuggestions.items?.some((item) => item.value === "C-TAG" && item.normalized_value === "c-tag" && item.known)
     || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || !configuredCampaignSuggestions.items?.some((item) => item.value === "SmokeCampaignCopy" && item.normalized_value === "smokecampaigncopy" && item.known && item.count === 0)
     || configuredCampaignContext.consistency?.warnings?.some((warning) => warning.type === "new_value" && warning.fields?.includes("campaign"))
@@ -1203,6 +1233,10 @@ try {
     || vthPreview.preview?.resolved?.utm_term !== "LandingPage"
     || vthPreview.preview?.resolved?.utm_content !== "Scan"
     || vthPreview.preview?.resolved?.final_long_url !== "https://www.technologyhillnh.com/?utm_source=EventsPostcard&utm_medium=QRCode&utm_campaign=HomePage&utm_term=LandingPage&utm_content=Scan"
+    || authoritativeCasePreviewResponse.status !== 200
+    || authoritativeCasePreview.preview?.resolved?.utm_term !== "BecomeAMember"
+    || authoritativeCasePreview.preview?.resolved?.utm_content !== "CATC"
+    || !authoritativeCasePreview.preview?.resolved?.final_long_url?.includes("utm_term=BecomeAMember&utm_content=CATC")
     || externalPreviewResponse.status !== 200
     || externalPreview.preview?.resolved?.external_domain !== true
     || externalKeyUpdateResponse.status !== 302

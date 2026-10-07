@@ -258,6 +258,22 @@ export class RulesService {
     };
   }
 
+  getClientAuthoritativeTaxonomy(client) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    const clientConfig = this.rules.clients?.[key] ?? {};
+    const taxonomyKey = String(clientConfig.taxonomyKey ?? key).trim();
+    const taxonomy = this.rules.workbookTaxonomy?.clients?.[taxonomyKey] ?? clientConfig.taxonomy ?? null;
+    if (!taxonomy) return emptyTaxonomy();
+    return {
+      sources: [...(taxonomy.sources ?? [])],
+      mediums: [...(taxonomy.mediums ?? [])],
+      campaigns: [...(taxonomy.campaigns ?? [])],
+      terms: [...(taxonomy.terms ?? [])],
+      contents: [...(taxonomy.contents ?? [])],
+      combinations: [...(taxonomy.combinations ?? [])]
+    };
+  }
+
   createFormCatalog() {
     return this.clients().map((clientKey) => ({
       key: clientKey,
