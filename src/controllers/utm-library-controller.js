@@ -60,17 +60,25 @@ export class UtmLibraryController {
   async handleHtml(request) {
     await this.utmIntelligenceService?.refreshDataAsync?.();
     const query = this.normalizeClientQuery(request.query);
+    const highlightRequestId = positiveInteger(request.query.highlight_request_id, null);
     const library = await (this.utmLibraryService.listCachedAsync?.(query)
       ?? this.utmLibraryService.listCached?.(query)
       ?? this.utmLibraryService.listAsync?.(query)
       ?? this.utmLibraryService.list(query));
     this.applyClientDisplayNames(library);
+    const highlightedItem = highlightRequestId
+      ? await (this.utmLibraryService.getByRequestIdAsync?.(highlightRequestId)
+        ?? this.utmLibraryService.getByRequestId?.(highlightRequestId)
+        ?? null)
+      : null;
+    if (highlightedItem) this.applyClientDisplayNames({ items: [highlightedItem] });
     const acknowledgedSet = await this.loadAcknowledgedSet();
     const view = {
       library,
       toast: normalizeTextValue(request.query.toast),
       toastLevel: normalizeToastLevel(request.query.toast_level),
-      highlightRequestId: positiveInteger(request.query.highlight_request_id, null),
+      highlightRequestId,
+      highlightedItem,
       standalone: this.standalone,
       user: request?.user ?? null,
       canManageGovernance: request?.user?.role === "admin",
@@ -344,7 +352,9 @@ export class UtmLibraryController {
 }
 
 function renderHtml(view) {
-  const { library, toast, toastLevel, highlightRequestId, governance, canManageGovernance } = view;
+  const { library, toast, toastLevel, highlightRequestId, highlightedItem, governance, canManageGovernance } = view;
+  const highlightedItemOnPage = Boolean(highlightedItem
+    && library.items.some((item) => item.requestId === highlightedItem.requestId));
   const queryBase = {
     client: library.filters.client,
     source: library.filters.source,
@@ -474,6 +484,12 @@ function renderHtml(view) {
               </div>
             </div>
             <div class="card-body">
+              ${highlightRequestId && !highlightedItem
+                ? `<div class="alert-row warn" data-highlight-not-found>${renderIcon("warning")}<div><div class="title">The existing link could not be found.</div><div class="body">Request ${escapeHtml(highlightRequestId)} may have been deleted or is no longer available.</div></div></div>`
+                : ""}
+              ${highlightedItem && !highlightedItemOnPage
+                ? `<section data-focused-request="${escapeAttribute(highlightedItem.requestId)}" style="margin-bottom:16px"><div class="results-head" style="margin-bottom:10px"><div><h2>Requested Link</h2><div class="meta">The exact existing UTM referenced by the builder.</div></div><span class="badge">Request ${escapeHtml(highlightedItem.requestId)}</span></div>${renderResultCard(highlightedItem, { highlightRequestId, archived: Boolean(highlightedItem.archivedAt), canManage: canManageGovernance })}</section>`
+                : ""}
               <div class="bulk-bar" id="bulk-bar">
                 <label class="select-link"><input type="checkbox" id="select-page"> Select all on this page</label>
                 <span class="meta" id="selected-count">0 selected</span>
@@ -483,7 +499,7 @@ function renderHtml(view) {
                   ? `<button type="button" class="button mini-button" data-bulk-action="restore">Restore selected</button>`
                   : `<button type="button" class="danger-button mini" data-bulk-action="archive">Archive selected</button>` : ""}
               </div>
-              ${highlightRequestId ? (() => { const hi = library.items.find((i) => i.requestId === highlightRequestId); return `<div class="meta" style="margin-bottom:12px"><a class="link" href="/utms">Link Library</a> / ${escapeHtml(hi ? (hi.utmCampaign || `Link ${hi.requestId}`) : "Link")}</div>`; })() : ""}
+              ${highlightedItem ? `<div class="meta" style="margin-bottom:12px"><a class="link" href="/utms">Link Library</a> / ${escapeHtml(highlightedItem.utmCampaign || `Link ${highlightedItem.requestId}`)}</div>` : ""}
               <div class="grid library-results-grid">
                 ${library.items.length > 0
                     ? library.items.map((item) => renderResultCard(item, { highlightRequestId, archived: library.filters.view === "archived", canManage: canManageGovernance })).join("")

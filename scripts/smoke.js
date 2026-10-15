@@ -797,6 +797,14 @@ try {
     })
   });
   const exactDuplicate = await duplicateResponseExact.json();
+  const duplicateLibraryUrl = exactDuplicate.error?.existing?.library_url ?? "";
+  const duplicateFocusedLibraryResponse = await af(`${duplicateLibraryUrl}${duplicateLibraryUrl.includes("?") ? "&" : "?"}per_page=1`);
+  const duplicateFocusedLibraryHtml = await duplicateFocusedLibraryResponse.text();
+  const duplicateOnPageLibraryHtml = await (await af(`${duplicateLibraryUrl}${duplicateLibraryUrl.includes("?") ? "&" : "?"}per_page=200`)).text();
+  const duplicateExistingRequestId = Number(exactDuplicate.error?.existing?.request_id ?? 0);
+  const duplicateCardMarker = `id="request-${duplicateExistingRequestId}"`;
+  const duplicateOnPageCardCount = duplicateOnPageLibraryHtml.split(duplicateCardMarker).length - 1;
+  const missingHighlightLibraryHtml = await (await af("/utms?highlight_request_id=99999999")).text();
   const duplicatePage = await af(`/new?duplicate_request_id=${created.result?.request_id}`);
   const duplicateHtml = await duplicatePage.text();
   const adminEditPage = await af(`/new?edit_request_id=${created.result?.request_id}`);
@@ -1354,6 +1362,16 @@ try {
     || duplicateResponseExact.status !== 409
     || exactDuplicate.error?.code !== "duplicate_utm"
     || !exactDuplicate.error?.existing?.library_url
+    || duplicateFocusedLibraryResponse.status !== 200
+    || !duplicateFocusedLibraryHtml.includes(`data-focused-request="${duplicateExistingRequestId}"`)
+    || !duplicateFocusedLibraryHtml.includes(duplicateCardMarker)
+    || !duplicateFocusedLibraryHtml.includes("https://example.com/bitly-degradation-smoke")
+    || !duplicateFocusedLibraryHtml.includes(">Jfclientspecificterm<")
+    || !duplicateFocusedLibraryHtml.includes(">Jfclientspecificcontent<")
+    || duplicateOnPageCardCount !== 1
+    || duplicateOnPageLibraryHtml.includes(`data-focused-request="${duplicateExistingRequestId}"`)
+    || !missingHighlightLibraryHtml.includes("data-highlight-not-found")
+    || !missingHighlightLibraryHtml.includes("The existing link could not be found.")
     || duplicatePage.status !== 200
     || !duplicateHtml.includes("Create Duplicate")
     || !duplicateHtml.includes('name="duplicated_from_request_id"')
