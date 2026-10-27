@@ -13,12 +13,13 @@ export class ClientCampaignStandardsRepository {
   async upsertSettings(payload) {
     const existing = await this.getSettings(payload.clientKey);
     if (existing) {
+      const { created_at: _createdAt, ...updateParams } = settingsParams(payload);
       await this.database.runAsync(`
         UPDATE client_guidance_settings
         SET summary = :summary, fields_json = :fields_json, managed = 1, updated_by_user_id = :user_id,
             updated_by_name = :user_name, updated_at = :updated_at
         WHERE client_key = :client_key
-      `, settingsParams(payload));
+      `, updateParams);
       return;
     }
     await this.database.runAsync(`

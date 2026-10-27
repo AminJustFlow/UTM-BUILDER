@@ -14,11 +14,33 @@ import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
 import { UtmIntelligenceService } from "../src/services/utm-intelligence-service.js";
 import { ClientCampaignStandardsService } from "../src/services/client-campaign-standards-service.js";
+import { ClientCampaignStandardsRepository } from "../src/repositories/client-campaign-standards-repository.js";
 import { FingerprintService } from "../src/services/fingerprint-service.js";
 import { UtmLibraryService } from "../src/services/utm-library-service.js";
 import { RequestRepository } from "../src/repositories/request-repository.js";
 
 const bitlyUpdateCalls = [];
+
+let campaignSettingsUpdateParams = null;
+const strictCampaignStandardsRepository = new ClientCampaignStandardsRepository({
+  async getAsync() { return { client_key: "fmb" }; },
+  async runAsync(_sql, params) {
+    campaignSettingsUpdateParams = params;
+    if (Object.hasOwn(params, "created_at")) throw new Error("SQLite received an unused created_at update parameter.");
+    return { changes: 1 };
+  }
+});
+await strictCampaignStandardsRepository.upsertSettings({
+  clientKey: "fmb",
+  summary: "FMB guidance",
+  fields: {},
+  actor: null,
+  timestamp: "2026-10-27T12:00:00.000Z"
+});
+if (campaignSettingsUpdateParams?.updated_at !== "2026-10-27T12:00:00.000Z") {
+  throw new Error("Campaign standards settings update parameter smoke test failed.");
+}
+
 const bitlyUpdateService = new BitlyService({
   async request(method, url, options) {
     bitlyUpdateCalls.push({ method, url, options });
