@@ -14,10 +14,14 @@ export class ClientCampaignStandardsService {
 
   async bootstrap() {
     for (const clientKey of this.rulesService.clients()) {
-      if (await this.repository.getSettings(clientKey)) {
-        continue;
-      }
       const guidance = this.rulesService.getClientGuidance(clientKey);
+      const settings = await this.repository.getSettings(clientKey);
+      if (settings) {
+        const profiles = await this.repository.listProfiles(clientKey);
+        if (profiles.length || !shouldBackfillUntouchedSettings(settings, guidance)) {
+          continue;
+        }
+      }
       const timestamp = new Date().toISOString();
       await this.repository.upsertSettings({
         clientKey,
@@ -196,6 +200,14 @@ export class ClientCampaignStandardsService {
   async recordAudit(clientKey, profileId, action, actor, summary, snapshot, createdAt) {
     await this.repository.recordAudit({ clientKey, profileId, action, actor, summary, snapshot, createdAt });
   }
+}
+
+function shouldBackfillUntouchedSettings(settings, guidance) {
+  return guidance.campaignProfiles.length > 0
+    && !text(settings.summary)
+    && Object.keys(jsonObject(settings.fields_json)).length === 0
+    && !settings.updated_by_user_id
+    && !text(settings.updated_by_name);
 }
 
 function normalizeProfile(input, actor, timestamp) {

@@ -13,6 +13,7 @@ import rules from "../config/rules.js";
 import { RulesService } from "../src/services/rules-service.js";
 import { QrCodeService, buildQrFilename } from "../src/services/qr-code-service.js";
 import { UtmIntelligenceService } from "../src/services/utm-intelligence-service.js";
+import { ClientCampaignStandardsService } from "../src/services/client-campaign-standards-service.js";
 import { FingerprintService } from "../src/services/fingerprint-service.js";
 import { UtmLibraryService } from "../src/services/utm-library-service.js";
 import { RequestRepository } from "../src/repositories/request-repository.js";
@@ -231,6 +232,33 @@ if (
   || !fmbProfiles.some((profile) => profile.campaign === "EppingShowroom")
 ) {
   throw new Error("FMB authoritative taxonomy and guidance smoke test failed.");
+}
+
+const legacyFmbSeededProfiles = [];
+const legacyFmbStandardsService = new ClientCampaignStandardsService({
+  rulesService: dictionaryOnlyRules,
+  repository: {
+    async getSettings(clientKey) {
+      return clientKey === "fmb"
+        ? { client_key: "fmb", summary: "", fields_json: "{}", updated_by_user_id: null, updated_by_name: "" }
+        : { client_key: clientKey, summary: "already configured", fields_json: "{}", updated_by_user_id: 1, updated_by_name: "Admin" };
+    },
+    async listProfiles() { return []; },
+    async upsertSettings(payload) {
+      if (payload.clientKey !== "fmb" || !payload.summary.includes("highest-priority FMB campaign")) {
+        throw new Error("Legacy FMB settings backfill did not restore configured guidance.");
+      }
+    },
+    async createProfile(payload) { legacyFmbSeededProfiles.push(payload); }
+  }
+});
+await legacyFmbStandardsService.bootstrap();
+if (
+  legacyFmbSeededProfiles.length !== fmbProfiles.length
+  || !legacyFmbSeededProfiles.some((profile) => profile.campaign === "Products")
+  || !legacyFmbSeededProfiles.some((profile) => profile.campaign === "EppingShowroom")
+) {
+  throw new Error("Legacy FMB campaign standards bootstrap smoke test failed.");
 }
 
 if (
