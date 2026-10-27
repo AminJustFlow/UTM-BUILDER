@@ -102,6 +102,43 @@ if (
   throw new Error("Authoritative workbook capitalization smoke test failed.");
 }
 
+const trafficPairWarnings = (input) => intelligenceService.consistencyAnalysis(input).warnings
+  .filter((warning) => warning.type === "new_pairing"
+    && warning.fields.some((field) => ["source", "medium"].includes(field)));
+const automaticTrafficPairs = [
+  ["Facebook", "Social"],
+  ["GMB", "Social"],
+  ["Instagram", "Social"],
+  ["LinkedIn", "Social"],
+  ["ConstantContact", "Email"]
+];
+for (const [client, campaign] of [["gas", "News"], ["studleys", "Community"], ["castle", "Calendar"], ["fmb", "Community"]]) {
+  for (const [source, medium] of automaticTrafficPairs) {
+    if (trafficPairWarnings({ client, campaign, source, medium }).length) {
+      throw new Error(`Approved client-wide traffic pair warned for ${client}/${campaign}/${source}/${medium}.`);
+    }
+  }
+}
+for (const [source, medium] of [["Facebook", "Email"], ["ConstantContact", "Social"]]) {
+  const warnings = trafficPairWarnings({ client: "gas", campaign: "News", source, medium });
+  if (!warnings.some((warning) => warning.fields.join("+") === "source+medium")) {
+    throw new Error(`Invalid client-wide traffic pair was not warned for ${source}/${medium}.`);
+  }
+}
+if (!trafficPairWarnings({ client: "gas", campaign: "MetaAdCampaignName", source: "Facebook", medium: "Social" })
+  .some((warning) => warning.fields.join("+") === "campaign+source")) {
+  throw new Error("Campaign-specific MetaAd source requirement smoke test failed.");
+}
+if (trafficPairWarnings({ client: "gas", campaign: "MetaAdCampaignName", source: "MetaAd", medium: "Social" }).length) {
+  throw new Error("Approved campaign-specific MetaAd/Social pair produced a warning.");
+}
+const retainedCampaignDetailWarnings = intelligenceService.consistencyAnalysis({
+  client: "gas", campaign: "News", source: "Facebook", medium: "Social", term: "LandingPage", content: "Learn"
+}).warnings.filter((warning) => warning.type === "new_pairing").map((warning) => warning.fields.join("+"));
+if (!retainedCampaignDetailWarnings.includes("campaign+term") || !retainedCampaignDetailWarnings.includes("campaign+content")) {
+  throw new Error("Campaign Term/Content historical warning smoke test failed.");
+}
+
 const approvedDictionary = JSON.parse(fs.readFileSync(
   new URL("../utm_dictionary_output/utm_ui_dictionaries.json", import.meta.url),
   "utf8"

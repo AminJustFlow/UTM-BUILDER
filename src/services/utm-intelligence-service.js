@@ -282,6 +282,10 @@ export class UtmIntelligenceService {
     for (const fields of pairs) {
       if (fields.some((field) => !filters[field] || newFields.has(field))) continue;
       if (fields.some((field) => this.isGlobalSuggestion(field, filters[field]))) continue;
+      if (fields[0] === "campaign" && ["source", "medium"].includes(fields[1])
+        && this.isClientWideCampaignTrafficValue(filters, fields[1])) continue;
+      if (fields[0] === "source" && fields[1] === "medium"
+        && this.isApprovedClientTrafficPair(filters)) continue;
       const usageCount = clientRows.filter((row) => fields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
       const valueKey = fields.map((field) => filters[field]).join("|");
       const acknowledgement = `${client}|pair:${fields.join("+")}:${valueKey}`;
@@ -816,6 +820,41 @@ export class UtmIntelligenceService {
     const normalized = normalizeOptional(value);
     return this.rulesService.getGlobalUtmSuggestions(field)
       .some((candidate) => normalizeOptional(candidate) === normalized);
+  }
+
+  campaignStandard(client, campaign) {
+    const expected = compactValue(normalizeOptional(campaign));
+    if (!expected) return null;
+    return this.rulesService.getCampaignStandards(client).find((profile) => [
+      profile.campaign,
+      profile.displayName,
+      ...(profile.aliases ?? [])
+    ].some((value) => compactValue(normalizeOptional(value)) === expected)) ?? null;
+  }
+
+  isClientWideCampaignTrafficValue(filters, field) {
+    const selected = filters[field];
+    if (!selected) return false;
+    const standard = this.campaignStandard(filters.client, filters.campaign);
+    const required = normalizeOptional(standard?.[field]);
+    if (required) return compactValue(selected) === compactValue(required);
+    return this.staticData.masterRows.some((row) => row.client === filters.client
+      && compactValue(row[field]) === compactValue(selected));
+  }
+
+  isApprovedClientTrafficPair(filters) {
+    if (!filters.source || !filters.medium) return false;
+    const standard = this.campaignStandard(filters.client, filters.campaign);
+    const requiredSource = normalizeOptional(standard?.source);
+    const requiredMedium = normalizeOptional(standard?.medium);
+    if ((requiredSource || requiredMedium)
+      && (!requiredSource || compactValue(filters.source) === compactValue(requiredSource))
+      && (!requiredMedium || compactValue(filters.medium) === compactValue(requiredMedium))) {
+      return true;
+    }
+    return this.staticData.masterRows.some((row) => row.client === filters.client
+      && compactValue(row.source) === compactValue(filters.source)
+      && compactValue(row.medium) === compactValue(filters.medium));
   }
 
   limitSuggestions(ranked, field, limit) {
