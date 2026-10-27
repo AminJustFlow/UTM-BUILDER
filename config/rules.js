@@ -1,6 +1,94 @@
 import workbookTaxonomy from "./workbook-taxonomy.js";
 
 const manualClients = {
+  fmb: {
+    displayName: "FMB",
+    aliases: ["fmb", "fimbel", "fimbel garage doors"],
+    domains: ["fimbel.com"],
+    taxonomyKey: "fmb",
+    authoritativeTaxonomy: {
+      sources: ["Facebook", "GMB", "Instagram", "LinkedIn", "ConstantContact"],
+      mediums: ["Social", "Email"],
+      campaigns: [
+        "HomePage", "GarageDoors", "Products", "Commercial", "Services",
+        "Locations", "AboutFimbel", "Resources", "Contact", "Community",
+        "News", "MobileLinks", "EppingShowroom"
+      ],
+      terms: [
+        "LandingPage", "ResidentialGarageDoors", "Styles", "Materials",
+        "AllProducts", "Residential", "Amarr", "CHI", "FADS", "Commercial",
+        "Trac-Rite", "CommercialGarageDoors", "LoadingDockSolutions",
+        "GarageDoorInstallation", "GarageDoorRepair", "EmergencyRepair",
+        "PanelReplacement", "GarageDoorOpenerInstallation", "MaintenancePlans",
+        "Consultation", "Parts", "ServiceAreas", "GarageDoors",
+        "GarageDoorOpeners", "Merrimack", "Epping", "FimbelPriceMatchGuarantee",
+        "Careers", "CustomerReviews", "BuyingGuide", "TroubleshootingGuide", "10022026"
+      ],
+      contents: ["Learn", "Explore", "Contact", "Read", "Profile", "Header", "Footer"],
+      combinations: []
+    },
+    guidance: {
+      summary: "Use the highest-priority FMB campaign that fits the destination. Product catalogue filters stay in the destination URL and do not change the UTM naming rules.",
+      fields: {
+        campaign: {
+          label: "Campaign — FMB reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the page or promotion.",
+          placeholder: "GarageDoors"
+        }
+      },
+      campaignProfiles: [
+        ...["HomePage", "GarageDoors", "Products", "Commercial", "Services", "Locations", "AboutFimbel", "Resources", "Contact"].map((campaign) => ({
+          priority: 1,
+          campaign,
+          guideline: "Use for pages and products within this section of the Fimbel website.",
+          fields: {
+            term: {
+              label: "Term — Page, product, or filter",
+              help: "Use LandingPage, the secondary page name, or the approved product filter name.",
+              placeholder: "LandingPage"
+            },
+            content: {
+              label: "Content — Message or CTA",
+              help: "Use the call to action or messaging used to engage the audience.",
+              placeholder: "Learn"
+            }
+          }
+        })),
+        {
+          priority: 2,
+          campaign: "Community",
+          guideline: "Use only for a specific community event, award, donation, or initiative. Enter that item's name as Term.",
+          fields: {
+            term: { label: "Term — Community item", help: "Use the compact name of the community activity.", placeholder: "CommunityEventName" },
+            content: { label: "Content — Message or CTA", help: "Use Read, Learn, or the specific call to action.", placeholder: "Read" }
+          }
+        },
+        {
+          priority: 2,
+          campaign: "News",
+          guideline: "Use only for press releases. Use the publication date as a compact MMDDYYYY Term.",
+          fields: {
+            term: { label: "Term — Press release date", help: "Use the press release date in MMDDYYYY format.", placeholder: "10022026" },
+            content: { label: "Content — Message or CTA", help: "Use Read, Learn, or the specific call to action.", placeholder: "Read" }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "MobileLinks",
+          guideline: "Use only for destinations under /links.",
+          fields: {
+            term: { label: "Term — Mobile links page", help: "Use LandingPage for the main mobile-links page.", placeholder: "LandingPage" },
+            content: { label: "Content — Link purpose", help: "Use Read, Learn, Explore, or Profile for a social profile.", placeholder: "Explore" }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "EppingShowroom",
+          guideline: "Specialty campaign retained for manually configured Epping showroom activity."
+        }
+      ]
+    }
+  },
   studleys: {
     displayName: "Studleys",
     aliases: ["studley", "studleys", "studley's", "sfg"],

@@ -262,7 +262,10 @@ export class RulesService {
     const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
     const clientConfig = this.rules.clients?.[key] ?? {};
     const taxonomyKey = String(clientConfig.taxonomyKey ?? key).trim();
-    const taxonomy = this.rules.workbookTaxonomy?.clients?.[taxonomyKey] ?? clientConfig.taxonomy ?? null;
+    const taxonomy = clientConfig.authoritativeTaxonomy
+      ?? this.rules.workbookTaxonomy?.clients?.[taxonomyKey]
+      ?? clientConfig.taxonomy
+      ?? null;
     if (!taxonomy) return emptyTaxonomy();
     return {
       sources: [...(taxonomy.sources ?? [])],

@@ -89,14 +89,20 @@ if (
   approvedClientRowCount("gas") !== 170
   || approvedClientRowCount("sfg") !== 875
   || approvedClientRowCount("cic") !== 756
+  || approvedClientRowCount("fmb") !== 610
   || approvedClientRowCount("vth") !== 1
-  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,gas,jf,sfg,vth"
+  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,sfg,vth"
   || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
   || !approvedDictionary.clients.vth.value_counts.medium.some((entry) => entry.value === "qrcode")
   || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "landingpage")
   || !approvedDictionary.clients.vth.value_counts.content.some((entry) => entry.value === "scan")
   || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || !approvedDictionary.clients.cic.value_counts.content.some((entry) => entry.value === "purchase")
+  || !approvedDictionary.clients.fmb.value_counts.campaign.some((entry) => entry.value === "products")
+  || !approvedDictionary.clients.fmb.value_counts.term.some((entry) => entry.value === "trac-rite")
+  || !approvedDictionary.clients.fmb.value_counts.term.some((entry) => entry.value === "10022026")
+  || approvedDictionary.clients.fmb.value_counts.source.some((entry) => entry.value === "metaad")
+  || approvedDictionary.clients.fmb.value_counts.medium.some((entry) => ["qrcode", "digitalad"].includes(entry.value))
   || approvedDictionary.clients.gas.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || approvedDictionary.clients.sfg.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
 ) {
@@ -205,6 +211,26 @@ if (
 }
 if (dictionaryOnlyRules.normalizeUtmField("campaign", "News", { client: "studleys" }) !== "Inspiration") {
   throw new Error("Configured campaign alias smoke test failed.");
+}
+const fmbTaxonomy = dictionaryOnlyRules.getClientAuthoritativeTaxonomy("fmb");
+const fmbProfiles = dictionaryOnlyRules.getClientGuidance("fmb").campaignProfiles;
+if (
+  dictionaryOnlyRules.normalizeClient("Fimbel Garage Doors") !== "fmb"
+  || dictionaryOnlyRules.getClientCode("fmb") !== "FMB"
+  || !fmbTaxonomy.campaigns.includes("Products")
+  || !fmbTaxonomy.campaigns.includes("Community")
+  || !fmbTaxonomy.campaigns.includes("EppingShowroom")
+  || !fmbTaxonomy.terms.includes("10022026")
+  || fmbTaxonomy.campaigns.includes("CurbAppeal")
+  || fmbTaxonomy.sources.includes("X")
+  || fmbTaxonomy.sources.includes("MetaAd")
+  || fmbTaxonomy.mediums.includes("QRCode")
+  || fmbTaxonomy.mediums.includes("DigitalAd")
+  || fmbTaxonomy.contents.includes("Static")
+  || !fmbProfiles.some((profile) => profile.campaign === "Community")
+  || !fmbProfiles.some((profile) => profile.campaign === "EppingShowroom")
+) {
+  throw new Error("FMB authoritative taxonomy and guidance smoke test failed.");
 }
 
 if (

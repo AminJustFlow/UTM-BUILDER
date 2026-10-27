@@ -22,9 +22,24 @@
         "unique_clients": 1
       },
       {
+        "value": "services",
+        "count": 190,
+        "unique_clients": 2
+      },
+      {
+        "value": "products",
+        "count": 150,
+        "unique_clients": 1
+      },
+      {
         "value": "support",
         "count": 140,
         "unique_clients": 1
+      },
+      {
+        "value": "homepage",
+        "count": 71,
+        "unique_clients": 5
       },
       {
         "value": "programsandevents",
@@ -32,7 +47,17 @@
         "unique_clients": 1
       },
       {
+        "value": "aboutfimbel",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
         "value": "dine",
+        "count": 60,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoors",
         "count": 60,
         "unique_clients": 1
       },
@@ -42,17 +67,22 @@
         "unique_clients": 1
       },
       {
-        "value": "homepage",
-        "count": 56,
-        "unique_clients": 4
-      },
-      {
-        "value": "landscaping",
-        "count": 40,
+        "value": "commercial",
+        "count": 45,
         "unique_clients": 1
       },
       {
-        "value": "services",
+        "value": "locations",
+        "count": 45,
+        "unique_clients": 1
+      },
+      {
+        "value": "resources",
+        "count": 45,
+        "unique_clients": 1
+      },
+      {
+        "value": "landscaping",
         "count": 40,
         "unique_clients": 1
       },
@@ -68,8 +98,8 @@
       },
       {
         "value": "contact",
-        "count": 20,
-        "unique_clients": 2
+        "count": 25,
+        "unique_clients": 3
       },
       {
         "value": "gardencenter",
@@ -77,7 +107,17 @@
         "unique_clients": 1
       },
       {
+        "value": "mobilelinks",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "myaccount",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "news",
         "count": 15,
         "unique_clients": 1
       },
@@ -95,28 +135,28 @@
     "source": [
       {
         "value": "constantcontact",
-        "count": 361,
-        "unique_clients": 3
+        "count": 483,
+        "unique_clients": 4
       },
       {
         "value": "facebook",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       },
       {
         "value": "gmb",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       },
       {
         "value": "instagram",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       },
       {
         "value": "linkedin",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       },
       {
         "value": "eventspostcard",
@@ -132,13 +172,13 @@
     "medium": [
       {
         "value": "social",
-        "count": 1440,
-        "unique_clients": 3
+        "count": 1928,
+        "unique_clients": 4
       },
       {
         "value": "email",
-        "count": 361,
-        "unique_clients": 3
+        "count": 483,
+        "unique_clients": 4
       },
       {
         "value": "qrcode",
@@ -149,8 +189,8 @@
     "term": [
       {
         "value": "landingpage",
-        "count": 266,
-        "unique_clients": 4
+        "count": 411,
+        "unique_clients": 5
       },
       {
         "value": "caregiver",
@@ -473,7 +513,27 @@
         "unique_clients": 1
       },
       {
+        "value": "10022026",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "allproducts",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "amarr",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "boardofdirectors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "buyingguide",
         "count": 15,
         "unique_clients": 1
       },
@@ -483,7 +543,32 @@
         "unique_clients": 1
       },
       {
+        "value": "careers",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "castleweddings",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "chi",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercial",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercialgaragedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "consultation",
         "count": 15,
         "unique_clients": 1
       },
@@ -493,7 +578,22 @@
         "unique_clients": 1
       },
       {
+        "value": "customerreviews",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "donations",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "emergencyrepair",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "epping",
         "count": 15,
         "unique_clients": 1
       },
@@ -503,12 +603,67 @@
         "unique_clients": 1
       },
       {
+        "value": "fads",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "fimbelpricematchguarantee",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "forteachers",
         "count": 15,
         "unique_clients": 1
       },
       {
+        "value": "garagedoorinstallation",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedooropenerinstallation",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedooropeners",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoorrepair",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "history",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "loadingdocksolutions",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "maintenanceplans",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "materials",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "merrimack",
         "count": 15,
         "unique_clients": 1
       },
@@ -523,7 +678,17 @@
         "unique_clients": 1
       },
       {
+        "value": "panelreplacement",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "partnerships",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "parts",
         "count": 15,
         "unique_clients": 1
       },
@@ -533,7 +698,22 @@
         "unique_clients": 1
       },
       {
+        "value": "residential",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "residentialgaragedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
         "value": "restoration",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "serviceareas",
         "count": 15,
         "unique_clients": 1
       },
@@ -544,6 +724,21 @@
       },
       {
         "value": "staffleadership",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "styles",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "trac-rite",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "troubleshootingguide",
         "count": 15,
         "unique_clients": 1
       },
@@ -571,13 +766,13 @@
     "content": [
       {
         "value": "learn",
-        "count": 440,
-        "unique_clients": 3
+        "count": 640,
+        "unique_clients": 4
       },
       {
         "value": "explore",
-        "count": 415,
-        "unique_clients": 3
+        "count": 610,
+        "unique_clients": 4
       },
       {
         "value": "shop",
@@ -585,14 +780,14 @@
         "unique_clients": 2
       },
       {
+        "value": "read",
+        "count": 90,
+        "unique_clients": 3
+      },
+      {
         "value": "visit",
         "count": 90,
         "unique_clients": 1
-      },
-      {
-        "value": "read",
-        "count": 80,
-        "unique_clients": 2
       },
       {
         "value": "support",
@@ -601,8 +796,8 @@
       },
       {
         "value": "contact",
-        "count": 20,
-        "unique_clients": 3
+        "count": 25,
+        "unique_clients": 4
       },
       {
         "value": "donate",
@@ -714,6 +909,33 @@
         "unique_clients": 3
       }
     ],
+    "aboutfimbel": [
+      {
+        "value": "constantcontact",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "brl": [
       {
         "value": "gsaad",
@@ -748,31 +970,58 @@
         "unique_clients": 1
       }
     ],
-    "contact": [
+    "commercial": [
       {
         "value": "constantcontact",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
       },
       {
         "value": "facebook",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
       },
       {
         "value": "gmb",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
       },
       {
         "value": "instagram",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
       },
       {
         "value": "linkedin",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
+      }
+    ],
+    "contact": [
+      {
+        "value": "constantcontact",
+        "count": 5,
+        "unique_clients": 3
+      },
+      {
+        "value": "facebook",
+        "count": 5,
+        "unique_clients": 3
+      },
+      {
+        "value": "gmb",
+        "count": 5,
+        "unique_clients": 3
+      },
+      {
+        "value": "instagram",
+        "count": 5,
+        "unique_clients": 3
+      },
+      {
+        "value": "linkedin",
+        "count": 5,
+        "unique_clients": 3
       }
     ],
     "dine": [
@@ -829,6 +1078,33 @@
         "unique_clients": 1
       }
     ],
+    "garagedoors": [
+      {
+        "value": "constantcontact",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "gardencenter": [
       {
         "value": "constantcontact",
@@ -859,28 +1135,28 @@
     "homepage": [
       {
         "value": "constantcontact",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "facebook",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "gmb",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "instagram",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "linkedin",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "eventspostcard",
@@ -942,6 +1218,60 @@
         "unique_clients": 1
       }
     ],
+    "locations": [
+      {
+        "value": "constantcontact",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 9,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 9,
+        "unique_clients": 1
+      }
+    ],
+    "mobilelinks": [
+      {
+        "value": "constantcontact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "myaccount": [
       {
         "value": "constantcontact",
@@ -966,6 +1296,60 @@
       {
         "value": "linkedin",
         "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "constantcontact",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 3,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "products": [
+      {
+        "value": "constantcontact",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 30,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 30,
         "unique_clients": 1
       }
     ],
@@ -996,31 +1380,58 @@
         "unique_clients": 1
       }
     ],
-    "services": [
+    "resources": [
       {
         "value": "constantcontact",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
       },
       {
         "value": "facebook",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
       },
       {
         "value": "gmb",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
       },
       {
         "value": "instagram",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
       },
       {
         "value": "linkedin",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "constantcontact",
+        "count": 38,
+        "unique_clients": 2
+      },
+      {
+        "value": "facebook",
+        "count": 38,
+        "unique_clients": 2
+      },
+      {
+        "value": "gmb",
+        "count": 38,
+        "unique_clients": 2
+      },
+      {
+        "value": "instagram",
+        "count": 38,
+        "unique_clients": 2
+      },
+      {
+        "value": "linkedin",
+        "count": 38,
+        "unique_clients": 2
       }
     ],
     "shop": [
@@ -1172,6 +1583,18 @@
         "unique_clients": 3
       }
     ],
+    "aboutfimbel": [
+      {
+        "value": "social",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "brl": [
       {
         "value": "qrcode",
@@ -1191,16 +1614,28 @@
         "unique_clients": 1
       }
     ],
-    "contact": [
+    "commercial": [
       {
         "value": "social",
-        "count": 16,
-        "unique_clients": 2
+        "count": 36,
+        "unique_clients": 1
       },
       {
         "value": "email",
-        "count": 4,
-        "unique_clients": 2
+        "count": 9,
+        "unique_clients": 1
+      }
+    ],
+    "contact": [
+      {
+        "value": "social",
+        "count": 20,
+        "unique_clients": 3
+      },
+      {
+        "value": "email",
+        "count": 5,
+        "unique_clients": 3
       }
     ],
     "dine": [
@@ -1227,6 +1662,18 @@
         "unique_clients": 1
       }
     ],
+    "garagedoors": [
+      {
+        "value": "social",
+        "count": 48,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 12,
+        "unique_clients": 1
+      }
+    ],
     "gardencenter": [
       {
         "value": "social",
@@ -1242,13 +1689,13 @@
     "homepage": [
       {
         "value": "social",
-        "count": 44,
-        "unique_clients": 3
+        "count": 56,
+        "unique_clients": 4
       },
       {
         "value": "email",
-        "count": 11,
-        "unique_clients": 3
+        "count": 14,
+        "unique_clients": 4
       },
       {
         "value": "qrcode",
@@ -1280,6 +1727,30 @@
         "unique_clients": 1
       }
     ],
+    "locations": [
+      {
+        "value": "social",
+        "count": 36,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 9,
+        "unique_clients": 1
+      }
+    ],
+    "mobilelinks": [
+      {
+        "value": "social",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "myaccount": [
       {
         "value": "social",
@@ -1289,6 +1760,30 @@
       {
         "value": "email",
         "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "social",
+        "count": 12,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 3,
+        "unique_clients": 1
+      }
+    ],
+    "products": [
+      {
+        "value": "social",
+        "count": 120,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 30,
         "unique_clients": 1
       }
     ],
@@ -1304,16 +1799,28 @@
         "unique_clients": 1
       }
     ],
-    "services": [
+    "resources": [
       {
         "value": "social",
-        "count": 32,
+        "count": 36,
         "unique_clients": 1
       },
       {
         "value": "email",
-        "count": 8,
+        "count": 9,
         "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "social",
+        "count": 152,
+        "unique_clients": 2
+      },
+      {
+        "value": "email",
+        "count": 38,
+        "unique_clients": 2
       }
     ],
     "shop": [
@@ -1381,8 +1888,8 @@
     "constantcontact": [
       {
         "value": "email",
-        "count": 361,
-        "unique_clients": 3
+        "count": 483,
+        "unique_clients": 4
       }
     ],
     "eventspostcard": [
@@ -1395,15 +1902,15 @@
     "facebook": [
       {
         "value": "social",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       }
     ],
     "gsaad": [
@@ -1416,15 +1923,15 @@
     "instagram": [
       {
         "value": "social",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 360,
-        "unique_clients": 3
+        "count": 482,
+        "unique_clients": 4
       }
     ]
   },
@@ -1511,6 +2018,28 @@
         "unique_clients": 1
       }
     ],
+    "aboutfimbel": [
+      {
+        "value": "careers",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "customerreviews",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "fimbelpricematchguarantee",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "brl": [
       {
         "value": "paidadvertising",
@@ -1525,11 +2054,28 @@
         "unique_clients": 1
       }
     ],
+    "commercial": [
+      {
+        "value": "commercialgaragedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "loadingdocksolutions",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "contact": [
       {
         "value": "landingpage",
-        "count": 20,
-        "unique_clients": 2
+        "count": 25,
+        "unique_clients": 3
       }
     ],
     "dine": [
@@ -1641,6 +2187,28 @@
         "unique_clients": 1
       }
     ],
+    "garagedoors": [
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "materials",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "residentialgaragedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "styles",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "gardencenter": [
       {
         "value": "landingpage",
@@ -1651,8 +2219,8 @@
     "homepage": [
       {
         "value": "landingpage",
-        "count": 56,
-        "unique_clients": 4
+        "count": 71,
+        "unique_clients": 5
       }
     ],
     "houseplants": [
@@ -1734,9 +2302,92 @@
         "unique_clients": 1
       }
     ],
+    "locations": [
+      {
+        "value": "epping",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "merrimack",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "mobilelinks": [
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "myaccount": [
       {
         "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "10022026",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "products": [
+      {
+        "value": "allproducts",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "amarr",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "chi",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "commercial",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "fads",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedooropeners",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoors",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "residential",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "trac-rite",
         "count": 15,
         "unique_clients": 1
       }
@@ -1763,15 +2414,77 @@
         "unique_clients": 1
       }
     ],
+    "resources": [
+      {
+        "value": "buyingguide",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "troubleshootingguide",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "services": [
+      {
+        "value": "landingpage",
+        "count": 35,
+        "unique_clients": 2
+      },
       {
         "value": "faqs",
         "count": 20,
         "unique_clients": 1
       },
       {
-        "value": "landingpage",
-        "count": 20,
+        "value": "consultation",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "emergencyrepair",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoorinstallation",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedooropenerinstallation",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "garagedoorrepair",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "maintenanceplans",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "panelreplacement",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "parts",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "serviceareas",
+        "count": 15,
         "unique_clients": 1
       }
     ],
@@ -1974,6 +2687,18 @@
         "unique_clients": 1
       }
     ],
+    "aboutfimbel": [
+      {
+        "value": "explore",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "careers": [
       {
         "value": "apply",
@@ -1996,11 +2721,23 @@
         "unique_clients": 1
       }
     ],
+    "commercial": [
+      {
+        "value": "explore",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
     "contact": [
       {
         "value": "contact",
-        "count": 10,
-        "unique_clients": 2
+        "count": 15,
+        "unique_clients": 3
       }
     ],
     "dine": [
@@ -2042,6 +2779,18 @@
         "unique_clients": 1
       }
     ],
+    "garagedoors": [
+      {
+        "value": "explore",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "gardencenter": [
       {
         "value": "explore",
@@ -2062,13 +2811,13 @@
     "homepage": [
       {
         "value": "explore",
-        "count": 15,
-        "unique_clients": 3
+        "count": 20,
+        "unique_clients": 4
       },
       {
         "value": "learn",
-        "count": 15,
-        "unique_clients": 3
+        "count": 20,
+        "unique_clients": 4
       },
       {
         "value": "read",
@@ -2120,6 +2869,35 @@
         "unique_clients": 1
       }
     ],
+    "locations": [
+      {
+        "value": "explore",
+        "count": 15,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "mobilelinks": [
+      {
+        "value": "explore",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
     "myaccount": [
       {
         "value": "register",
@@ -2129,6 +2907,30 @@
       {
         "value": "signin",
         "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "news": [
+      {
+        "value": "learn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "products": [
+      {
+        "value": "explore",
+        "count": 50,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 50,
         "unique_clients": 1
       }
     ],
@@ -2164,16 +2966,28 @@
         "unique_clients": 1
       }
     ],
-    "services": [
+    "resources": [
       {
         "value": "explore",
-        "count": 10,
+        "count": 15,
         "unique_clients": 1
       },
       {
         "value": "learn",
-        "count": 10,
+        "count": 15,
         "unique_clients": 1
+      }
+    ],
+    "services": [
+      {
+        "value": "explore",
+        "count": 60,
+        "unique_clients": 2
+      },
+      {
+        "value": "learn",
+        "count": 60,
+        "unique_clients": 2
       },
       {
         "value": "read",
@@ -3348,6 +4162,1123 @@
           {
             "value": "learn",
             "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      }
+    },
+    "fmb": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "products",
+            "count": 150,
+            "unique_clients": 1
+          },
+          {
+            "value": "services",
+            "count": 150,
+            "unique_clients": 1
+          },
+          {
+            "value": "aboutfimbel",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoors",
+            "count": 60,
+            "unique_clients": 1
+          },
+          {
+            "value": "commercial",
+            "count": 45,
+            "unique_clients": 1
+          },
+          {
+            "value": "locations",
+            "count": 45,
+            "unique_clients": 1
+          },
+          {
+            "value": "resources",
+            "count": 45,
+            "unique_clients": 1
+          },
+          {
+            "value": "mobilelinks",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "homepage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "news",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 122,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 122,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 122,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 122,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "social",
+            "count": 488,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "landingpage",
+            "count": 145,
+            "unique_clients": 1
+          },
+          {
+            "value": "10022026",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "allproducts",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "amarr",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "buyingguide",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "careers",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "chi",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "commercial",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "commercialgaragedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "consultation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "customerreviews",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "emergencyrepair",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "epping",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "fads",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "fimbelpricematchguarantee",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoorinstallation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedooropenerinstallation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedooropeners",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoorrepair",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "loadingdocksolutions",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "maintenanceplans",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "materials",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "merrimack",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "panelreplacement",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "parts",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "residential",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "residentialgaragedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "serviceareas",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "styles",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "trac-rite",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "troubleshootingguide",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "learn",
+            "count": 200,
+            "unique_clients": 1
+          },
+          {
+            "value": "explore",
+            "count": 195,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "aboutfimbel": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "commercial": [
+          {
+            "value": "constantcontact",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "constantcontact",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "garagedoors": [
+          {
+            "value": "constantcontact",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "constantcontact",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "locations": [
+          {
+            "value": "constantcontact",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "mobilelinks": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "news": [
+          {
+            "value": "constantcontact",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 3,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "products": [
+          {
+            "value": "constantcontact",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 30,
+            "unique_clients": 1
+          }
+        ],
+        "resources": [
+          {
+            "value": "constantcontact",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 9,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "constantcontact",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 30,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 30,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "aboutfimbel": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "commercial": [
+          {
+            "value": "social",
+            "count": 36,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "social",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "garagedoors": [
+          {
+            "value": "social",
+            "count": 48,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 12,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "social",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "locations": [
+          {
+            "value": "social",
+            "count": 36,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "mobilelinks": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "news": [
+          {
+            "value": "social",
+            "count": 12,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 3,
+            "unique_clients": 1
+          }
+        ],
+        "products": [
+          {
+            "value": "social",
+            "count": 120,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 30,
+            "unique_clients": 1
+          }
+        ],
+        "resources": [
+          {
+            "value": "social",
+            "count": 36,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 9,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "social",
+            "count": 120,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 30,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "gmb": [
+          {
+            "value": "social",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 122,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "aboutfimbel": [
+          {
+            "value": "careers",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "customerreviews",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "fimbelpricematchguarantee",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "commercial": [
+          {
+            "value": "commercialgaragedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "loadingdocksolutions",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "landingpage",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "garagedoors": [
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "materials",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "residentialgaragedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "styles",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "locations": [
+          {
+            "value": "epping",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "merrimack",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "mobilelinks": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "news": [
+          {
+            "value": "10022026",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "products": [
+          {
+            "value": "allproducts",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "amarr",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "chi",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "commercial",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "fads",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedooropeners",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoors",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "residential",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "trac-rite",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "resources": [
+          {
+            "value": "buyingguide",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "troubleshootingguide",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "consultation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "emergencyrepair",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoorinstallation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedooropenerinstallation",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "garagedoorrepair",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "maintenanceplans",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "panelreplacement",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "parts",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "serviceareas",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "aboutfimbel": [
+          {
+            "value": "explore",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "commercial": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "contact": [
+          {
+            "value": "contact",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "garagedoors": [
+          {
+            "value": "explore",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "locations": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "mobilelinks": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "news": [
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "products": [
+          {
+            "value": "explore",
+            "count": 50,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 50,
+            "unique_clients": 1
+          }
+        ],
+        "resources": [
+          {
+            "value": "explore",
+            "count": 15,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 15,
+            "unique_clients": 1
+          }
+        ],
+        "services": [
+          {
+            "value": "explore",
+            "count": 50,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 50,
             "unique_clients": 1
           }
         ]
