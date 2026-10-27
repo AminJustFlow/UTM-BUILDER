@@ -33,6 +33,22 @@ export class RulesService {
     return Array.isArray(values) ? [...values] : [];
   }
 
+  getClientWideContents(client) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    const values = this.rules.clients?.[key]?.clientWideContents;
+    return Array.isArray(values) ? [...values] : [];
+  }
+
+  normalizeClientUtmAlias(client, field, value) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    const aliases = this.rules.clients?.[key]?.utmValueAliases?.[field] ?? {};
+    const comparable = normalizeComparable(value);
+    for (const [alias, canonical] of Object.entries(aliases)) {
+      if (normalizeComparable(alias) === comparable) return String(canonical);
+    }
+    return value;
+  }
+
   normalizeClient(client, destinationUrl = null) {
     const normalized = this.normalizeByAliases(client, this.rules.clients ?? {});
     if (normalized) {
@@ -383,8 +399,10 @@ export class RulesService {
       return "";
     }
 
+    const aliased = String(this.normalizeClientUtmAlias(context.client, field, trimmed)).trim();
+
     if (field === "campaign" && context.client) {
-      const normalized = normalizeComparable(trimmed);
+      const normalized = normalizeComparable(aliased);
       const standard = this.getCampaignStandards(context.client).find((profile) => {
         return [profile.campaign, profile.displayName, ...(profile.aliases ?? [])]
           .some((candidate) => normalizeComparable(candidate) === normalized);
@@ -395,26 +413,26 @@ export class RulesService {
     }
 
     if (this.usesDictionaryOnlyUtms(context.client)) {
-      return trimmed;
+      return aliased;
     }
 
-    const matched = this.matchTaxonomyValue(field, trimmed, context);
+    const matched = this.matchTaxonomyValue(field, aliased, context);
     if (matched) {
       return matched;
     }
 
     const knownValues = this.utmValueMaps[field] ?? new Map();
-    const directMatch = knownValues.get(normalizeComparable(trimmed));
+    const directMatch = knownValues.get(normalizeComparable(aliased));
     if (directMatch) {
       return directMatch;
     }
 
-    const fuzzyMatch = findBestTypoMatch(normalizeComparable(trimmed), [...knownValues.keys()]);
+    const fuzzyMatch = findBestTypoMatch(normalizeComparable(aliased), [...knownValues.keys()]);
     if (fuzzyMatch) {
-      return knownValues.get(fuzzyMatch) ?? trimmed;
+      return knownValues.get(fuzzyMatch) ?? aliased;
     }
 
-    return trimmed;
+    return aliased;
   }
 
   buildCampaign(client, channel, campaignLabel, timestamp) {

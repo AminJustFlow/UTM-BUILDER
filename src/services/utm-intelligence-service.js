@@ -284,6 +284,8 @@ export class UtmIntelligenceService {
       if (fields.some((field) => this.isGlobalSuggestion(field, filters[field]))) continue;
       if (fields[0] === "campaign" && ["source", "medium"].includes(fields[1])
         && this.isClientWideCampaignTrafficValue(filters, fields[1])) continue;
+      if (fields[0] === "campaign" && fields[1] === "content"
+        && this.isClientWideCampaignContent(filters)) continue;
       if (fields[0] === "source" && fields[1] === "medium"
         && this.isApprovedClientTrafficPair(filters)) continue;
       const usageCount = clientRows.filter((row) => fields.every((field) => compactValue(row[field]) === compactValue(filters[field]))).length;
@@ -781,14 +783,18 @@ export class UtmIntelligenceService {
   }
 
   normalizeSelection(input = {}) {
+    const client = normalizeOptional(input.client);
+    const normalizeFieldValue = (field, value) => normalizeOptional(
+      this.rulesService.normalizeClientUtmAlias(client, field, value)
+    );
     return {
-      client: normalizeOptional(input.client),
+      client,
       channel: normalizeOptional(input.channel),
-      campaign: normalizeOptional(input.campaign ?? input.utm_campaign),
-      source: normalizeOptional(input.source ?? input.utm_source),
-      medium: normalizeOptional(input.medium ?? input.utm_medium),
-      term: normalizeOptional(input.term ?? input.utm_term),
-      content: normalizeOptional(input.content ?? input.utm_content)
+      campaign: normalizeFieldValue("campaign", input.campaign ?? input.utm_campaign),
+      source: normalizeFieldValue("source", input.source ?? input.utm_source),
+      medium: normalizeFieldValue("medium", input.medium ?? input.utm_medium),
+      term: normalizeFieldValue("term", input.term ?? input.utm_term),
+      content: normalizeFieldValue("content", input.content ?? input.utm_content)
     };
   }
 
@@ -855,6 +861,12 @@ export class UtmIntelligenceService {
     return this.staticData.masterRows.some((row) => row.client === filters.client
       && compactValue(row.source) === compactValue(filters.source)
       && compactValue(row.medium) === compactValue(filters.medium));
+  }
+
+  isClientWideCampaignContent(filters) {
+    if (!filters.content) return false;
+    return this.rulesService.getClientWideContents(filters.client)
+      .some((value) => compactValue(normalizeOptional(value)) === compactValue(filters.content));
   }
 
   limitSuggestions(ranked, field, limit) {
@@ -946,7 +958,9 @@ export class UtmIntelligenceService {
       }
     }
 
-    return [...candidates];
+    return [...new Set([...candidates].map((value) => normalizeOptional(
+      this.rulesService.normalizeClientUtmAlias(filters.client, field, value)
+    )).filter(Boolean))];
   }
 
   buildSuggestion(field, value, scopedRows, approvedRows, filters, maps) {

@@ -135,8 +135,14 @@ if (trafficPairWarnings({ client: "gas", campaign: "MetaAdCampaignName", source:
 const retainedCampaignDetailWarnings = intelligenceService.consistencyAnalysis({
   client: "gas", campaign: "News", source: "Facebook", medium: "Social", term: "LandingPage", content: "Learn"
 }).warnings.filter((warning) => warning.type === "new_pairing").map((warning) => warning.fields.join("+"));
-if (!retainedCampaignDetailWarnings.includes("campaign+term") || !retainedCampaignDetailWarnings.includes("campaign+content")) {
-  throw new Error("Campaign Term/Content historical warning smoke test failed.");
+if (!retainedCampaignDetailWarnings.includes("campaign+term") || retainedCampaignDetailWarnings.includes("campaign+content")) {
+  throw new Error("Client-wide GAS Content or Campaign/Term historical warning smoke test failed.");
+}
+const gasReadWarnings = intelligenceService.consistencyAnalysis({
+  client: "gas", campaign: "News", source: "Facebook", medium: "Social", content: "Read"
+}).warnings;
+if (gasReadWarnings.some((warning) => warning.fields.join("+") === "campaign+content")) {
+  throw new Error("Approved GAS News/Read content produced a campaign pairing warning.");
 }
 
 const approvedDictionary = JSON.parse(fs.readFileSync(
@@ -271,6 +277,12 @@ if (
 }
 if (dictionaryOnlyRules.normalizeUtmField("campaign", "News", { client: "studleys" }) !== "Inspiration") {
   throw new Error("Configured campaign alias smoke test failed.");
+}
+if (
+  dictionaryOnlyRules.normalizeUtmField("content", "ChristmasAtTheCastle", { client: "castle" }) !== "CATC"
+  || dictionaryOnlyRules.normalizeUtmField("term", "ChristmasAtTheCastle", { client: "castle" }) !== "ChristmasAtTheCastle"
+) {
+  throw new Error("Field-specific CIC CATC alias smoke test failed.");
 }
 const fmbTaxonomy = dictionaryOnlyRules.getClientAuthoritativeTaxonomy("fmb");
 const fmbProfiles = dictionaryOnlyRules.getClientGuidance("fmb").campaignProfiles;
@@ -1368,6 +1380,7 @@ try {
     || !cicTermSuggestions.items?.some((item) => item.value === "HikingWalkingTrails" && item.normalized_value === "hikingwalkingtrails" && item.known)
     || !cicMemberSuggestions.items?.some((item) => item.value === "BecomeAMember" && item.normalized_value === "becomeamember" && item.known)
     || !cicCatcSuggestions.items?.some((item) => item.value === "CATC" && item.normalized_value === "catc" && item.known)
+    || cicCatcSuggestions.items?.some((item) => item.value === "ChristmasAtTheCastle" || item.normalized_value === "christmasatthecastle")
     || !cicCTagSuggestions.items?.some((item) => item.value === "C-TAG" && item.normalized_value === "c-tag" && item.known)
     || !approvedCampaignSuggestions.items?.some((item) => item.value === "About" && item.normalized_value === "about")
     || !configuredCampaignSuggestions.items?.some((item) => item.value === "SmokeCampaignCopy" && item.normalized_value === "smokecampaigncopy" && item.known && item.count === 0)

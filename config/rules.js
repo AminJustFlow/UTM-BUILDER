@@ -223,6 +223,7 @@ const manualClients = {
     aliases: ["gas", "guardian angel", "guardian angel senior services"],
     domains: ["guardianangelseniorservices.com"],
     taxonomyKey: "gas",
+    clientWideContents: ["Read", "Learn", "Explore"],
     guidance: {
       summary: "Use the highest-priority GAS campaign that fits the destination. Campaign standards are guidance for consistent reporting and do not block link creation.",
       fields: {
@@ -387,6 +388,11 @@ const manualClients = {
     aliases: ["castle", "castle in the clouds", "castleintheclouds", "cic"],
     domains: ["castleintheclouds.org"],
     taxonomyKey: "cic",
+    utmValueAliases: {
+      content: {
+        ChristmasAtTheCastle: "CATC"
+      }
+    },
     guidance: {
       summary: "Use the highest-priority Castle campaign that fits the destination. Campaign standards keep website, event, development, education, and advertising reporting consistent.",
       fields: {
