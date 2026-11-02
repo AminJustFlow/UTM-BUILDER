@@ -514,35 +514,78 @@ const manualClients = {
     displayName: "VTH",
     aliases: ["vth", "technology hill", "technology hill nh"],
     domains: ["technologyhillnh.com"],
+    taxonomyKey: "vth",
+    clientWideContents: ["Read", "Learn", "Explore"],
+    authoritativeTaxonomy: {
+      sources: ["Facebook", "GMB", "Instagram", "LinkedIn", "MetaAd", "EventsPostcard"],
+      mediums: ["Social", "QRCode", "Email"],
+      campaigns: ["LimitedCampaign", "MetaAdCampaignName", "HomePage", "TheVillage", "Apartments", "BookATour", "ContactUs", "SearchUnits", "NewsAndUpdates", "MobileLinks", "Website", "Collateral"],
+      terms: ["LandingPage", "Amenities", "Lifestyle", "ChildCare", "PastEvents", "FAQs", "1Bedroom", "1BedroomWithDen", "2Bedroom", "3Bedroom"],
+      contents: ["Read", "Learn", "Explore", "Book", "Contact", "Search", "Scan", "Static", "Video", "Carousel", "Profile"],
+      combinations: []
+    },
     guidance: {
-      summary: "Use the approved VTH campaign values below for the Events postcard QR code.",
+      summary: "Use the highest-priority VTH campaign that fits the destination. Stable website pages use the approved ecosystem values; dated news and specialty campaigns require campaign-specific input.",
       fields: {
         campaign: {
-          label: "Campaign",
-          help: "Reporting campaign or category.",
-          placeholder: "HomePage"
+          label: "Campaign — VTH reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the page or promotion.",
+          placeholder: "TheVillage"
         }
       },
       campaignProfiles: [
         {
           priority: 1,
           campaign: "HomePage",
-          guideline: "Use for the VTH Events postcard QR code linking to the website home page.",
-          source: "EventsPostcard",
-          medium: "QRCode",
+          guideline: "Use only for the VTH home page.",
           fields: {
             term: {
-              label: "Campaign Term — Publication Name",
-              help: "Enter the publication carrying the advertisement.",
+              label: "Term — Website page",
+              help: "Use LandingPage for the website home page.",
               placeholder: "LandingPage"
             },
             content: {
-              label: "Campaign Content — Issue Name",
-              help: "Enter the publication issue or edition.",
-              placeholder: "Scan"
+              label: "Content — Message or CTA",
+              help: "Use Read, Learn, Explore, or leave blank when no distinct CTA applies.",
+              placeholder: "Learn"
             }
           }
-        }
+        },
+        { priority: 1, campaign: "LimitedCampaign", displayName: "Limited Campaign", guideline: "Use sparingly and only when determined by Ami or Amin." },
+        {
+          priority: 1, campaign: "MetaAdCampaignName", displayName: "Meta Ad campaign name",
+          guideline: "Use the Meta campaign name with no punctuation, spaces, or date.", source: "MetaAd", medium: "Social",
+          fields: {
+            term: { label: "Term — Meta ad set", help: "Use the Meta ad set name minus the campaign name, plus location when applicable.", placeholder: "AdSetNameLocation" },
+            content: { label: "Content — Creative type", help: "Identify the creative format as Static, Video, or Carousel.", placeholder: "Static" }
+          }
+        },
+        ...["TheVillage", "Apartments"].map((campaign) => ({
+          priority: 1, campaign, displayName: campaign === "TheVillage" ? "The Village" : undefined,
+          guideline: "Use for stable pages within this section of the VTH website.",
+          fields: {
+            term: { label: "Term — Website page", help: "Use LandingPage or the compact page name from the approved taxonomy.", placeholder: campaign === "TheVillage" ? "Amenities" : "1Bedroom" },
+            content: { label: "Content — Message or CTA", help: "Use Read, Learn, Explore, or leave blank when no distinct CTA applies.", placeholder: "Learn" }
+          }
+        })),
+        ...[["BookATour", "Book", "Book"], ["ContactUs", "Contact", "Contact"], ["SearchUnits", "Search or Explore", "Search"]].map(([campaign, allowed, placeholder]) => ({
+          priority: 1, campaign, guideline: "Use for this dedicated VTH destination.",
+          fields: {
+            term: { label: "Term — Website page", help: "Use LandingPage.", placeholder: "LandingPage" },
+            content: { label: "Content — Message or CTA", help: `Use ${allowed}, or leave blank when no distinct CTA applies.`, placeholder }
+          }
+        })),
+        {
+          priority: 2, campaign: "NewsAndUpdates", displayName: "News and Updates",
+          guideline: "Use for a specific news or event item after confirming the event workflow.",
+          fields: {
+            term: { label: "Term — Publication date", help: "Use the news date in YYMMDD format.", placeholder: "261102" },
+            content: { label: "Content — Message or CTA", help: "Use Read, Learn, Explore, or leave blank.", placeholder: "Read" }
+          }
+        },
+        { priority: 2, campaign: "Collateral", guideline: "Specialty campaign retained for manually configured VTH collateral." },
+        { priority: 3, campaign: "MobileLinks", guideline: "Use only for /links destinations. VTH does not currently have this page.", fields: { content: { label: "Content — Link purpose", help: "Use Profile when the destination represents a social profile.", placeholder: "Profile" } } },
+        { priority: 4, campaign: "Website", guideline: "Use only when no higher-priority VTH campaign fits, after review with Ami or Amin." }
       ]
     }
   }

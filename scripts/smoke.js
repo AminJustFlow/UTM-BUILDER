@@ -156,12 +156,17 @@ if (
   || approvedClientRowCount("sfg") !== 875
   || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("fmb") !== 610
-  || approvedClientRowCount("vth") !== 1
+  || approvedClientRowCount("vth") !== 189
   || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,sfg,vth"
   || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
   || !approvedDictionary.clients.vth.value_counts.medium.some((entry) => entry.value === "qrcode")
   || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "landingpage")
   || !approvedDictionary.clients.vth.value_counts.content.some((entry) => entry.value === "scan")
+  || !approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "thevillage")
+  || !approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "apartments")
+  || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "1bedroomwithden")
+  || approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "newsandupdates")
+  || approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "metaad")
   || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
   || !approvedDictionary.clients.cic.value_counts.content.some((entry) => entry.value === "purchase")
   || !approvedDictionary.clients.fmb.value_counts.campaign.some((entry) => entry.value === "products")
@@ -303,6 +308,34 @@ if (
   || !fmbProfiles.some((profile) => profile.campaign === "EppingShowroom")
 ) {
   throw new Error("FMB authoritative taxonomy and guidance smoke test failed.");
+}
+const vthTaxonomy = dictionaryOnlyRules.getClientAuthoritativeTaxonomy("vth");
+const vthProfiles = dictionaryOnlyRules.getClientGuidance("vth").campaignProfiles;
+if (
+  !vthTaxonomy.campaigns.includes("TheVillage")
+  || !vthTaxonomy.campaigns.includes("Collateral")
+  || !vthTaxonomy.terms.includes("1BedroomWithDen")
+  || !vthProfiles.some((profile) => profile.campaign === "NewsAndUpdates")
+  || !vthProfiles.some((profile) => profile.campaign === "MetaAdCampaignName" && profile.source === "MetaAd" && profile.medium === "Social")
+) {
+  throw new Error("VTH authoritative taxonomy and guidance smoke test failed.");
+}
+
+const legacyVthSeededProfiles = [];
+let legacyVthGuidanceReplaced = false;
+const legacyVthStandardsService = new ClientCampaignStandardsService({
+  rulesService: { clients: () => ["vth"], getClientGuidance: () => dictionaryOnlyRules.getClientGuidance("vth") },
+  repository: {
+    async getSettings() { return { client_key: "vth", summary: "Use the approved VTH campaign values below for the Events postcard QR code.", fields_json: "{}", updated_by_user_id: null, updated_by_name: "" }; },
+    async listProfiles() { return [{ campaign: "HomePage", source: "EventsPostcard", medium: "QRCode" }]; },
+    async replaceGuidance(payload) { legacyVthGuidanceReplaced = true; legacyVthSeededProfiles.push(...payload.profiles); },
+    async upsertSettings() {},
+    async createProfile(payload) { legacyVthSeededProfiles.push(payload); }
+  }
+});
+await legacyVthStandardsService.bootstrap();
+if (!legacyVthGuidanceReplaced || legacyVthSeededProfiles.length !== vthProfiles.length || !legacyVthSeededProfiles.some((profile) => profile.campaign === "TheVillage")) {
+  throw new Error("Legacy VTH campaign standards upgrade smoke test failed.");
 }
 
 const legacyFmbSeededProfiles = [];

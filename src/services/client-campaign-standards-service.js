@@ -16,29 +16,24 @@ export class ClientCampaignStandardsService {
     for (const clientKey of this.rulesService.clients()) {
       const guidance = this.rulesService.getClientGuidance(clientKey);
       const settings = await this.repository.getSettings(clientKey);
+      const timestamp = new Date().toISOString();
       if (settings) {
         const profiles = await this.repository.listProfiles(clientKey);
-        if (profiles.length || !shouldBackfillUntouchedSettings(settings, guidance)) {
+        const upgradeLegacyVth = shouldUpgradeLegacyVthGuidance(clientKey, settings, profiles);
+        if (!upgradeLegacyVth && (profiles.length || !shouldBackfillUntouchedSettings(settings, guidance))) {
+          continue;
+        }
+        if (upgradeLegacyVth) {
+          await this.repository.replaceGuidance({
+            clientKey,
+            settings: settingsPayload(clientKey, guidance, timestamp),
+            profiles: configuredProfiles(clientKey, guidance, timestamp)
+          });
           continue;
         }
       }
-      const timestamp = new Date().toISOString();
-      await this.repository.upsertSettings({
-        clientKey,
-        summary: guidance.summary,
-        fields: guidance.fields,
-        actor: null,
-        timestamp
-      });
-      for (let index = 0; index < guidance.campaignProfiles.length; index += 1) {
-        const profile = guidance.campaignProfiles[index];
-        await this.repository.createProfile(normalizeProfile({
-          ...profile,
-          client_key: clientKey,
-          sort_order: index,
-          is_active: true
-        }, null, timestamp));
-      }
+      await this.repository.upsertSettings(settingsPayload(clientKey, guidance, timestamp));
+      for (const profile of configuredProfiles(clientKey, guidance, timestamp)) await this.repository.createProfile(profile);
     }
   }
 
@@ -208,6 +203,25 @@ function shouldBackfillUntouchedSettings(settings, guidance) {
     && Object.keys(jsonObject(settings.fields_json)).length === 0
     && !settings.updated_by_user_id
     && !text(settings.updated_by_name);
+}
+
+function shouldUpgradeLegacyVthGuidance(clientKey, settings, profiles) {
+  if (clientKey !== "vth" || profiles.length !== 1 || settings.updated_by_user_id || text(settings.updated_by_name)) return false;
+  const profile = profiles[0];
+  return text(settings.summary) === "Use the approved VTH campaign values below for the Events postcard QR code."
+    && campaignKey(profile.campaign) === "homepage"
+    && campaignKey(profile.source) === "eventspostcard"
+    && campaignKey(profile.medium) === "qrcode";
+}
+
+function settingsPayload(clientKey, guidance, timestamp) {
+  return { clientKey, summary: guidance.summary, fields: guidance.fields, actor: null, timestamp };
+}
+
+function configuredProfiles(clientKey, guidance, timestamp) {
+  return guidance.campaignProfiles.map((profile, index) => normalizeProfile({
+    ...profile, client_key: clientKey, sort_order: index, is_active: true
+  }, null, timestamp));
 }
 
 function normalizeProfile(input, actor, timestamp) {

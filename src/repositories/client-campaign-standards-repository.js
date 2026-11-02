@@ -114,6 +114,18 @@ export class ClientCampaignStandardsRepository {
     return Number(result.changes ?? 0);
   }
 
+  async replaceGuidance(payload) {
+    await this.database.withTransaction(async (database) => {
+      const repository = new ClientCampaignStandardsRepository(database);
+      await database.runAsync(
+        "DELETE FROM client_campaign_profiles WHERE client_key = :client_key",
+        { client_key: payload.clientKey }
+      );
+      await repository.upsertSettings(payload.settings);
+      for (const profile of payload.profiles) await repository.createProfile(profile);
+    });
+  }
+
   async recordAudit(payload) {
     await this.database.runAsync(`
       INSERT INTO client_guidance_audit_events (
