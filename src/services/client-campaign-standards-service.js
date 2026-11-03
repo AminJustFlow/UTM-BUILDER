@@ -20,9 +20,6 @@ export class ClientCampaignStandardsService {
       if (settings) {
         const profiles = await this.repository.listProfiles(clientKey);
         const upgradeLegacyVth = shouldUpgradeLegacyVthGuidance(clientKey, settings, profiles);
-        if (!upgradeLegacyVth && (profiles.length || !shouldBackfillUntouchedSettings(settings, guidance))) {
-          continue;
-        }
         if (upgradeLegacyVth) {
           await this.repository.replaceGuidance({
             clientKey,
@@ -31,9 +28,26 @@ export class ClientCampaignStandardsService {
           });
           continue;
         }
+        const seedAllProfiles = !profiles.length && shouldBackfillUntouchedSettings(settings, guidance);
+        if (!seedAllProfiles) {
+          await this.backfillAdditiveProfiles(clientKey, guidance, profiles, timestamp);
+          continue;
+        }
       }
       await this.repository.upsertSettings(settingsPayload(clientKey, guidance, timestamp));
       for (const profile of configuredProfiles(clientKey, guidance, timestamp)) await this.repository.createProfile(profile);
+    }
+  }
+
+  async backfillAdditiveProfiles(clientKey, guidance, profiles, timestamp) {
+    const additiveCampaigns = clientKey === "vth" ? new Set(["ads"]) : new Set();
+    if (!additiveCampaigns.size) return;
+    const existing = new Set(profiles.map((profile) => campaignKey(profile.campaign)));
+    for (const profile of configuredProfiles(clientKey, guidance, timestamp)) {
+      if (additiveCampaigns.has(profile.campaignKey) && !existing.has(profile.campaignKey)) {
+        await this.repository.createProfile(profile);
+        existing.add(profile.campaignKey);
+      }
     }
   }
 

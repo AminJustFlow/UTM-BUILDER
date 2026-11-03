@@ -112,6 +112,11 @@
         "unique_clients": 3
       },
       {
+        "value": "bookatour",
+        "count": 24,
+        "unique_clients": 1
+      },
+      {
         "value": "gardencenter",
         "count": 20,
         "unique_clients": 1
@@ -142,11 +147,6 @@
         "unique_clients": 1
       },
       {
-        "value": "bookatour",
-        "count": 8,
-        "unique_clients": 1
-      },
-      {
         "value": "contactus",
         "count": 8,
         "unique_clients": 1
@@ -160,22 +160,22 @@
     "source": [
       {
         "value": "facebook",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       },
       {
         "value": "gmb",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       },
       {
         "value": "instagram",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       },
       {
         "value": "linkedin",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       },
       {
@@ -197,7 +197,7 @@
     "medium": [
       {
         "value": "social",
-        "count": 2116,
+        "count": 2132,
         "unique_clients": 5
       },
       {
@@ -818,6 +818,16 @@
         "unique_clients": 1
       },
       {
+        "value": "bookatourwitherika",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "bookatourwithrayshonda",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
         "value": "visitorfeedback",
         "count": 5,
         "unique_clients": 1
@@ -863,6 +873,11 @@
         "value": "contact",
         "count": 29,
         "unique_clients": 5
+      },
+      {
+        "value": "book",
+        "count": 12,
+        "unique_clients": 1
       },
       {
         "value": "donate",
@@ -932,11 +947,6 @@
       {
         "value": "twilighttours",
         "count": 5,
-        "unique_clients": 1
-      },
-      {
-        "value": "book",
-        "count": 4,
         "unique_clients": 1
       },
       {
@@ -1036,22 +1046,22 @@
     "bookatour": [
       {
         "value": "facebook",
-        "count": 2,
+        "count": 6,
         "unique_clients": 1
       },
       {
         "value": "gmb",
-        "count": 2,
+        "count": 6,
         "unique_clients": 1
       },
       {
         "value": "instagram",
-        "count": 2,
+        "count": 6,
         "unique_clients": 1
       },
       {
         "value": "linkedin",
-        "count": 2,
+        "count": 6,
         "unique_clients": 1
       }
     ],
@@ -1790,7 +1800,7 @@
     "bookatour": [
       {
         "value": "social",
-        "count": 8,
+        "count": 24,
         "unique_clients": 1
       }
     ],
@@ -2122,14 +2132,14 @@
     "facebook": [
       {
         "value": "social",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       }
     ],
@@ -2143,14 +2153,14 @@
     "instagram": [
       {
         "value": "social",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 529,
+        "count": 533,
         "unique_clients": 5
       }
     ]
@@ -2283,6 +2293,16 @@
       }
     ],
     "bookatour": [
+      {
+        "value": "bookatourwitherika",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "bookatourwithrayshonda",
+        "count": 8,
+        "unique_clients": 1
+      },
       {
         "value": "landingpage",
         "count": 8,
@@ -3009,7 +3029,7 @@
     "bookatour": [
       {
         "value": "book",
-        "count": 4,
+        "count": 12,
         "unique_clients": 1
       }
     ],
@@ -7406,6 +7426,11 @@
             "unique_clients": 1
           },
           {
+            "value": "bookatour",
+            "count": 24,
+            "unique_clients": 1
+          },
+          {
             "value": "homepage",
             "count": 17,
             "unique_clients": 1
@@ -7413,11 +7438,6 @@
           {
             "value": "searchunits",
             "count": 12,
-            "unique_clients": 1
-          },
-          {
-            "value": "bookatour",
-            "count": 8,
             "unique_clients": 1
           },
           {
@@ -7429,22 +7449,22 @@
         "source": [
           {
             "value": "facebook",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           },
           {
             "value": "gmb",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           },
           {
             "value": "instagram",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           },
           {
             "value": "linkedin",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           },
           {
@@ -7456,7 +7476,7 @@
         "medium": [
           {
             "value": "social",
-            "count": 188,
+            "count": 204,
             "unique_clients": 1
           },
           {
@@ -7515,6 +7535,16 @@
             "value": "pastevents",
             "count": 16,
             "unique_clients": 1
+          },
+          {
+            "value": "bookatourwitherika",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "bookatourwithrayshonda",
+            "count": 8,
+            "unique_clients": 1
           }
         ],
         "content": [
@@ -7535,7 +7565,7 @@
           },
           {
             "value": "book",
-            "count": 4,
+            "count": 12,
             "unique_clients": 1
           },
           {
@@ -7581,22 +7611,22 @@
         "bookatour": [
           {
             "value": "facebook",
-            "count": 2,
+            "count": 6,
             "unique_clients": 1
           },
           {
             "value": "gmb",
-            "count": 2,
+            "count": 6,
             "unique_clients": 1
           },
           {
             "value": "instagram",
-            "count": 2,
+            "count": 6,
             "unique_clients": 1
           },
           {
             "value": "linkedin",
-            "count": 2,
+            "count": 6,
             "unique_clients": 1
           }
         ],
@@ -7705,7 +7735,7 @@
         "bookatour": [
           {
             "value": "social",
-            "count": 8,
+            "count": 24,
             "unique_clients": 1
           }
         ],
@@ -7754,28 +7784,28 @@
         "facebook": [
           {
             "value": "social",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           }
         ],
         "gmb": [
           {
             "value": "social",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           }
         ],
         "instagram": [
           {
             "value": "social",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           }
         ],
         "linkedin": [
           {
             "value": "social",
-            "count": 47,
+            "count": 51,
             "unique_clients": 1
           }
         ]
@@ -7804,6 +7834,16 @@
           }
         ],
         "bookatour": [
+          {
+            "value": "bookatourwitherika",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "bookatourwithrayshonda",
+            "count": 8,
+            "unique_clients": 1
+          },
           {
             "value": "landingpage",
             "count": 8,
@@ -7880,7 +7920,7 @@
         "bookatour": [
           {
             "value": "book",
-            "count": 4,
+            "count": 12,
             "unique_clients": 1
           }
         ],

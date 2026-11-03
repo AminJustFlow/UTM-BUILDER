@@ -10,9 +10,10 @@
   "scripts": {
     "start": "node ./bin/server.js",
     "dev": "node --watch --watch-path=./bin --watch-path=./src --watch-path=./config --watch-path=./.env ./bin/server.js",
-    "smoke": "node ./scripts/smoke.js && node ./scripts/repair-utm-casing-smoke.js && node ./scripts/repair-cic-catc-smoke.js",
+    "smoke": "node ./scripts/smoke.js && node ./scripts/repair-utm-casing-smoke.js && node ./scripts/repair-cic-catc-smoke.js && node ./scripts/repair-vth-schedule-a-tour-smoke.js",
     "repair-utm-casing": "node ./scripts/repair-historical-utm-casing.js",
     "repair-cic-catc": "node ./scripts/repair-cic-catc.js",
+    "repair-vth-schedule-a-tour": "node ./scripts/repair-vth-schedule-a-tour.js",
     "load-test": "node ./scripts/load-test.js"
   },
   "dependencies": {

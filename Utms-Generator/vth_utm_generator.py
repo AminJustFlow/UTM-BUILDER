@@ -85,6 +85,8 @@ DESTINATION_RULES = (
     rule("Two Bedroom", "/2-bedroom/", "Apartments", "2Bedroom"),
     rule("Three Bedroom", "/3-bedroom/", "Apartments", "3Bedroom"),
     rule("Book a Tour", "/book-a-tour/", "BookATour", "LandingPage", ("Book", None)),
+    rule("Book a Tour with Erika", "/book-a-tour-with-erika/", "BookATour", "BookATourWithErika", ("Book", None)),
+    rule("Book a Tour with Rayshonda", "/book-a-tour-with-rayshonda/", "BookATour", "BookATourWithRayshonda", ("Book", None)),
     rule("Contact Us", "/contact/", "ContactUs", "LandingPage", ("Contact", None)),
     rule("Search Units", "/search-units/", "SearchUnits", "LandingPage", ("Search", "Explore", None)),
 )
@@ -99,8 +101,8 @@ CURATED_LINKS = (
     },
 )
 
-EXPECTED_DESTINATION_COUNT = 13
-EXPECTED_ROW_COUNT = 189
+EXPECTED_DESTINATION_COUNT = 15
+EXPECTED_ROW_COUNT = 205
 
 
 def utc_timestamp() -> str:
@@ -233,7 +235,7 @@ def write_csv(rows: Iterable[dict[str, str | int]], output_path: Path) -> None:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate the 189-row VTH starter UTM library.")
+    parser = argparse.ArgumentParser(description="Generate the 205-row VTH starter UTM library.")
     parser.add_argument("--output", type=Path, default=Path("vth-starter-utm-import.csv"))
     parser.add_argument("--start-id", type=int, default=1)
     parser.add_argument("--timestamp", type=validate_timestamp, default=None)

@@ -515,13 +515,13 @@ const manualClients = {
     aliases: ["vth", "technology hill", "technology hill nh"],
     domains: ["technologyhillnh.com"],
     taxonomyKey: "vth",
-    clientWideContents: ["Read", "Learn", "Explore"],
+    clientWideContents: ["Read", "Learn", "Explore", "ScheduleATour"],
     authoritativeTaxonomy: {
       sources: ["Facebook", "GMB", "Instagram", "LinkedIn", "MetaAd", "EventsPostcard"],
       mediums: ["Social", "QRCode", "Email"],
-      campaigns: ["LimitedCampaign", "MetaAdCampaignName", "HomePage", "TheVillage", "Apartments", "BookATour", "ContactUs", "SearchUnits", "NewsAndUpdates", "MobileLinks", "Website", "Collateral"],
-      terms: ["LandingPage", "Amenities", "Lifestyle", "ChildCare", "PastEvents", "FAQs", "1Bedroom", "1BedroomWithDen", "2Bedroom", "3Bedroom"],
-      contents: ["Read", "Learn", "Explore", "Book", "Contact", "Search", "Scan", "Static", "Video", "Carousel", "Profile"],
+      campaigns: ["LimitedCampaign", "MetaAdCampaignName", "Ads", "HomePage", "TheVillage", "Apartments", "BookATour", "ContactUs", "SearchUnits", "NewsAndUpdates", "MobileLinks", "Website", "Collateral"],
+      terms: ["LandingPage", "Amenities", "Lifestyle", "ChildCare", "PastEvents", "FAQs", "1Bedroom", "1BedroomWithDen", "2Bedroom", "3Bedroom", "BookATourWithErika", "BookATourWithRayshonda", "PrivacyAndUsageTerms"],
+      contents: ["Read", "Learn", "Explore", "Book", "Contact", "Search", "ScheduleATour", "Scan", "Static", "Video", "Carousel", "Profile"],
       combinations: []
     },
     guidance: {
@@ -560,6 +560,14 @@ const manualClients = {
             content: { label: "Content — Creative type", help: "Identify the creative format as Static, Video, or Carousel.", placeholder: "Static" }
           }
         },
+        {
+          priority: 1, campaign: "Ads",
+          guideline: "Use for paid placements unless the more specific Meta Ad campaign standard applies.",
+          fields: {
+            term: { label: "Term — Destination page", help: "Use LandingPage or the compact destination page name.", placeholder: "LandingPage" },
+            content: { label: "Content — Message or CTA", help: "Use the approved call to action, such as ScheduleATour.", placeholder: "ScheduleATour" }
+          }
+        },
         ...["TheVillage", "Apartments"].map((campaign) => ({
           priority: 1, campaign, displayName: campaign === "TheVillage" ? "The Village" : undefined,
           guideline: "Use for stable pages within this section of the VTH website.",
@@ -571,7 +579,7 @@ const manualClients = {
         ...[["BookATour", "Book", "Book"], ["ContactUs", "Contact", "Contact"], ["SearchUnits", "Search or Explore", "Search"]].map(([campaign, allowed, placeholder]) => ({
           priority: 1, campaign, guideline: "Use for this dedicated VTH destination.",
           fields: {
-            term: { label: "Term — Website page", help: "Use LandingPage.", placeholder: "LandingPage" },
+            term: { label: "Term — Website page", help: campaign === "BookATour" ? "Use LandingPage or the compact booking page name." : "Use LandingPage.", placeholder: campaign === "BookATour" ? "BookATourWithErika" : "LandingPage" },
             content: { label: "Content — Message or CTA", help: `Use ${allowed}, or leave blank when no distinct CTA applies.`, placeholder }
           }
         })),
@@ -585,7 +593,7 @@ const manualClients = {
         },
         { priority: 2, campaign: "Collateral", guideline: "Specialty campaign retained for manually configured VTH collateral." },
         { priority: 3, campaign: "MobileLinks", guideline: "Use only for /links destinations. VTH does not currently have this page.", fields: { content: { label: "Content — Link purpose", help: "Use Profile when the destination represents a social profile.", placeholder: "Profile" } } },
-        { priority: 4, campaign: "Website", guideline: "Use only when no higher-priority VTH campaign fits, after review with Ami or Amin." }
+        { priority: 4, campaign: "Website", guideline: "Use only when no higher-priority VTH campaign fits, after review with Ami or Amin. The Privacy and Usage Terms page belongs here.", fields: { term: { label: "Term — Website page", help: "Use PrivacyAndUsageTerms for the legal page.", placeholder: "PrivacyAndUsageTerms" } } }
       ]
     }
   }

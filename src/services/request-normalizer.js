@@ -171,7 +171,8 @@ export class RequestNormalizer {
 
   formatResolvedUtmValue(field, value, client, preserveUserCasing = false) {
     if (preserveUserCasing) {
-      return formatUserEnteredUtmValue(value);
+      return this.utmIntelligenceService?.authoritativeDisplayValue?.(field, value, client)
+        ?? formatUserEnteredUtmValue(value);
     }
     return this.utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
   }

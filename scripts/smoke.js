@@ -156,7 +156,7 @@ if (
   || approvedClientRowCount("sfg") !== 875
   || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("fmb") !== 610
-  || approvedClientRowCount("vth") !== 189
+  || approvedClientRowCount("vth") !== 205
   || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,sfg,vth"
   || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
   || !approvedDictionary.clients.vth.value_counts.medium.some((entry) => entry.value === "qrcode")
@@ -165,6 +165,8 @@ if (
   || !approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "thevillage")
   || !approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "apartments")
   || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "1bedroomwithden")
+  || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "bookatourwitherika")
+  || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "bookatourwithrayshonda")
   || approvedDictionary.clients.vth.value_counts.campaign.some((entry) => entry.value === "newsandupdates")
   || approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "metaad")
   || !approvedDictionary.clients.cic.value_counts.term.some((entry) => entry.value === "hikingwalkingtrails")
@@ -314,8 +316,12 @@ const vthProfiles = dictionaryOnlyRules.getClientGuidance("vth").campaignProfile
 if (
   !vthTaxonomy.campaigns.includes("TheVillage")
   || !vthTaxonomy.campaigns.includes("Collateral")
+  || !vthTaxonomy.campaigns.includes("Ads")
+  || !vthTaxonomy.contents.includes("ScheduleATour")
   || !vthTaxonomy.terms.includes("1BedroomWithDen")
+  || !vthTaxonomy.terms.includes("PrivacyAndUsageTerms")
   || !vthProfiles.some((profile) => profile.campaign === "NewsAndUpdates")
+  || !vthProfiles.some((profile) => profile.campaign === "Ads" && profile.fields?.content?.placeholder === "ScheduleATour")
   || !vthProfiles.some((profile) => profile.campaign === "MetaAdCampaignName" && profile.source === "MetaAd" && profile.medium === "Social")
 ) {
   throw new Error("VTH authoritative taxonomy and guidance smoke test failed.");
@@ -338,6 +344,23 @@ if (!legacyVthGuidanceReplaced || legacyVthSeededProfiles.length !== vthProfiles
   throw new Error("Legacy VTH campaign standards upgrade smoke test failed.");
 }
 
+const additiveVthProfiles = [];
+const additiveVthStandardsService = new ClientCampaignStandardsService({
+  rulesService: { clients: () => ["vth"], getClientGuidance: () => dictionaryOnlyRules.getClientGuidance("vth") },
+  repository: {
+    async getSettings() { return { client_key: "vth", summary: "Administrator guidance", fields_json: "{}", updated_by_user_id: 9, updated_by_name: "Admin" }; },
+    async listProfiles() { return [{ campaign: "HomePage", campaign_key: "homepage" }, ...additiveVthProfiles]; },
+    async createProfile(payload) { additiveVthProfiles.push(payload); },
+    async upsertSettings() { throw new Error("Additive VTH backfill must not overwrite settings."); },
+    async replaceGuidance() { throw new Error("Additive VTH backfill must not replace guidance."); }
+  }
+});
+await additiveVthStandardsService.bootstrap();
+await additiveVthStandardsService.bootstrap();
+if (additiveVthProfiles.length !== 1 || additiveVthProfiles.some((profile) => profile.campaign !== "Ads")) {
+  throw new Error("Additive VTH Ads campaign standard backfill smoke test failed.");
+}
+
 const legacyFmbSeededProfiles = [];
 const legacyFmbStandardsService = new ClientCampaignStandardsService({
   rulesService: dictionaryOnlyRules,
@@ -353,7 +376,7 @@ const legacyFmbStandardsService = new ClientCampaignStandardsService({
         throw new Error("Legacy FMB settings backfill did not restore configured guidance.");
       }
     },
-    async createProfile(payload) { legacyFmbSeededProfiles.push(payload); }
+    async createProfile(payload) { if (payload.clientKey === "fmb") legacyFmbSeededProfiles.push(payload); }
   }
 });
 await legacyFmbStandardsService.bootstrap();
@@ -466,6 +489,8 @@ if (
 if (
   formatUserEnteredUtmValue("TestValue") !== "TestValue"
   || formatUserEnteredUtmValue("spring campaign") !== "SpringCampaign"
+  || formatUserEnteredUtmValue("schedule a tour") !== "ScheduleATour"
+  || formatUserEnteredUtmValue("schedule-a-tour") !== "ScheduleATour"
   || formatUserEnteredUtmValue("event-postcard") !== "EventPostcard"
   || formatUserEnteredUtmValue("  internalCAPValue  ") !== "InternalCAPValue"
   || formatUserEnteredUtmValue("qrcode") !== "QRCode"
@@ -818,6 +843,20 @@ try {
     })
   });
   const vthPreview = await vthPreviewResponse.json();
+  const vthSchedulePreviewResponse = await af("/new/preview.json", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client: "vth",
+      destination_url: "https://technologyhillnh.com/",
+      utm_source: "SpectrumMonthlyHolidayShopper",
+      utm_medium: "QRCode",
+      utm_campaign: "Ads",
+      utm_term: "LandingPage",
+      utm_content: "ScheduleAtour"
+    })
+  });
+  const vthSchedulePreview = await vthSchedulePreviewResponse.json();
   const authoritativeCasePreviewResponse = await af("/new/preview.json", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ client: "castle", destination_url: "https://www.castleintheclouds.org/membership/",
@@ -1325,6 +1364,7 @@ try {
     || !builderHtml.includes("suggestionRequestIds")
     || !builderHtml.includes("suggestionControllers")
     || !builderHtml.includes("suggestionCache")
+    || !builderHtml.includes("canonicalKnownInput")
     || !builderHtml.includes("new AbortController()")
     || !builderHtml.includes('state.externalActive?["source","medium"]:UTM_FIELDS')
     || !builderHtml.includes('return state.externalActive?"submit":null')
@@ -1449,6 +1489,11 @@ try {
     || vthPreview.preview?.resolved?.utm_term !== "LandingPage"
     || vthPreview.preview?.resolved?.utm_content !== "Scan"
     || vthPreview.preview?.resolved?.final_long_url !== "https://www.technologyhillnh.com/?utm_source=EventsPostcard&utm_medium=QRCode&utm_campaign=HomePage&utm_term=LandingPage&utm_content=Scan"
+    || vthSchedulePreviewResponse.status !== 200
+    || vthSchedulePreview.preview?.resolved?.utm_campaign !== "Ads"
+    || vthSchedulePreview.preview?.resolved?.utm_content !== "ScheduleATour"
+    || !vthSchedulePreview.preview?.resolved?.final_long_url?.includes("utm_content=ScheduleATour")
+    || vthSchedulePreview.preview?.resolved?.final_long_url?.includes("utm_content=ScheduleAtour")
     || authoritativeCasePreviewResponse.status !== 200
     || authoritativeCasePreview.preview?.resolved?.utm_term !== "BecomeAMember"
     || authoritativeCasePreview.preview?.resolved?.utm_content !== "CATC"
