@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { formatUserEnteredUtmValue, formatUtmValue } from "./utm-value-format.js";
+import { formatUserEnteredUtmValue, formatUtmValue, normalizeUtmComparable } from "./utm-value-format.js";
 
 const UTM_FIELDS = ["campaign", "source", "medium", "term", "content"];
 const DEFAULT_SUGGESTION_LIMIT = 8;
@@ -892,12 +892,55 @@ export class UtmIntelligenceService {
       ?? formatUtmValue(value);
   }
 
-  authoritativeDisplayValue(field, value, client = null) {
+  canonicalizeValue(field, value, client = null) {
+    const input = String(value ?? "").trim();
+    if (!input) return "";
+    const normalizedField = normalizeField(field);
+    if (!normalizedField) return formatUserEnteredUtmValue(input);
+    const normalizedClient = normalizeOptional(client);
+    const aliased = this.resolveConfiguredAlias(normalizedField, input, normalizedClient);
+    const authoritative = this.canonicalConfiguredValue(normalizedField, aliased, normalizedClient);
+    return authoritative ?? formatUserEnteredUtmValue(aliased);
+  }
+
+  canonicalConfiguredValue(field, value, client = null) {
+    const normalizedClient = normalizeOptional(client);
     const normalized = normalizeOptional(value);
-    if (!normalized || !UTM_FIELDS.includes(field)) return null;
-    return this.configuredValues.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
-      ?? this.data.approvedValueOverrides?.get(`${normalizeOptional(client)}:${field}`)?.get(normalized)
-      ?? this.data.displayValueLookup?.get(`${field}:${normalized}`)
+    const comparable = normalizeUtmComparable(value);
+    if (!normalized || !comparable || this.purgedClients.has(normalizedClient)) return null;
+    const maps = [
+      this.configuredValues.get(`${normalizedClient}:${field}`),
+      this.data.approvedValueOverrides?.get(`${normalizedClient}:${field}`)
+    ].filter(Boolean);
+    for (const map of maps) {
+      const exact = map.get(normalized);
+      if (exact) return exact;
+    }
+    for (const map of maps) {
+      for (const [candidate, display] of map.entries()) {
+        if (normalizeUtmComparable(candidate) === comparable) return display;
+      }
+    }
+    return null;
+  }
+
+  resolveConfiguredAlias(field, value, client = null) {
+    const aliased = String(this.rulesService.normalizeClientUtmAlias(client, field, value) ?? "").trim();
+    if (field !== "campaign") return aliased;
+    const comparable = normalizeUtmComparable(aliased);
+    const standard = this.rulesService.getCampaignStandards(client).find((profile) => [
+      profile.campaign,
+      profile.displayName,
+      ...(profile.aliases ?? [])
+    ].some((candidate) => normalizeUtmComparable(candidate) === comparable));
+    return standard?.campaign ?? aliased;
+  }
+
+  authoritativeDisplayValue(field, value, client = null) {
+    if (!UTM_FIELDS.includes(field)) return null;
+    const aliased = this.resolveConfiguredAlias(field, value, normalizeOptional(client));
+    return this.canonicalConfiguredValue(field, aliased, client)
+      ?? this.data.displayValueLookup?.get(`${field}:${normalizeOptional(aliased)}`)
       ?? null;
   }
 

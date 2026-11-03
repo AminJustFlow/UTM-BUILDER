@@ -326,6 +326,18 @@ if (
 ) {
   throw new Error("VTH authoritative taxonomy and guidance smoke test failed.");
 }
+if (
+  intelligenceService.canonicalizeValue("content", "ScheduleAtour", "vth") !== "ScheduleATour"
+  || intelligenceService.canonicalizeValue("content", "schedule a tour", "vth") !== "ScheduleATour"
+  || intelligenceService.canonicalizeValue("content", "schedule-a-tour", "vth") !== "ScheduleATour"
+  || intelligenceService.canonicalizeValue("content", "schedule_a_tour", "vth") !== "ScheduleATour"
+  || intelligenceService.canonicalizeValue("content", "ScheduleAtour", "gas") !== "ScheduleAtour"
+  || intelligenceService.canonicalizeValue("content", "internalCAPValue", "vth") !== "InternalCAPValue"
+  || intelligenceService.canonicalizeValue("content", "ChristmasAtTheCastle", "castle") !== "CATC"
+  || intelligenceService.canonicalizeValue("term", "ChristmasAtTheCastle", "castle") !== "ChristmasAtTheCastle"
+) {
+  throw new Error("Client- and field-specific UTM canonicalization smoke test failed.");
+}
 
 const legacyVthSeededProfiles = [];
 let legacyVthGuidanceReplaced = false;
@@ -1091,7 +1103,8 @@ try {
   const aliasCsv = [
     csv.split("\n")[0],
     '"2","completed","SFG","Facebook","social","houseplants","houseplants","facebook","social","houseplants","patio","shop","https://studleys.com/product-category/houseplants/patio/","https://studleys.com/product-category/houseplants/patio/?utm_source=facebook&utm_medium=social&utm_campaign=houseplants&utm_term=patio&utm_content=shop","","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","SFG alias import"',
-    '"3","completed","CIC","Facebook","social","visit","visit","facebook","social","visit","mansion","learn","https://www.castleintheclouds.org/visit/mansion/","https://www.castleintheclouds.org/visit/mansion/?utm_source=facebook&utm_medium=social&utm_campaign=visit&utm_term=mansion&utm_content=learn","","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","CIC alias import"'
+    '"3","completed","CIC","Facebook","social","visit","visit","facebook","social","visit","mansion","learn","https://www.castleintheclouds.org/visit/mansion/","https://www.castleintheclouds.org/visit/mansion/?utm_source=facebook&utm_medium=social&utm_campaign=visit&utm_term=mansion&utm_content=learn","","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","CIC alias import"',
+    '"4","completed_without_short_link","VTH","QR","offline","ads","ads","SpectrumMonthlyHolidayShopper","QRCode","ads","landing_page","ScheduleAtour","https://technologyhillnh.com/","https://technologyhillnh.com/?utm_source=SpectrumMonthlyHolidayShopper&utm_medium=QRCode&utm_campaign=ads&utm_term=landing_page&utm_content=ScheduleAtour","","","1","2026-01-01T00:00:00.000Z","2026-01-01T00:00:00.000Z","VTH canonical import"'
   ].join("\n");
   const aliasImportResponse = await af("/imports", {
     method: "POST",
@@ -1102,6 +1115,7 @@ try {
   const aliasLibrary = await (await af("/utms.json")).json();
   const sfgAliasItem = aliasLibrary.items?.find((item) => item.originalMessage === "SFG alias import");
   const cicAliasItem = aliasLibrary.items?.find((item) => item.originalMessage === "CIC alias import");
+  const vthCanonicalItem = aliasLibrary.items?.find((item) => item.originalMessage === "VTH canonical import");
   const importedLibrary = await (await af("/utms.json?search=Smoke%20import")).json();
   const importedItem = importedLibrary.items?.find((item) => item.originalMessage === "Smoke import");
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
@@ -1595,9 +1609,14 @@ try {
     || imported.summary?.imported !== 1
     || duplicate.summary?.skipped !== 1
     || replacement.summary?.imported !== 1
-    || aliasImported.summary?.imported !== 2
+    || aliasImported.summary?.imported !== 3
     || sfgAliasItem?.client !== "studleys"
     || cicAliasItem?.client !== "castle"
+    || vthCanonicalItem?.client !== "vth"
+    || vthCanonicalItem?.utmCampaign !== "Ads"
+    || vthCanonicalItem?.utmTerm !== "LandingPage"
+    || vthCanonicalItem?.utmContent !== "ScheduleATour"
+    || !vthCanonicalItem?.finalLongUrl?.includes("utm_content=ScheduleATour")
     || aliasLibrary.available?.clients?.includes("sfg")
     || aliasLibrary.available?.clients?.includes("cic")
     || !aliasLibrary.available?.clients?.includes("studleys")

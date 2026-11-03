@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import { formatUtmValue } from "./utm-value-format.js";
+import { formatUserEnteredUtmValue } from "./utm-value-format.js";
 
 const REQUIRED_COLUMNS = [
   "client", "channel", "destination_url", "final_long_url",
@@ -207,7 +207,7 @@ function normalizeRow(row, utmIntelligenceService = null, rulesService = null) {
   const destinationUrl = text(row.destination_url);
   const client = rulesService?.normalizeClient?.(importedClient, destinationUrl) ?? importedClient;
   const clientDisplayName = rulesService?.getClientDisplayName?.(client) ?? importedClient;
-  const canonical = (field, value) => utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
+  const canonical = (field, value) => utmIntelligenceService?.canonicalizeValue?.(field, value, client) ?? formatUserEnteredUtmValue(value);
   return {
     client,
     clientDisplayName,

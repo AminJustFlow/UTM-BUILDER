@@ -1,6 +1,6 @@
 import { NormalizedLinkRequest } from "../domain/normalized-link-request.js";
 import { WorkflowDecision } from "../domain/workflow-decision.js";
-import { formatUserEnteredUtmValue, formatUtmValue } from "./utm-value-format.js";
+import { formatUserEnteredUtmValue } from "./utm-value-format.js";
 import { sanitizeOptionalUtmValue } from "./utm-value-sanitizer.js";
 
 export class RequestNormalizer {
@@ -115,11 +115,11 @@ export class RequestNormalizer {
     }
     const finalWarnings = [...new Set(sanitizedWarnings)];
     const formattedUtm = {
-      source: this.formatResolvedUtmValue("source", utm.source, client, guidedBuilderMode),
-      medium: this.formatResolvedUtmValue("medium", utm.medium, client, guidedBuilderMode),
-      campaign: externalDomain ? "" : this.formatResolvedUtmValue("campaign", utm.campaign, client, guidedBuilderMode),
-      term: externalDomain ? "" : this.formatResolvedUtmValue("term", sanitizedTerm, client, guidedBuilderMode),
-      content: externalDomain ? "" : this.formatResolvedUtmValue("content", sanitizedContent, client, guidedBuilderMode)
+      source: this.formatResolvedUtmValue("source", utm.source, client),
+      medium: this.formatResolvedUtmValue("medium", utm.medium, client),
+      campaign: externalDomain ? "" : this.formatResolvedUtmValue("campaign", utm.campaign, client),
+      term: externalDomain ? "" : this.formatResolvedUtmValue("term", sanitizedTerm, client),
+      content: externalDomain ? "" : this.formatResolvedUtmValue("content", sanitizedContent, client)
     };
 
     const finalLongUrl = this.urlService.appendUtms(normalizedDestination, {
@@ -140,7 +140,7 @@ export class RequestNormalizer {
         channel,
         channelDisplayName: this.rulesService.getChannelDisplayName(channel),
         assetType,
-        campaignLabel: formatUtmValue(correctedCampaignLabel ?? formattedUtm.campaign),
+        campaignLabel: this.formatResolvedUtmValue("campaign", correctedCampaignLabel ?? formattedUtm.campaign, client),
         canonicalCampaign: formattedUtm.campaign,
         destinationUrl: parsed.destinationUrl,
         normalizedDestinationUrl: normalizedDestination,
@@ -169,12 +169,9 @@ export class RequestNormalizer {
     ].some((value) => Boolean(String(value ?? "").trim()));
   }
 
-  formatResolvedUtmValue(field, value, client, preserveUserCasing = false) {
-    if (preserveUserCasing) {
-      return this.utmIntelligenceService?.authoritativeDisplayValue?.(field, value, client)
-        ?? formatUserEnteredUtmValue(value);
-    }
-    return this.utmIntelligenceService?.displayValue?.(field, value, client) ?? formatUtmValue(value);
+  formatResolvedUtmValue(field, value, client) {
+    return this.utmIntelligenceService?.canonicalizeValue?.(field, value, client)
+      ?? formatUserEnteredUtmValue(value);
   }
 
   isGuidedBuilderSource(source) {
