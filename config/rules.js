@@ -388,6 +388,9 @@ const manualClients = {
     aliases: ["castle", "castle in the clouds", "castleintheclouds", "cic"],
     domains: ["castleintheclouds.org"],
     taxonomyKey: "cic",
+    excludedUtmSuggestions: {
+      campaign: ["CATC25"]
+    },
     utmValueAliases: {
       content: {
         ChristmasAtTheCastle: "CATC"

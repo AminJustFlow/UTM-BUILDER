@@ -147,6 +147,11 @@ export class RulesService {
     return [...(this.rules.clients?.[key]?.domains ?? [])];
   }
 
+  getExcludedUtmSuggestions(client, field) {
+    const key = this.normalizeClient(client) ?? String(client ?? "").trim().toLowerCase();
+    return [...(this.rules.clients?.[key]?.excludedUtmSuggestions?.[field] ?? [])];
+  }
+
   isExternalDestination(client, destinationUrl) {
     const key = this.normalizeClient(client);
     if (!key || !destinationUrl) return false;

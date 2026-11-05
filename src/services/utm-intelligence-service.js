@@ -1001,9 +1001,10 @@ export class UtmIntelligenceService {
       }
     }
 
+    const excluded = new Set(this.rulesService.getExcludedUtmSuggestions(filters.client, field).map(normalizeOptional));
     return [...new Set([...candidates].map((value) => normalizeOptional(
       this.rulesService.normalizeClientUtmAlias(filters.client, field, value)
-    )).filter(Boolean))];
+    )).filter((value) => value && !excluded.has(value)))];
   }
 
   buildSuggestion(field, value, scopedRows, approvedRows, filters, maps) {

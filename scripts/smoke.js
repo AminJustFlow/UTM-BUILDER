@@ -93,13 +93,15 @@ if (intelligenceHistoryLoads !== 2 || intelligenceStandardsLoads !== 2) {
 }
 if (
   intelligenceService.displayValue("source", "catcrackcard", "castle") !== "CATCRackCard"
-  || intelligenceService.displayValue("campaign", "catc25", "castle") !== "CATC25"
   || intelligenceService.displayValue("content", "redirecturl", "soc") !== "RedirectURL"
   || intelligenceService.displayValue("medium", "sms", "gas") !== "SMS"
   || intelligenceService.displayValue("term", "2fa", "studleys") !== "2FA"
   || intelligenceService.displayValue("term", "lnaprep", "nam") !== "LNAPrep"
 ) {
   throw new Error("Authoritative workbook capitalization smoke test failed.");
+}
+if (intelligenceService.suggestions({ client: "cic", field: "campaign", query: "CATC25" }).items.some((item) => item.normalized_value === "catc25")) {
+  throw new Error("Excluded CIC campaign suggestion smoke test failed.");
 }
 
 const trafficPairWarnings = (input) => intelligenceService.consistencyAnalysis(input).warnings
