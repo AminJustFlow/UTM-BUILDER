@@ -1,6 +1,12 @@
 import crypto from "node:crypto";
 
-const TARGET_SHORT_URL = "https://bit.ly/4Akgw2f";
+const TARGETS = new Map([
+  ["https://bit.ly/4akgw2f", { source: "constantcontact", medium: "email", content: "learn" }],
+  ["https://bit.ly/4zzl5b6", { source: "facebook", medium: "social", content: "read" }],
+  ["https://bit.ly/48b0gvs", { source: "instagram", medium: "social", content: "read" }],
+  ["https://bit.ly/4880ytl", { source: "linkedin", medium: "social", content: "read" }],
+  ["https://bit.ly/3ulceig", { source: "twitter", medium: "social", content: "read" }]
+]);
 
 export class RadLinkMigrationService {
   constructor({ database, fingerprintService }) {
@@ -30,7 +36,8 @@ export class RadLinkMigrationService {
         continue;
       }
       const shortUrl = String(generated.short_url || activeMatches[0].row.short_url || "").trim().replace(/\/$/u, "");
-      if (shortUrl.toLowerCase() !== TARGET_SHORT_URL.toLowerCase()) continue;
+      const target = TARGETS.get(shortUrl.toLowerCase());
+      if (!target || !matchesTargetValues(activeMatches[0].payload, target)) continue;
       const corrected = { ...activeMatches[0].payload, client: "rad", client_display_name: "RAD" };
       const fingerprint = this.fingerprintService.generate(normalizedShape(corrected, generated));
       const requestConflict = await this.database.getAsync("SELECT id FROM requests WHERE fingerprint=:fingerprint AND archived_at IS NULL LIMIT 1", { fingerprint });
@@ -53,7 +60,7 @@ export class RadLinkMigrationService {
         }))
       });
     }
-    const plan = { version: 1, target_short_url: TARGET_SHORT_URL, created_at: new Date().toISOString(), changes, conflicts };
+    const plan = { version: 2, target_short_urls: [...TARGETS.keys()], created_at: new Date().toISOString(), changes, conflicts };
     plan.signature = sign(plan);
     return plan;
   }
@@ -95,11 +102,14 @@ function isTargetIdentity(payload) {
   try { host = new URL(payload.normalized_destination_url || row.final_long_url || "").hostname.toLowerCase().replace(/^www\./u, ""); } catch {}
   return compact(payload.client) === "jf"
     && host === "redarrowdiner.com"
-    && compact(payload.utm_source) === "constantcontact"
-    && compact(payload.utm_medium) === "email"
     && compact(payload.utm_campaign || payload.canonical_campaign) === "newsandpromos"
-    && compact(payload.utm_term) === "promos"
-    && compact(payload.utm_content) === "learn";
+    && compact(payload.utm_term) === "promos";
+}
+
+function matchesTargetValues(payload, target) {
+  return compact(payload.utm_source) === target.source
+    && compact(payload.utm_medium) === target.medium
+    && compact(payload.utm_content) === target.content;
 }
 
 function normalizedShape(payload, generated) {

@@ -159,7 +159,7 @@ if (
   || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("fmb") !== 610
   || approvedClientRowCount("vth") !== 205
-  || approvedClientRowCount("rad") !== 1
+  || approvedClientRowCount("rad") !== 5
   || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,rad,sfg,vth"
   || !approvedDictionary.clients.rad.value_counts.campaign.some((entry) => entry.value === "newsandpromos")
   || !approvedDictionary.clients.rad.value_counts.source.some((entry) => entry.value === "constantcontact")

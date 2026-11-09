@@ -152,12 +152,12 @@
         "unique_clients": 1
       },
       {
-        "value": "brl",
-        "count": 1,
+        "value": "newsandpromos",
+        "count": 5,
         "unique_clients": 1
       },
       {
-        "value": "newsandpromos",
+        "value": "brl",
         "count": 1,
         "unique_clients": 1
       }
@@ -165,21 +165,21 @@
     "source": [
       {
         "value": "facebook",
-        "count": 533,
-        "unique_clients": 5
-      },
-      {
-        "value": "gmb",
-        "count": 533,
-        "unique_clients": 5
+        "count": 534,
+        "unique_clients": 6
       },
       {
         "value": "instagram",
-        "count": 533,
-        "unique_clients": 5
+        "count": 534,
+        "unique_clients": 6
       },
       {
         "value": "linkedin",
+        "count": 534,
+        "unique_clients": 6
+      },
+      {
+        "value": "gmb",
         "count": 533,
         "unique_clients": 5
       },
@@ -197,13 +197,18 @@
         "value": "gsaad",
         "count": 1,
         "unique_clients": 1
+      },
+      {
+        "value": "twitter",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "medium": [
       {
         "value": "social",
-        "count": 2132,
-        "unique_clients": 5
+        "count": 2136,
+        "unique_clients": 6
       },
       {
         "value": "email",
@@ -833,17 +838,17 @@
         "unique_clients": 1
       },
       {
+        "value": "promos",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
         "value": "visitorfeedback",
         "count": 5,
         "unique_clients": 1
       },
       {
         "value": "paidadvertising",
-        "count": 1,
-        "unique_clients": 1
-      },
-      {
-        "value": "promos",
         "count": 1,
         "unique_clients": 1
       }
@@ -866,8 +871,8 @@
       },
       {
         "value": "read",
-        "count": 130,
-        "unique_clients": 4
+        "count": 134,
+        "unique_clients": 5
       },
       {
         "value": "visit",
@@ -1492,6 +1497,26 @@
         "value": "constantcontact",
         "count": 1,
         "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "twitter",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "products": [
@@ -2010,6 +2035,11 @@
     ],
     "newsandpromos": [
       {
+        "value": "social",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
         "value": "email",
         "count": 1,
         "unique_clients": 1
@@ -2156,8 +2186,8 @@
     "facebook": [
       {
         "value": "social",
-        "count": 533,
-        "unique_clients": 5
+        "count": 534,
+        "unique_clients": 6
       }
     ],
     "gmb": [
@@ -2177,15 +2207,22 @@
     "instagram": [
       {
         "value": "social",
-        "count": 533,
-        "unique_clients": 5
+        "count": 534,
+        "unique_clients": 6
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 533,
-        "unique_clients": 5
+        "count": 534,
+        "unique_clients": 6
+      }
+    ],
+    "twitter": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
       }
     ]
   },
@@ -2643,7 +2680,7 @@
     "newsandpromos": [
       {
         "value": "promos",
-        "count": 1,
+        "count": 5,
         "unique_clients": 1
       }
     ],
@@ -3295,6 +3332,11 @@
       }
     ],
     "newsandpromos": [
+      {
+        "value": "read",
+        "count": 4,
+        "unique_clients": 1
+      },
       {
         "value": "learn",
         "count": 1,
@@ -6329,7 +6371,7 @@
         "campaign": [
           {
             "value": "newsandpromos",
-            "count": 1,
+            "count": 5,
             "unique_clients": 1
           }
         ],
@@ -6338,9 +6380,34 @@
             "value": "constantcontact",
             "count": 1,
             "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "twitter",
+            "count": 1,
+            "unique_clients": 1
           }
         ],
         "medium": [
+          {
+            "value": "social",
+            "count": 4,
+            "unique_clients": 1
+          },
           {
             "value": "email",
             "count": 1,
@@ -6350,11 +6417,16 @@
         "term": [
           {
             "value": "promos",
-            "count": 1,
+            "count": 5,
             "unique_clients": 1
           }
         ],
         "content": [
+          {
+            "value": "read",
+            "count": 4,
+            "unique_clients": 1
+          },
           {
             "value": "learn",
             "count": 1,
@@ -6368,11 +6440,36 @@
             "value": "constantcontact",
             "count": 1,
             "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "twitter",
+            "count": 1,
+            "unique_clients": 1
           }
         ]
       },
       "campaign_to_mediums": {
         "newsandpromos": [
+          {
+            "value": "social",
+            "count": 4,
+            "unique_clients": 1
+          },
           {
             "value": "email",
             "count": 1,
@@ -6387,19 +6484,52 @@
             "count": 1,
             "unique_clients": 1
           }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "twitter": [
+          {
+            "value": "social",
+            "count": 1,
+            "unique_clients": 1
+          }
         ]
       },
       "campaign_to_terms": {
         "newsandpromos": [
           {
             "value": "promos",
-            "count": 1,
+            "count": 5,
             "unique_clients": 1
           }
         ]
       },
       "campaign_to_contents": {
         "newsandpromos": [
+          {
+            "value": "read",
+            "count": 4,
+            "unique_clients": 1
+          },
           {
             "value": "learn",
             "count": 1,
