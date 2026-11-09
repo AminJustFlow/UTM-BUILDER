@@ -155,6 +155,11 @@
         "value": "brl",
         "count": 1,
         "unique_clients": 1
+      },
+      {
+        "value": "newsandpromos",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "source": [
@@ -180,8 +185,8 @@
       },
       {
         "value": "constantcontact",
-        "count": 483,
-        "unique_clients": 4
+        "count": 484,
+        "unique_clients": 5
       },
       {
         "value": "eventspostcard",
@@ -202,8 +207,8 @@
       },
       {
         "value": "email",
-        "count": 483,
-        "unique_clients": 4
+        "count": 484,
+        "unique_clients": 5
       },
       {
         "value": "qrcode",
@@ -836,13 +841,18 @@
         "value": "paidadvertising",
         "count": 1,
         "unique_clients": 1
+      },
+      {
+        "value": "promos",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "content": [
       {
         "value": "learn",
-        "count": 680,
-        "unique_clients": 5
+        "count": 681,
+        "unique_clients": 6
       },
       {
         "value": "explore",
@@ -1477,6 +1487,13 @@
         "unique_clients": 1
       }
     ],
+    "newsandpromos": [
+      {
+        "value": "constantcontact",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
     "products": [
       {
         "value": "constantcontact",
@@ -1991,6 +2008,13 @@
         "unique_clients": 1
       }
     ],
+    "newsandpromos": [
+      {
+        "value": "email",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
     "products": [
       {
         "value": "social",
@@ -2118,8 +2142,8 @@
     "constantcontact": [
       {
         "value": "email",
-        "count": 483,
-        "unique_clients": 4
+        "count": 484,
+        "unique_clients": 5
       }
     ],
     "eventspostcard": [
@@ -2613,6 +2637,13 @@
       {
         "value": "10022026",
         "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "newsandpromos": [
+      {
+        "value": "promos",
+        "count": 1,
         "unique_clients": 1
       }
     ],
@@ -3260,6 +3291,13 @@
       {
         "value": "read",
         "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "newsandpromos": [
+      {
+        "value": "learn",
+        "count": 1,
         "unique_clients": 1
       }
     ],
@@ -6285,6 +6323,90 @@
         ]
       },
       "campaign_to_contents": {}
+    },
+    "rad": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "newsandpromos",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "email",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "promos",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "learn",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "newsandpromos": [
+          {
+            "value": "constantcontact",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "newsandpromos": [
+          {
+            "value": "email",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "newsandpromos": [
+          {
+            "value": "promos",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "newsandpromos": [
+          {
+            "value": "learn",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ]
+      }
     },
     "sfg": {
       "value_counts": {

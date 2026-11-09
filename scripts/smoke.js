@@ -159,7 +159,11 @@ if (
   || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("fmb") !== 610
   || approvedClientRowCount("vth") !== 205
-  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,sfg,vth"
+  || approvedClientRowCount("rad") !== 1
+  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,rad,sfg,vth"
+  || !approvedDictionary.clients.rad.value_counts.campaign.some((entry) => entry.value === "newsandpromos")
+  || !approvedDictionary.clients.rad.value_counts.source.some((entry) => entry.value === "constantcontact")
+  || !approvedDictionary.clients.rad.value_counts.medium.some((entry) => entry.value === "email")
   || !approvedDictionary.clients.vth.value_counts.source.some((entry) => entry.value === "eventspostcard")
   || !approvedDictionary.clients.vth.value_counts.medium.some((entry) => entry.value === "qrcode")
   || !approvedDictionary.clients.vth.value_counts.term.some((entry) => entry.value === "landingpage")

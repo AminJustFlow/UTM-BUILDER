@@ -383,6 +383,12 @@ const manualClients = {
     domains: ["justflownh.com"],
     taxonomyKey: "jf"
   },
+  rad: {
+    displayName: "RAD",
+    aliases: ["rad", "red arrow diner", "redarrowdiner"],
+    domains: ["redarrowdiner.com"],
+    taxonomyKey: "rad"
+  },
   castle: {
     displayName: "Castle In The Clouds",
     aliases: ["castle", "castle in the clouds", "castleintheclouds", "cic"],
