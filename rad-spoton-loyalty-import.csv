@@ -1,0 +1,2 @@
+client,channel,asset_type,utm_source,utm_medium,utm_campaign,destination_url,final_long_url,preserve_medium_case
+RAD,QR,qr,,qr,,https://deals.spoton.com/696512ae0b81d3ae0140ab61/join-loyalty,https://deals.spoton.com/696512ae0b81d3ae0140ab61/join-loyalty?utm_medium=qr,true

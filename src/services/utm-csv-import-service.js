@@ -216,7 +216,9 @@ function normalizeRow(row, utmIntelligenceService = null, rulesService = null) {
     campaignLabel: canonical("campaign", text(row.campaign_label) || text(row.utm_campaign)),
     canonicalCampaign: canonical("campaign", text(row.canonical_campaign) || text(row.utm_campaign)),
     utmSource: canonical("source", row.utm_source),
-    utmMedium: canonical("medium", row.utm_medium),
+    utmMedium: text(row.preserve_medium_case) === "true"
+      ? text(row.utm_medium)
+      : canonical("medium", row.utm_medium),
     utmCampaign: canonical("campaign", row.utm_campaign),
     utmTerm: canonical("term", row.utm_term),
     utmContent: canonical("content", row.utm_content),

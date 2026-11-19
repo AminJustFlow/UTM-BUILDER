@@ -130,8 +130,6 @@ git add .
 git commit -m "Initial standalone UTM Builder"
 ```
 
-
-
 cd /home/ubuntu/UTM-BUILDER
 git pull --ff-only
 npm ci --omit=dev
