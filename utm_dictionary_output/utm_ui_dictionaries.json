@@ -147,13 +147,13 @@
         "unique_clients": 1
       },
       {
-        "value": "contactus",
-        "count": 8,
+        "value": "newsandpromos",
+        "count": 9,
         "unique_clients": 1
       },
       {
-        "value": "newsandpromos",
-        "count": 5,
+        "value": "contactus",
+        "count": 8,
         "unique_clients": 1
       },
       {
@@ -165,17 +165,17 @@
     "source": [
       {
         "value": "facebook",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       },
       {
         "value": "instagram",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       },
       {
         "value": "linkedin",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       },
       {
@@ -202,12 +202,17 @@
         "value": "twitter",
         "count": 1,
         "unique_clients": 1
+      },
+      {
+        "value": "x",
+        "count": 1,
+        "unique_clients": 1
       }
     ],
     "medium": [
       {
         "value": "social",
-        "count": 2136,
+        "count": 2140,
         "unique_clients": 6
       },
       {
@@ -848,6 +853,11 @@
         "unique_clients": 1
       },
       {
+        "value": "mediaandpress",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
         "value": "paidadvertising",
         "count": 1,
         "unique_clients": 1
@@ -871,7 +881,7 @@
       },
       {
         "value": "read",
-        "count": 134,
+        "count": 138,
         "unique_clients": 5
       },
       {
@@ -1494,27 +1504,32 @@
     ],
     "newsandpromos": [
       {
+        "value": "facebook",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 2,
+        "unique_clients": 1
+      },
+      {
         "value": "constantcontact",
         "count": 1,
         "unique_clients": 1
       },
       {
-        "value": "facebook",
-        "count": 1,
-        "unique_clients": 1
-      },
-      {
-        "value": "instagram",
-        "count": 1,
-        "unique_clients": 1
-      },
-      {
-        "value": "linkedin",
-        "count": 1,
-        "unique_clients": 1
-      },
-      {
         "value": "twitter",
+        "count": 1,
+        "unique_clients": 1
+      },
+      {
+        "value": "x",
         "count": 1,
         "unique_clients": 1
       }
@@ -2036,7 +2051,7 @@
     "newsandpromos": [
       {
         "value": "social",
-        "count": 4,
+        "count": 8,
         "unique_clients": 1
       },
       {
@@ -2186,7 +2201,7 @@
     "facebook": [
       {
         "value": "social",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       }
     ],
@@ -2207,18 +2222,25 @@
     "instagram": [
       {
         "value": "social",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 534,
+        "count": 535,
         "unique_clients": 6
       }
     ],
     "twitter": [
+      {
+        "value": "social",
+        "count": 1,
+        "unique_clients": 1
+      }
+    ],
+    "x": [
       {
         "value": "social",
         "count": 1,
@@ -2681,6 +2703,11 @@
       {
         "value": "promos",
         "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "mediaandpress",
+        "count": 4,
         "unique_clients": 1
       }
     ],
@@ -3334,7 +3361,7 @@
     "newsandpromos": [
       {
         "value": "read",
-        "count": 4,
+        "count": 8,
         "unique_clients": 1
       },
       {
@@ -6371,28 +6398,28 @@
         "campaign": [
           {
             "value": "newsandpromos",
-            "count": 5,
+            "count": 9,
             "unique_clients": 1
           }
         ],
         "source": [
           {
-            "value": "constantcontact",
-            "count": 1,
-            "unique_clients": 1
-          },
-          {
             "value": "facebook",
-            "count": 1,
+            "count": 2,
             "unique_clients": 1
           },
           {
             "value": "instagram",
-            "count": 1,
+            "count": 2,
             "unique_clients": 1
           },
           {
             "value": "linkedin",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "constantcontact",
             "count": 1,
             "unique_clients": 1
           },
@@ -6400,12 +6427,17 @@
             "value": "twitter",
             "count": 1,
             "unique_clients": 1
+          },
+          {
+            "value": "x",
+            "count": 1,
+            "unique_clients": 1
           }
         ],
         "medium": [
           {
             "value": "social",
-            "count": 4,
+            "count": 8,
             "unique_clients": 1
           },
           {
@@ -6419,12 +6451,17 @@
             "value": "promos",
             "count": 5,
             "unique_clients": 1
+          },
+          {
+            "value": "mediaandpress",
+            "count": 4,
+            "unique_clients": 1
           }
         ],
         "content": [
           {
             "value": "read",
-            "count": 4,
+            "count": 8,
             "unique_clients": 1
           },
           {
@@ -6437,27 +6474,32 @@
       "campaign_to_sources": {
         "newsandpromos": [
           {
+            "value": "facebook",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 2,
+            "unique_clients": 1
+          },
+          {
             "value": "constantcontact",
             "count": 1,
             "unique_clients": 1
           },
           {
-            "value": "facebook",
-            "count": 1,
-            "unique_clients": 1
-          },
-          {
-            "value": "instagram",
-            "count": 1,
-            "unique_clients": 1
-          },
-          {
-            "value": "linkedin",
-            "count": 1,
-            "unique_clients": 1
-          },
-          {
             "value": "twitter",
+            "count": 1,
+            "unique_clients": 1
+          },
+          {
+            "value": "x",
             "count": 1,
             "unique_clients": 1
           }
@@ -6467,7 +6509,7 @@
         "newsandpromos": [
           {
             "value": "social",
-            "count": 4,
+            "count": 8,
             "unique_clients": 1
           },
           {
@@ -6488,25 +6530,32 @@
         "facebook": [
           {
             "value": "social",
-            "count": 1,
+            "count": 2,
             "unique_clients": 1
           }
         ],
         "instagram": [
           {
             "value": "social",
-            "count": 1,
+            "count": 2,
             "unique_clients": 1
           }
         ],
         "linkedin": [
           {
             "value": "social",
-            "count": 1,
+            "count": 2,
             "unique_clients": 1
           }
         ],
         "twitter": [
+          {
+            "value": "social",
+            "count": 1,
+            "unique_clients": 1
+          }
+        ],
+        "x": [
           {
             "value": "social",
             "count": 1,
@@ -6520,6 +6569,11 @@
             "value": "promos",
             "count": 5,
             "unique_clients": 1
+          },
+          {
+            "value": "mediaandpress",
+            "count": 4,
+            "unique_clients": 1
           }
         ]
       },
@@ -6527,7 +6581,7 @@
         "newsandpromos": [
           {
             "value": "read",
-            "count": 4,
+            "count": 8,
             "unique_clients": 1
           },
           {
