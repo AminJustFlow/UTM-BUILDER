@@ -3,8 +3,8 @@
 
 The ecosystem workbook is authoritative. Gray/manual campaigns and source
 combinations are intentionally excluded. The current page sitemap contains 20
-pages; the two thank-you pages are excluded, leaving 17 approved destinations
-and 340 generated rows.
+pages; the two thank-you pages are excluded. A pending /links/ destination is
+also included at the user's request, producing 18 destinations and 360 rows.
 """
 
 from __future__ import annotations
@@ -23,8 +23,8 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 CLIENT = "AAA"
 APPROVED_HOST = "aaapumpservice.com"
 DEFAULT_STATUS = "completed_without_short_link"
-EXPECTED_DESTINATION_COUNT = 17
-EXPECTED_ROW_COUNT = 340
+EXPECTED_DESTINATION_COUNT = 18
+EXPECTED_ROW_COUNT = 360
 
 CSV_COLUMNS = (
     "request_id", "status", "client", "channel", "asset_type",
@@ -77,6 +77,7 @@ DESTINATION_RULES = (
     DestinationRule("Products", "https://aaapumpservice.com/products/", "AboutUs", "Products"),
     DestinationRule("Partnerships", "https://aaapumpservice.com/partnerships/", "AboutUs", "Partnerships"),
     DestinationRule("Reviews", "https://aaapumpservice.com/reviews/", "Reviews", "LandingPage"),
+    DestinationRule("Mobile Links", "https://aaapumpservice.com/links/", "MobileLinks", "LandingPage"),
 )
 
 
@@ -165,7 +166,7 @@ def validate_rows(rows: Sequence[dict[str, object]]) -> None:
         if (content and query.get("utm_content") != content) or (not content and "utm_content" in query):
             errors.append(f"Content mismatch in request {row['request_id']}.")
             break
-        if str(row["utm_campaign"]) in {"LimitedCampaign", "MetaAdCampaignName", "Website", "Media", "MobileLinks"}:
+        if str(row["utm_campaign"]) in {"LimitedCampaign", "MetaAdCampaignName", "Website", "Media"}:
             errors.append(f"Manual or unresolved campaign generated in request {row['request_id']}.")
             break
     if errors:
@@ -181,7 +182,7 @@ def write_csv(rows: Iterable[dict[str, object]], output_path: Path) -> None:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate the 340-row AAA starter UTM library.")
+    parser = argparse.ArgumentParser(description="Generate the 360-row AAA starter UTM library.")
     parser.add_argument("--output", type=Path, default=Path("aaa-starter-utm-import.csv"))
     parser.add_argument("--start-id", type=int, default=1)
     parser.add_argument("--timestamp", type=validate_timestamp, default=None)

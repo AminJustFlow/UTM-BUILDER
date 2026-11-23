@@ -160,12 +160,13 @@ if (
   || approvedClientRowCount("fmb") !== 610
   || approvedClientRowCount("vth") !== 205
   || approvedClientRowCount("rad") !== 9
-  || approvedClientRowCount("aaa") !== 340
+  || approvedClientRowCount("aaa") !== 360
   || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "aaa,cic,fmb,gas,jf,rad,sfg,vth"
   || !approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => entry.value === "sewagepumpserviceandinstallation")
   || !approvedDictionary.clients.aaa.value_counts.term.some((entry) => entry.value === "industrialcommercialpumpsales")
   || !approvedDictionary.clients.aaa.value_counts.content.some((entry) => entry.value === "explore")
-  || approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => ["limitedcampaign", "metaadcampaignname", "website", "media", "mobilelinks"].includes(entry.value))
+  || !approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => entry.value === "mobilelinks")
+  || approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => ["limitedcampaign", "metaadcampaignname", "website", "media"].includes(entry.value))
   || approvedDictionary.clients.aaa.value_counts.source.some((entry) => entry.value === "metaad")
   || !approvedDictionary.clients.rad.value_counts.campaign.some((entry) => entry.value === "newsandpromos")
   || !approvedDictionary.clients.rad.value_counts.source.some((entry) => entry.value === "constantcontact")

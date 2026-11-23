@@ -567,7 +567,7 @@ const manualClients = {
         {
           priority: 3,
           campaign: "MobileLinks",
-          guideline: "Use only for a /links destination. No such page is present in the current sitemap.",
+          guideline: "Use only for the /links destination.",
           fields: {
             term: { label: "Term - Mobile links page", help: "Use LandingPage.", placeholder: "LandingPage" },
             content: { label: "Content - Message or CTA", help: "Use Read, Learn, Explore, or the messaging used to engage.", placeholder: "Learn" }
