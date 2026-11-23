@@ -38,8 +38,18 @@
       },
       {
         "value": "homepage",
-        "count": 87,
-        "unique_clients": 5
+        "count": 107,
+        "unique_clients": 6
+      },
+      {
+        "value": "aboutus",
+        "count": 100,
+        "unique_clients": 1
+      },
+      {
+        "value": "sewagepumpserviceandinstallation",
+        "count": 100,
+        "unique_clients": 1
       },
       {
         "value": "thevillage",
@@ -77,6 +87,11 @@
         "unique_clients": 1
       },
       {
+        "value": "careers",
+        "count": 45,
+        "unique_clients": 2
+      },
+      {
         "value": "commercial",
         "count": 45,
         "unique_clients": 1
@@ -97,13 +112,13 @@
         "unique_clients": 1
       },
       {
-        "value": "wedding",
+        "value": "sewagepumpsales",
         "count": 40,
         "unique_clients": 1
       },
       {
-        "value": "careers",
-        "count": 25,
+        "value": "wedding",
+        "count": 40,
         "unique_clients": 1
       },
       {
@@ -117,12 +132,27 @@
         "unique_clients": 1
       },
       {
+        "value": "electricmotorrepairs",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "electricmotorsales",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "gardencenter",
         "count": 20,
         "unique_clients": 1
       },
       {
         "value": "mobilelinks",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "reviews",
         "count": 20,
         "unique_clients": 1
       },
@@ -165,28 +195,28 @@
     "source": [
       {
         "value": "facebook",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       },
       {
         "value": "instagram",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       },
       {
         "value": "linkedin",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       },
       {
         "value": "gmb",
-        "count": 533,
-        "unique_clients": 5
+        "count": 601,
+        "unique_clients": 6
       },
       {
         "value": "constantcontact",
-        "count": 484,
-        "unique_clients": 5
+        "count": 552,
+        "unique_clients": 6
       },
       {
         "value": "eventspostcard",
@@ -212,13 +242,13 @@
     "medium": [
       {
         "value": "social",
-        "count": 2140,
-        "unique_clients": 6
+        "count": 2412,
+        "unique_clients": 7
       },
       {
         "value": "email",
-        "count": 484,
-        "unique_clients": 5
+        "count": 552,
+        "unique_clients": 6
       },
       {
         "value": "qrcode",
@@ -229,12 +259,27 @@
     "term": [
       {
         "value": "landingpage",
-        "count": 455,
-        "unique_clients": 5
+        "count": 615,
+        "unique_clients": 6
       },
       {
         "value": "faqs",
         "count": 36,
+        "unique_clients": 2
+      },
+      {
+        "value": "commercial",
+        "count": 35,
+        "unique_clients": 2
+      },
+      {
+        "value": "partnerships",
+        "count": 35,
+        "unique_clients": 2
+      },
+      {
+        "value": "residential",
+        "count": 35,
         "unique_clients": 2
       },
       {
@@ -318,6 +363,16 @@
         "unique_clients": 1
       },
       {
+        "value": "contact",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "contractors",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "directionsandparking",
         "count": 20,
         "unique_clients": 1
@@ -388,6 +443,16 @@
         "unique_clients": 1
       },
       {
+        "value": "industrial",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrialcommercialpumpsales",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "irrigationservices",
         "count": 20,
         "unique_clients": 1
@@ -438,6 +503,11 @@
         "unique_clients": 1
       },
       {
+        "value": "ourhistory",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
         "value": "patio",
         "count": 20,
         "unique_clients": 1
@@ -449,6 +519,11 @@
       },
       {
         "value": "plantgifts",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "products",
         "count": 20,
         "unique_clients": 1
       },
@@ -638,11 +713,6 @@
         "unique_clients": 1
       },
       {
-        "value": "commercial",
-        "count": 15,
-        "unique_clients": 1
-      },
-      {
         "value": "commercialgaragedoors",
         "count": 15,
         "unique_clients": 1
@@ -763,22 +833,12 @@
         "unique_clients": 1
       },
       {
-        "value": "partnerships",
-        "count": 15,
-        "unique_clients": 1
-      },
-      {
         "value": "parts",
         "count": 15,
         "unique_clients": 1
       },
       {
         "value": "privateevents",
-        "count": 15,
-        "unique_clients": 1
-      },
-      {
-        "value": "residential",
         "count": 15,
         "unique_clients": 1
       },
@@ -866,23 +926,23 @@
     "content": [
       {
         "value": "learn",
-        "count": 681,
-        "unique_clients": 6
+        "count": 766,
+        "unique_clients": 7
       },
       {
         "value": "explore",
-        "count": 654,
-        "unique_clients": 5
+        "count": 739,
+        "unique_clients": 6
+      },
+      {
+        "value": "read",
+        "count": 223,
+        "unique_clients": 6
       },
       {
         "value": "shop",
         "count": 165,
         "unique_clients": 2
-      },
-      {
-        "value": "read",
-        "count": 138,
-        "unique_clients": 5
       },
       {
         "value": "visit",
@@ -1046,6 +1106,33 @@
         "unique_clients": 1
       }
     ],
+    "aboutus": [
+      {
+        "value": "constantcontact",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "apartments": [
       {
         "value": "facebook",
@@ -1100,28 +1187,28 @@
     "careers": [
       {
         "value": "constantcontact",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       },
       {
         "value": "facebook",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       },
       {
         "value": "gmb",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       },
       {
         "value": "instagram",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       },
       {
         "value": "linkedin",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       }
     ],
     "commercial": [
@@ -1227,6 +1314,60 @@
         "unique_clients": 1
       }
     ],
+    "electricmotorrepairs": [
+      {
+        "value": "constantcontact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorsales": [
+      {
+        "value": "constantcontact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "floral": [
       {
         "value": "constantcontact",
@@ -1311,28 +1452,28 @@
     "homepage": [
       {
         "value": "facebook",
-        "count": 18,
-        "unique_clients": 5
+        "count": 22,
+        "unique_clients": 6
       },
       {
         "value": "gmb",
-        "count": 18,
-        "unique_clients": 5
+        "count": 22,
+        "unique_clients": 6
       },
       {
         "value": "instagram",
-        "count": 18,
-        "unique_clients": 5
+        "count": 22,
+        "unique_clients": 6
       },
       {
         "value": "linkedin",
-        "count": 18,
-        "unique_clients": 5
+        "count": 22,
+        "unique_clients": 6
       },
       {
         "value": "constantcontact",
-        "count": 14,
-        "unique_clients": 4
+        "count": 18,
+        "unique_clients": 5
       },
       {
         "value": "eventspostcard",
@@ -1615,6 +1756,33 @@
         "unique_clients": 1
       }
     ],
+    "reviews": [
+      {
+        "value": "constantcontact",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 4,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "searchunits": [
       {
         "value": "facebook",
@@ -1662,6 +1830,60 @@
         "value": "linkedin",
         "count": 38,
         "unique_clients": 2
+      }
+    ],
+    "sewagepumpsales": [
+      {
+        "value": "constantcontact",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 8,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpserviceandinstallation": [
+      {
+        "value": "constantcontact",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "facebook",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "gmb",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "instagram",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "linkedin",
+        "count": 20,
+        "unique_clients": 1
       }
     ],
     "shop": [
@@ -1847,6 +2069,18 @@
         "unique_clients": 1
       }
     ],
+    "aboutus": [
+      {
+        "value": "social",
+        "count": 80,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "apartments": [
       {
         "value": "social",
@@ -1871,13 +2105,13 @@
     "careers": [
       {
         "value": "social",
-        "count": 20,
-        "unique_clients": 1
+        "count": 36,
+        "unique_clients": 2
       },
       {
         "value": "email",
-        "count": 5,
-        "unique_clients": 1
+        "count": 9,
+        "unique_clients": 2
       }
     ],
     "commercial": [
@@ -1923,6 +2157,30 @@
         "unique_clients": 1
       }
     ],
+    "electricmotorrepairs": [
+      {
+        "value": "social",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorsales": [
+      {
+        "value": "social",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "floral": [
       {
         "value": "social",
@@ -1962,13 +2220,13 @@
     "homepage": [
       {
         "value": "social",
-        "count": 72,
-        "unique_clients": 5
+        "count": 88,
+        "unique_clients": 6
       },
       {
         "value": "email",
-        "count": 14,
-        "unique_clients": 4
+        "count": 18,
+        "unique_clients": 5
       },
       {
         "value": "qrcode",
@@ -2096,6 +2354,18 @@
         "unique_clients": 1
       }
     ],
+    "reviews": [
+      {
+        "value": "social",
+        "count": 16,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 4,
+        "unique_clients": 1
+      }
+    ],
     "searchunits": [
       {
         "value": "social",
@@ -2113,6 +2383,30 @@
         "value": "email",
         "count": 38,
         "unique_clients": 2
+      }
+    ],
+    "sewagepumpsales": [
+      {
+        "value": "social",
+        "count": 32,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 8,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpserviceandinstallation": [
+      {
+        "value": "social",
+        "count": 80,
+        "unique_clients": 1
+      },
+      {
+        "value": "email",
+        "count": 20,
+        "unique_clients": 1
       }
     ],
     "shop": [
@@ -2187,8 +2481,8 @@
     "constantcontact": [
       {
         "value": "email",
-        "count": 484,
-        "unique_clients": 5
+        "count": 552,
+        "unique_clients": 6
       }
     ],
     "eventspostcard": [
@@ -2201,15 +2495,15 @@
     "facebook": [
       {
         "value": "social",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       }
     ],
     "gmb": [
       {
         "value": "social",
-        "count": 533,
-        "unique_clients": 5
+        "count": 601,
+        "unique_clients": 6
       }
     ],
     "gsaad": [
@@ -2222,15 +2516,15 @@
     "instagram": [
       {
         "value": "social",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       }
     ],
     "linkedin": [
       {
         "value": "social",
-        "count": 535,
-        "unique_clients": 6
+        "count": 603,
+        "unique_clients": 7
       }
     ],
     "twitter": [
@@ -2353,6 +2647,33 @@
         "unique_clients": 1
       }
     ],
+    "aboutus": [
+      {
+        "value": "contact",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "ourhistory",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "partnerships",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "products",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "apartments": [
       {
         "value": "1bedroom",
@@ -2404,6 +2725,11 @@
         "value": "caregiver",
         "count": 25,
         "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
       }
     ],
     "commercial": [
@@ -2450,6 +2776,20 @@
       },
       {
         "value": "musicnights",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorrepairs": [
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorsales": [
+      {
+        "value": "landingpage",
         "count": 20,
         "unique_clients": 1
       }
@@ -2578,8 +2918,8 @@
     "homepage": [
       {
         "value": "landingpage",
-        "count": 87,
-        "unique_clients": 5
+        "count": 107,
+        "unique_clients": 6
       }
     ],
     "houseplants": [
@@ -2802,6 +3142,13 @@
         "unique_clients": 1
       }
     ],
+    "reviews": [
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
     "searchunits": [
       {
         "value": "landingpage",
@@ -2863,6 +3210,45 @@
       {
         "value": "serviceareas",
         "count": 15,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpsales": [
+      {
+        "value": "industrialcommercialpumpsales",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpserviceandinstallation": [
+      {
+        "value": "commercial",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "contractors",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "industrial",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "landingpage",
+        "count": 20,
+        "unique_clients": 1
+      },
+      {
+        "value": "residential",
+        "count": 20,
         "unique_clients": 1
       }
     ],
@@ -3104,6 +3490,23 @@
         "unique_clients": 1
       }
     ],
+    "aboutus": [
+      {
+        "value": "explore",
+        "count": 25,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 25,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 25,
+        "unique_clients": 1
+      }
+    ],
     "apartments": [
       {
         "value": "explore",
@@ -3130,22 +3533,22 @@
     ],
     "careers": [
       {
-        "value": "apply",
-        "count": 5,
-        "unique_clients": 1
-      },
-      {
         "value": "explore",
-        "count": 5,
-        "unique_clients": 1
+        "count": 10,
+        "unique_clients": 2
       },
       {
         "value": "learn",
-        "count": 5,
-        "unique_clients": 1
+        "count": 10,
+        "unique_clients": 2
       },
       {
         "value": "read",
+        "count": 10,
+        "unique_clients": 2
+      },
+      {
+        "value": "apply",
         "count": 5,
         "unique_clients": 1
       }
@@ -3194,6 +3597,40 @@
       },
       {
         "value": "buy",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorrepairs": [
+      {
+        "value": "explore",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
+    "electricmotorsales": [
+      {
+        "value": "explore",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
         "count": 5,
         "unique_clients": 1
       }
@@ -3247,18 +3684,18 @@
     "homepage": [
       {
         "value": "explore",
-        "count": 24,
-        "unique_clients": 5
+        "count": 29,
+        "unique_clients": 6
       },
       {
         "value": "learn",
-        "count": 24,
-        "unique_clients": 5
+        "count": 29,
+        "unique_clients": 6
       },
       {
         "value": "read",
-        "count": 9,
-        "unique_clients": 2
+        "count": 14,
+        "unique_clients": 3
       },
       {
         "value": "shop",
@@ -3426,6 +3863,23 @@
         "unique_clients": 1
       }
     ],
+    "reviews": [
+      {
+        "value": "explore",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 5,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 5,
+        "unique_clients": 1
+      }
+    ],
     "searchunits": [
       {
         "value": "explore",
@@ -3452,6 +3906,40 @@
       {
         "value": "read",
         "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpsales": [
+      {
+        "value": "explore",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 10,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 10,
+        "unique_clients": 1
+      }
+    ],
+    "sewagepumpserviceandinstallation": [
+      {
+        "value": "explore",
+        "count": 25,
+        "unique_clients": 1
+      },
+      {
+        "value": "learn",
+        "count": 25,
+        "unique_clients": 1
+      },
+      {
+        "value": "read",
+        "count": 25,
         "unique_clients": 1
       }
     ],
@@ -3574,6 +4062,754 @@
     ]
   },
   "clients": {
+    "aaa": {
+      "value_counts": {
+        "campaign": [
+          {
+            "value": "aboutus",
+            "count": 100,
+            "unique_clients": 1
+          },
+          {
+            "value": "sewagepumpserviceandinstallation",
+            "count": 100,
+            "unique_clients": 1
+          },
+          {
+            "value": "sewagepumpsales",
+            "count": 40,
+            "unique_clients": 1
+          },
+          {
+            "value": "careers",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "electricmotorrepairs",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "electricmotorsales",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "homepage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "reviews",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "source": [
+          {
+            "value": "constantcontact",
+            "count": 68,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 68,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 68,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 68,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "medium": [
+          {
+            "value": "social",
+            "count": 272,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "term": [
+          {
+            "value": "landingpage",
+            "count": 160,
+            "unique_clients": 1
+          },
+          {
+            "value": "commercial",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "contact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "contractors",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "industrial",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "industrialcommercialpumpsales",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "ourhistory",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "partnerships",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "products",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "residential",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "content": [
+          {
+            "value": "explore",
+            "count": 85,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 85,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 85,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_sources": {
+        "aboutus": [
+          {
+            "value": "constantcontact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorrepairs": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorsales": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "reviews": [
+          {
+            "value": "constantcontact",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 4,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpsales": [
+          {
+            "value": "constantcontact",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 8,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpserviceandinstallation": [
+          {
+            "value": "constantcontact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "facebook",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "gmb",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "instagram",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "linkedin",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_mediums": {
+        "aboutus": [
+          {
+            "value": "social",
+            "count": 80,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorrepairs": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorsales": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "reviews": [
+          {
+            "value": "social",
+            "count": 16,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 4,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpsales": [
+          {
+            "value": "social",
+            "count": 32,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 8,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpserviceandinstallation": [
+          {
+            "value": "social",
+            "count": 80,
+            "unique_clients": 1
+          },
+          {
+            "value": "email",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "source_to_mediums": {
+        "constantcontact": [
+          {
+            "value": "email",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "facebook": [
+          {
+            "value": "social",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "gmb": [
+          {
+            "value": "social",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "instagram": [
+          {
+            "value": "social",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ],
+        "linkedin": [
+          {
+            "value": "social",
+            "count": 68,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_terms": {
+        "aboutus": [
+          {
+            "value": "contact",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "ourhistory",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "partnerships",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "products",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorrepairs": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorsales": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "reviews": [
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpsales": [
+          {
+            "value": "industrialcommercialpumpsales",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpserviceandinstallation": [
+          {
+            "value": "commercial",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "contractors",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "industrial",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "landingpage",
+            "count": 20,
+            "unique_clients": 1
+          },
+          {
+            "value": "residential",
+            "count": 20,
+            "unique_clients": 1
+          }
+        ]
+      },
+      "campaign_to_contents": {
+        "aboutus": [
+          {
+            "value": "explore",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 25,
+            "unique_clients": 1
+          }
+        ],
+        "careers": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorrepairs": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "electricmotorsales": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "homepage": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "reviews": [
+          {
+            "value": "explore",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 5,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 5,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpsales": [
+          {
+            "value": "explore",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 10,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 10,
+            "unique_clients": 1
+          }
+        ],
+        "sewagepumpserviceandinstallation": [
+          {
+            "value": "explore",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "learn",
+            "count": 25,
+            "unique_clients": 1
+          },
+          {
+            "value": "read",
+            "count": 25,
+            "unique_clients": 1
+          }
+        ]
+      }
+    },
     "cic": {
       "value_counts": {
         "campaign": [

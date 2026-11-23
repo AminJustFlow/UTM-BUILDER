@@ -507,7 +507,74 @@ const manualClients = {
     displayName: "AAA",
     aliases: ["aaa", "aaa pump", "aaa pump service"],
     domains: ["aaapumpservice.com"],
-    taxonomyKey: "aaa"
+    taxonomyKey: "aaa",
+    clientWideContents: ["Read", "Learn", "Explore"],
+    guidance: {
+      summary: "Start with priority 1. Use Media or MobileLinks only when their specific destination rules apply.",
+      fields: {
+        campaign: {
+          label: "Campaign - AAA reporting bucket",
+          help: "Choose the highest-priority campaign that accurately describes the destination.",
+          placeholder: "SewagePumpSales"
+        },
+        term: {
+          label: "Term - Page or category",
+          help: "Use LandingPage or the approved secondary-page name.",
+          placeholder: "LandingPage"
+        },
+        content: {
+          label: "Content - Message or CTA",
+          help: "Use Read, Learn, Explore, or the messaging used to engage the audience.",
+          placeholder: "Learn"
+        }
+      },
+      campaignProfiles: [
+        {
+          priority: 1,
+          campaign: "HomePage",
+          guideline: "Use for the AAA Pump Service home page only.",
+          fields: {
+            term: { label: "Term - Home page", help: "Use LandingPage.", placeholder: "LandingPage" },
+            content: { label: "Content - Message or CTA", help: "Use Read, Learn, Explore, or the messaging used to engage.", placeholder: "Learn" }
+          }
+        },
+        ...[
+          ["Careers", "Use for pages and opportunities within the Careers section."],
+          ["SewagePumpSales", "Use for sewage pump sales pages and their approved product categories."],
+          ["ElectricMotorSales", "Use for electric motor sales pages."],
+          ["SewagePumpServiceAndInstallation", "Use for sewage pump service and installation pages and their approved categories."],
+          ["ElectricMotorRepairs", "Use for electric motor repair pages."],
+          ["AboutUs", "Use for About Us and its approved secondary pages."],
+          ["Reviews", "Use for the Reviews page."]
+        ].map(([campaign, guideline]) => ({
+          priority: 1,
+          campaign,
+          guideline,
+          fields: {
+            term: { label: "Term - Page or category", help: "Use LandingPage or the approved secondary-page name.", placeholder: "LandingPage" },
+            content: { label: "Content - Message or CTA", help: "Use Read, Learn, Explore, or the messaging used to engage.", placeholder: "Learn" }
+          }
+        })),
+        {
+          priority: 2,
+          campaign: "Media",
+          guideline: "Use only for media articles. Categorize the article as Pump, Motor, or Corporate.",
+          fields: {
+            term: { label: "Term - Media category", help: "Use Pump, Motor, or Corporate.", placeholder: "Pump" },
+            content: { label: "Content - Article date", help: "Use the article date in compact numeric form.", placeholder: "11092026" }
+          }
+        },
+        {
+          priority: 3,
+          campaign: "MobileLinks",
+          guideline: "Use only for a /links destination. No such page is present in the current sitemap.",
+          fields: {
+            term: { label: "Term - Mobile links page", help: "Use LandingPage.", placeholder: "LandingPage" },
+            content: { label: "Content - Message or CTA", help: "Use Read, Learn, Explore, or the messaging used to engage.", placeholder: "Learn" }
+          }
+        }
+      ]
+    }
   },
   woodstone: {
     displayName: "Woodstone",

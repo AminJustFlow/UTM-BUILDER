@@ -159,8 +159,14 @@ if (
   || approvedClientRowCount("cic") !== 756
   || approvedClientRowCount("fmb") !== 610
   || approvedClientRowCount("vth") !== 205
-  || approvedClientRowCount("rad") !== 5
-  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "cic,fmb,gas,jf,rad,sfg,vth"
+  || approvedClientRowCount("rad") !== 9
+  || approvedClientRowCount("aaa") !== 340
+  || Object.keys(approvedDictionary.clients ?? {}).sort().join(",") !== "aaa,cic,fmb,gas,jf,rad,sfg,vth"
+  || !approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => entry.value === "sewagepumpserviceandinstallation")
+  || !approvedDictionary.clients.aaa.value_counts.term.some((entry) => entry.value === "industrialcommercialpumpsales")
+  || !approvedDictionary.clients.aaa.value_counts.content.some((entry) => entry.value === "explore")
+  || approvedDictionary.clients.aaa.value_counts.campaign.some((entry) => ["limitedcampaign", "metaadcampaignname", "website", "media", "mobilelinks"].includes(entry.value))
+  || approvedDictionary.clients.aaa.value_counts.source.some((entry) => entry.value === "metaad")
   || !approvedDictionary.clients.rad.value_counts.campaign.some((entry) => entry.value === "newsandpromos")
   || !approvedDictionary.clients.rad.value_counts.source.some((entry) => entry.value === "constantcontact")
   || !approvedDictionary.clients.rad.value_counts.medium.some((entry) => entry.value === "email")
@@ -280,6 +286,7 @@ if (
   || dictionaryOnlyRules.getClientCode("castle") !== "CIC"
   || dictionaryOnlyRules.getClientCode("studleys") !== "SFG"
   || dictionaryOnlyRules.getClientCode("gas") !== "GAS"
+  || dictionaryOnlyRules.getClientCode("aaa") !== "AAA"
   || dictionaryOnlyRules.getClientCode("bis_603") !== "BIS 603"
   || dictionaryOnlyRules.getClientCode("woodstone") !== "WOODSTONE"
   || dictionaryOnlyRules.getSourceMedium("qr")?.medium !== "Offline"
@@ -331,6 +338,31 @@ if (
   || !vthProfiles.some((profile) => profile.campaign === "MetaAdCampaignName" && profile.source === "MetaAd" && profile.medium === "Social")
 ) {
   throw new Error("VTH authoritative taxonomy and guidance smoke test failed.");
+}
+const aaaProfiles = dictionaryOnlyRules.getClientGuidance("aaa").campaignProfiles;
+if (
+  aaaProfiles.length !== 10
+  || !aaaProfiles.some((profile) => profile.campaign === "HomePage" && profile.priority === 1)
+  || !aaaProfiles.some((profile) => profile.campaign === "Media" && profile.priority === 2)
+  || !aaaProfiles.some((profile) => profile.campaign === "MobileLinks" && profile.priority === 3)
+  || aaaProfiles.some((profile) => ["LimitedCampaign", "MetaAdCampaignName", "Website"].includes(profile.campaign))
+) {
+  throw new Error("AAA campaign standards guidance smoke test failed.");
+}
+const aaaSeededProfiles = [];
+let aaaSettingsSeeded = false;
+const aaaStandardsService = new ClientCampaignStandardsService({
+  rulesService: { clients: () => ["aaa"], getClientGuidance: () => dictionaryOnlyRules.getClientGuidance("aaa") },
+  repository: {
+    async getSettings() { return { client_key: "aaa", summary: "", fields_json: "{}", updated_by_user_id: null, updated_by_name: "" }; },
+    async listProfiles() { return []; },
+    async upsertSettings() { aaaSettingsSeeded = true; },
+    async createProfile(payload) { aaaSeededProfiles.push(payload); }
+  }
+});
+await aaaStandardsService.bootstrap();
+if (!aaaSettingsSeeded || aaaSeededProfiles.length !== aaaProfiles.length || !aaaSeededProfiles.some((profile) => profile.campaign === "Media")) {
+  throw new Error("AAA campaign standards bootstrap smoke test failed.");
 }
 if (
   intelligenceService.canonicalizeValue("content", "ScheduleAtour", "vth") !== "ScheduleATour"
