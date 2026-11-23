@@ -176,24 +176,32 @@ export class UtmLibraryController {
     const displayValue = normalizeTextValue(form.display_value) || value;
     const client = normalizeTextValue(form.client).toLowerCase();
     const warningType = normalizeTextValue(form.warning_type).toLowerCase();
+    const requestedReturnClient = normalizeTextValue(form.return_client);
+    const returnClient = requestedReturnClient
+      ? this.rulesService.normalizeClient(requestedReturnClient) ?? ""
+      : "";
+    const redirectToReview = (values) => NodeResponse.redirect(`/utms?${buildQueryString({
+      ...values,
+      client: returnClient
+    })}#consistency-warnings`);
 
     const validField = GOVERNANCE_FIELDS.includes(field) || /^pair:(campaign\+(source|medium|term|content)|source\+medium)$/u.test(field);
     const invalidDisplayValue = warningType === "new_value" && normalizeComparable(displayValue) !== normalizeComparable(value);
     if (!validField || !value || !client || warningType === "possible_typo" || invalidDisplayValue) {
-      return NodeResponse.redirect(`/utms?${buildQueryString({
+      return redirectToReview({
         toast: "Could not acknowledge that value.",
         toast_level: "error"
-      })}`);
+      });
     }
 
     if (["campaign", "source", "medium", "term", "content"].includes(field) && this.utmIntelligenceService) {
       await this.utmIntelligenceService.refreshDataAsync?.();
       const analysis = this.utmIntelligenceService.consistencyAnalysis({ client, [field]: value });
       if (analysis.warnings.some((warning) => warning.type === "possible_typo")) {
-        return NodeResponse.redirect(`/utms?${buildQueryString({
+        return redirectToReview({
           toast: "Possible typos must be corrected and cannot be acknowledged as standards.",
           toast_level: "error"
-        })}`);
+        });
       }
     }
 
@@ -215,12 +223,12 @@ export class UtmLibraryController {
 
     this.utmIntelligenceService?.invalidateData?.();
 
-    return NodeResponse.redirect(`/utms?${buildQueryString({
+    return redirectToReview({
       toast: warningType === "new_value"
         ? `Approved "${displayValue}" for ${client}. It is now available in builder suggestions.`
         : `Acknowledged "${value}" for ${client}. It will no longer be flagged for review.`,
       toast_level: "success"
-    })}`);
+    });
   }
 
   async handleArchive(request) {
@@ -415,7 +423,7 @@ function renderHtml(view) {
       ${renderJustFlowTopbar({ section: "UTM Builder", title: "Link Library", searchPlaceholder: "Search clients, campaigns, links...", showSearch: !view.standalone })}
       <div class="page">
         <div class="library-flow">
-          ${library.filters.view === "archived" ? "" : renderGovernancePanel(governance, { canManage: canManageGovernance })}
+          ${library.filters.view === "archived" ? "" : renderGovernancePanel(governance, { canManage: canManageGovernance, selectedClient: library.filters.client })}
           <div class="page-header">
             <div class="page-title-block">
               <h1>Link Library</h1>
@@ -957,11 +965,11 @@ function renderCsv(items) {
   return `${lines.join("\n")}\n`;
 }
 
-function renderGovernancePanel(governance, { canManage = false } = {}) {
+function renderGovernancePanel(governance, { canManage = false, selectedClient = "" } = {}) {
   if (!governance || !governance.totalNewValues) {
     return "";
   }
-  return `<section class="card">
+  return `<section class="card" id="consistency-warnings">
     <div class="card-header">
       <div>
         <h3>Consistency Warnings To Review</h3>
@@ -977,14 +985,14 @@ function renderGovernancePanel(governance, { canManage = false } = {}) {
       ${governance.fields.filter((field) => field.items.length).map((field) => `<div class="qi-tile">
         <div class="l">${escapeHtml(field.label)}</div>
         <div class="v num">${field.items.length}</div>
-        <div class="warnings" style="margin-top:.6rem">${field.items.slice(0, 8).map((item) => renderGovernanceChip(field.key, item, canManage)).join("")}</div>
+        <div class="warnings" style="margin-top:.6rem">${field.items.slice(0, 8).map((item) => renderGovernanceChip(field.key, item, canManage, selectedClient)).join("")}</div>
       </div>`).join("")}
       </div>
     </div>
   </section>`;
 }
 
-function renderGovernanceChip(fieldKey, item, canManage) {
+function renderGovernanceChip(fieldKey, item, canManage, selectedClient = "") {
   const displayValue = item.labeledDisplayValue ?? item.displayValue ?? displayGovernanceValue(item.client, item.value, item.type);
   const acknowledgeForm = canManage
     ? `<form method="post" action="/utms/governance/acknowledge" class="gov-ack">
@@ -993,6 +1001,7 @@ function renderGovernanceChip(fieldKey, item, canManage) {
         <input type="hidden" name="display_value" value="${escapeAttribute(item.displayValue ?? item.value)}">
         <input type="hidden" name="client" value="${escapeAttribute(item.client)}">
         <input type="hidden" name="warning_type" value="${escapeAttribute(item.type)}">
+        <input type="hidden" name="return_client" value="${escapeAttribute(selectedClient)}">
         <button type="submit" title="Acknowledge this value" aria-label="Acknowledge ${escapeAttribute(displayValue)}">${renderIcon("check")}</button>
       </form>`
     : "";

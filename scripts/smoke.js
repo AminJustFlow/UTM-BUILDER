@@ -1181,13 +1181,13 @@ try {
   const govWarning = govCreateAttempt.firstBody.error?.consistency_warnings?.find((warning) => warning.type === "new_value" && warning.fields?.includes("content"));
   const govValue = govCreated.result?.utm_content ?? "";
   const govMarker = `data-governance-value="${String(govValue).toLowerCase()}"`;
-  const libraryBeforeAck = await (await af("/utms")).text();
+  const libraryBeforeAck = await (await af("/utms?client=gas")).text();
   const govSuggestionsBeforeAck = await (await af("/new/utm-intelligence/suggestions.json?field=content&client=gas&query=approvalonlyvalue")).json();
   const ackResponse = await fetch(`${base}/utms/governance/acknowledge`, {
     method: "POST",
     redirect: "manual",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: sessionCookie },
-    body: new URLSearchParams({ field: "content", value: String(govValue).toLowerCase(), display_value: govValue, client: "gas", warning_type: "new_value" }).toString()
+    body: new URLSearchParams({ field: "content", value: String(govValue).toLowerCase(), display_value: govValue, client: "gas", warning_type: "new_value", return_client: "gas" }).toString()
   });
   const duplicateAckResponse = await fetch(`${base}/utms/governance/acknowledge`, {
     method: "POST", redirect: "manual",
@@ -1683,6 +1683,8 @@ try {
     || !libraryBeforeAck.includes('name="client" value="gas"')
     || !libraryBeforeAck.includes('name="value" value="approvalonlyvalue"')
     || !libraryBeforeAck.includes('name="display_value" value="ApprovalOnlyValue"')
+    || !libraryBeforeAck.includes('name="return_client" value="gas"')
+    || !libraryBeforeAck.includes('id="consistency-warnings"')
     || libraryBeforeAck.indexOf("Consistency warnings") > libraryBeforeAck.indexOf("<h1>Link Library</h1>")
     || !libraryBeforeAck.includes("Created by <strong>Smoke Admin</strong>")
     || !libraryBeforeAck.includes('class="grid library-results-grid"')
@@ -1694,6 +1696,8 @@ try {
     || !libraryBeforeAck.includes(".library-results-grid>.library-card:nth-child(even){background:var(--surface-2)}")
     || libraryBeforeAck.includes("Last edited by")
     || ackResponse.status !== 302
+    || !ackResponse.headers.get("location")?.includes("client=gas")
+    || !ackResponse.headers.get("location")?.endsWith("#consistency-warnings")
     || duplicateAckResponse.status !== 302
     || pairAckResponse.status !== 302
     || typoAckResponse.status !== 302
