@@ -1156,6 +1156,13 @@ try {
   const cicAliasItem = aliasLibrary.items?.find((item) => item.originalMessage === "CIC alias import");
   const vthCanonicalItem = aliasLibrary.items?.find((item) => item.originalMessage === "VTH canonical import");
   const importedLibrary = await (await af("/utms.json?search=Smoke%20import")).json();
+  const filterResponse = await af("/utms/filters.json?search=Smoke%20import");
+  const filterResult = await filterResponse.json();
+  if (!filterResponse.ok || Object.keys(filterResult).length !== 1
+    || JSON.stringify(filterResult.available) !== JSON.stringify(importedLibrary.available)) {
+    throw new Error("Library search filter options differ from the full search.");
+  }
+
   const importedItem = importedLibrary.items?.find((item) => item.originalMessage === "Smoke import");
   const historyResponse = await af(`/utms/history.json?fingerprint=${encodeURIComponent(created.result?.fingerprint ?? "")}`);
   const historyBody = await historyResponse.json();

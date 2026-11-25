@@ -312,6 +312,7 @@ export async function createUtmBuilderApplication(projectRoot) {
       "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"
     });
   }));
+  router.add("GET", "/utms/filters.json", protect((request) => utmLibraryController.handleFilterOptions(request)));
   router.add("GET", "/utms.json", protect((request) => utmLibraryController.handleJson(request)));
   router.add("GET", "/utms.csv", protect((request) => utmLibraryController.handleCsv(request)));
   router.add("GET", "/utms/history.json", protect((request) => utmLibraryController.handleHistory(request)));

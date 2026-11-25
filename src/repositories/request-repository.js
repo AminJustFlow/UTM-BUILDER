@@ -602,6 +602,7 @@ export class RequestRepository {
     sort = "recent",
     limit = 50,
     offset = 0,
+    includeAvailable = true,
     archived = false
   } = {}) {
     const context = this.buildTrackedRequestLibraryContext({
@@ -641,7 +642,7 @@ export class RequestRepository {
         COALESCE(SUM(CASE WHEN has_short_url = 0 THEN 1 ELSE 0 END), 0) AS without_short_link
       FROM filtered_requests
     `, context.params);
-    const available = syncAll(this.database, `
+    const available = !includeAvailable ? [] : syncAll(this.database, `
       ${context.baseCte}
       SELECT
         group_name,
@@ -693,6 +694,7 @@ export class RequestRepository {
     sort = "recent",
     limit = 50,
     offset = 0,
+    includeAvailable = true,
     archived = false
   } = {}) {
     if (typeof this.database.allAsync !== "function" || typeof this.database.getAsync !== "function") {
@@ -712,6 +714,7 @@ export class RequestRepository {
         sort,
         limit,
         offset,
+        includeAvailable,
         archived
       });
     }
@@ -752,7 +755,7 @@ export class RequestRepository {
         COALESCE(SUM(CASE WHEN has_short_url = 0 THEN 1 ELSE 0 END), 0) AS without_short_link
       FROM filtered_requests
     `, context.params);
-    const available = await this.database.allAsync(`
+    const available = !includeAvailable ? [] : await this.database.allAsync(`
       ${context.baseCte}
       SELECT
         group_name,
@@ -788,6 +791,53 @@ export class RequestRepository {
     };
   }
 
+  buildLibraryFacetQueries(query) {
+    // Unselected filters share a single filtered dataset. For a selected
+    // dropdown, omit only its own filter so alternatives remain selectable.
+    const dimensions = [
+      ["clients", "client", "client"],
+      ["channels", "channel", "channel"],
+      ["sources", "source", "utm_source"],
+      ["mediums", "medium", "utm_medium"],
+      ["qrStates", "qr", "CASE WHEN has_qr = 1 THEN 'with_qr' ELSE 'without_qr' END"],
+      ["shortLinkStates", "shortLink", "CASE WHEN has_short_url = 1 THEN 'with_short_link' ELSE 'without_short_link' END"]
+    ];
+    const groups = new Map();
+    for (const [name, field, expression] of dimensions) {
+      const isToggle = field === "qr" || field === "shortLink";
+      const selected = query[field] && !(isToggle && query[field] === "all");
+      const omit = selected ? field : "";
+      if (!groups.has(omit)) groups.set(omit, []);
+      groups.get(omit).push(`SELECT DISTINCT '${name}' AS group_name, ${expression} AS group_value FROM filtered_requests`);
+    }
+    const queries = [];
+    for (const [omit, selections] of groups) {
+      const filters = omit ? { ...query, [omit]: "" } : query;
+      const { baseCte, params } = this.buildTrackedRequestLibraryContext(filters);
+      queries.push({ sql: baseCte + selections.join(" UNION ALL "), params });
+    }
+    // Status is applied before deduplication. Keep the latest row within
+    // each status so reused fingerprints can appear under either status.
+    const { baseCte, params } = this.buildTrackedRequestLibraryContext({
+      ...query, status: "all", statuses: ["completed", "completed_without_short_link"], groupByStatus: true
+    });
+    queries.push({ sql: baseCte + "SELECT DISTINCT 'statuses' AS group_name, status AS group_value FROM filtered_requests", params });
+    return queries;
+  }
+
+  listLibraryFacets(query) {
+    return this.buildLibraryFacetQueries(query).flatMap(({ sql, params }) => syncAll(this.database, sql, params));
+  }
+
+  async listLibraryFacetsAsync(query) {
+    if (!this.database.allAsync) return this.listLibraryFacets(query);
+    const rows = [];
+    for (const { sql, params } of this.buildLibraryFacetQueries(query)) {
+      rows.push(...await this.database.allAsync(sql, params));
+    }
+    return rows;
+  }
+
   buildTrackedRequestLibraryContext({
     statuses = ["completed", "completed_without_short_link"],
     client = "",
@@ -801,6 +851,7 @@ export class RequestRepository {
     search = "",
     qr = "all",
     shortLink = "all",
+    groupByStatus = false,
     archived = false
   } = {}) {
     const normalizedStatuses = Array.isArray(statuses)
@@ -966,7 +1017,7 @@ export class RequestRepository {
             WHERE final_long_url IS NOT NULL
               AND ${archived ? "archived_at IS NOT NULL" : "archived_at IS NULL"}
               ${statusScopeClause}
-            GROUP BY COALESCE(NULLIF(fingerprint, ''), request_uuid)
+            GROUP BY COALESCE(NULLIF(fingerprint, ''), request_uuid)${groupByStatus ? ", status" : ""}
           ) grouped ON grouped.latest_id = r.id
         ),
         filtered_requests AS (

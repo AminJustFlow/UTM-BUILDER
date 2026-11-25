@@ -99,6 +99,13 @@ export class UtmLibraryController {
     return NodeResponse.json(library);
   }
 
+  async handleFilterOptions(request) {
+    const query = this.normalizeClientQuery(request.query);
+    const result = { available: await this.utmLibraryService.listFilterOptionsAsync(query) };
+    this.applyClientDisplayNames(result);
+    return NodeResponse.json(result);
+  }
+
   async handleCsv(request) {
     const query = this.normalizeClientQuery(request.query);
     const library = await (this.utmLibraryService.listAsync?.({
@@ -814,15 +821,6 @@ function renderHtml(view) {
         ["client", "source", "medium", "status", "short_link", "qr"].forEach((name) => {
           const select = filterForm.elements.namedItem(name);
           if (!select) return;
-          const currentValue = select.value;
-          const currentLabel = select.options[select.selectedIndex]
-            ? select.options[select.selectedIndex].text
-            : "Loading...";
-          const loadingLabel = currentValue ? currentLabel + " (updating...)" : "Loading...";
-          select.dataset.pendingValue = currentValue;
-          select.replaceChildren(new Option(loadingLabel, currentValue || ""));
-          select.value = currentValue || "";
-          select.disabled = true;
           select.setAttribute("aria-busy", "true");
         });
       }
@@ -832,9 +830,7 @@ function renderHtml(view) {
         ["client", "source", "medium", "status", "short_link", "qr"].forEach((name) => {
           const select = filterForm.elements.namedItem(name);
           if (!select) return;
-          select.disabled = false;
           select.removeAttribute("aria-busy");
-          delete select.dataset.pendingValue;
         });
       }
 
@@ -859,7 +855,7 @@ function renderHtml(view) {
         setFacetLoadingState();
 
         try {
-          const response = await fetch("/utms.json?" + params.toString(), {
+          const response = await fetch("/utms/filters.json?" + params.toString(), {
             headers: { "Accept": "application/json" },
             signal: facetAbortController.signal
           });
@@ -888,17 +884,25 @@ function renderHtml(view) {
       if (filterForm) {
         let refreshTimer = null;
         const queueFacetRefresh = () => {
+          facetRequestToken += 1;
+          facetAbortController?.abort();
           window.clearTimeout(refreshTimer);
-          refreshTimer = window.setTimeout(refreshFacetOptions, 120);
+          refreshTimer = window.setTimeout(refreshFacetOptions, 350);
         };
 
         filterForm.addEventListener("change", (event) => {
           if (!event.target || !event.target.name) return;
           if (["client", "source", "medium", "status", "short_link", "qr"].includes(event.target.name)) {
+            window.clearTimeout(refreshTimer);
             refreshFacetOptions();
             return;
           }
-          queueFacetRefresh();
+        });
+        filterForm.addEventListener("submit", () => {
+          window.clearTimeout(refreshTimer);
+          facetRequestToken += 1;
+          facetAbortController?.abort();
+          clearFacetLoadingState();
         });
         filterForm.addEventListener("input", (event) => {
           if (!event.target || !event.target.name) return;

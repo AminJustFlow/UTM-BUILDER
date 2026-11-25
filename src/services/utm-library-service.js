@@ -20,6 +20,7 @@ export class UtmLibraryService {
     const statuses = resolveStatuses(statusFilter);
     const offset = (page - 1) * perPage;
     const library = this.requestRepository.listTrackedRequestLibrary({
+      includeAvailable: false,
       statuses,
       client: normalizedQuery.client,
       channel: normalizedQuery.channel,
@@ -91,6 +92,7 @@ export class UtmLibraryService {
     const statuses = resolveStatuses(statusFilter);
     const offset = (page - 1) * perPage;
     const library = await (this.requestRepository.listTrackedRequestLibraryAsync?.({
+      includeAvailable: false,
       statuses,
       client: normalizedQuery.client,
       channel: normalizedQuery.channel,
@@ -108,6 +110,7 @@ export class UtmLibraryService {
       offset,
       archived: normalizedQuery.view === "archived"
     }) ?? this.requestRepository.listTrackedRequestLibrary({
+      includeAvailable: false,
       statuses,
       client: normalizedQuery.client,
       channel: normalizedQuery.channel,
@@ -238,191 +241,19 @@ export class UtmLibraryService {
     return `utm_library:${JSON.stringify(normalized)}`;
   }
 
-  buildFacetAvailability(normalizedQuery) {
-    return {
-      clients: uniqueValues(this.listFacetValues(normalizedQuery, "client", "clients")),
-      channels: uniqueValues(this.listFacetValues(normalizedQuery, "channel", "channels")),
-      sources: uniqueValues(this.listFacetValues(normalizedQuery, "source", "sources")),
-      mediums: uniqueValues(this.listFacetValues(normalizedQuery, "medium", "mediums")),
-      statuses: this.listToggleFacetValues(normalizedQuery, "status", DEFAULT_STATUSES),
-      qrStates: this.listToggleFacetValues(normalizedQuery, "qr", ["with_qr", "without_qr"]),
-      shortLinkStates: this.listToggleFacetValues(normalizedQuery, "shortLink", ["with_short_link", "without_short_link"]),
-      sorts: SORT_OPTIONS
-    };
+  buildFacetAvailability(query) {
+    return formatFacets(this.requestRepository.listLibraryFacets(facetFilters(query)));
   }
 
-  async buildFacetAvailabilityAsync(normalizedQuery) {
-    const [
-      clients,
-      channels,
-      sources,
-      mediums,
-      statuses,
-      qrStates,
-      shortLinkStates
-    ] = await Promise.all([
-      this.listFacetValuesAsync(normalizedQuery, "client", "clients"),
-      this.listFacetValuesAsync(normalizedQuery, "channel", "channels"),
-      this.listFacetValuesAsync(normalizedQuery, "source", "sources"),
-      this.listFacetValuesAsync(normalizedQuery, "medium", "mediums"),
-      this.listToggleFacetValuesAsync(normalizedQuery, "status", DEFAULT_STATUSES),
-      this.listToggleFacetValuesAsync(normalizedQuery, "qr", ["with_qr", "without_qr"]),
-      this.listToggleFacetValuesAsync(normalizedQuery, "shortLink", ["with_short_link", "without_short_link"])
-    ]);
-
-    return {
-      clients: uniqueValues(clients),
-      channels: uniqueValues(channels),
-      sources: uniqueValues(sources),
-      mediums: uniqueValues(mediums),
-      statuses,
-      qrStates,
-      shortLinkStates,
-      sorts: SORT_OPTIONS
-    };
+  async buildFacetAvailabilityAsync(query) {
+    const filters = facetFilters(query);
+    const rows = await (this.requestRepository.listLibraryFacetsAsync?.(filters)
+      ?? this.requestRepository.listLibraryFacets(filters));
+    return formatFacets(rows);
   }
 
-  listFacetValues(normalizedQuery, omittedField, resultKey) {
-    const facetQuery = omitFacetField(normalizedQuery, omittedField);
-    const library = this.requestRepository.listTrackedRequestLibrary({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    });
-    return library.available?.[resultKey] ?? [];
-  }
-
-  async listFacetValuesAsync(normalizedQuery, omittedField, resultKey) {
-    const facetQuery = omitFacetField(normalizedQuery, omittedField);
-    const library = await (this.requestRepository.listTrackedRequestLibraryAsync?.({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    }) ?? this.requestRepository.listTrackedRequestLibrary({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    }));
-    return library.available?.[resultKey] ?? [];
-  }
-
-  listToggleFacetValues(normalizedQuery, fieldName, values) {
-    return ["all", ...values.filter((value) => this.hasFacetResults(normalizedQuery, fieldName, value))];
-  }
-
-  async listToggleFacetValuesAsync(normalizedQuery, fieldName, values) {
-    const results = await Promise.all(values.map(async (value) => {
-      return (await this.hasFacetResultsAsync(normalizedQuery, fieldName, value)) ? value : null;
-    }));
-    return ["all", ...results.filter(Boolean)];
-  }
-
-  hasFacetResults(normalizedQuery, fieldName, value) {
-    const facetQuery = {
-      ...omitFacetField(normalizedQuery, fieldName),
-      [fieldName]: value
-    };
-    const library = this.requestRepository.listTrackedRequestLibrary({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    });
-    return Number(library.summary?.filtered_links ?? 0) > 0;
-  }
-
-  async hasFacetResultsAsync(normalizedQuery, fieldName, value) {
-    const facetQuery = {
-      ...omitFacetField(normalizedQuery, fieldName),
-      [fieldName]: value
-    };
-    const library = await (this.requestRepository.listTrackedRequestLibraryAsync?.({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    }) ?? this.requestRepository.listTrackedRequestLibrary({
-      statuses: resolveStatuses(facetQuery.status),
-      client: facetQuery.client,
-      channel: facetQuery.channel,
-      source: facetQuery.source,
-      medium: facetQuery.medium,
-      term: facetQuery.term,
-      content: facetQuery.content,
-      campaign: facetQuery.campaign,
-      status: facetQuery.status || "all",
-      search: facetQuery.search,
-      qr: facetQuery.qr,
-      shortLink: facetQuery.shortLink,
-      sort: facetQuery.sort,
-      limit: 1,
-      offset: 0,
-      archived: facetQuery.view === "archived"
-    }));
-    return Number(library.summary?.filtered_links ?? 0) > 0;
+  listFilterOptionsAsync(query) {
+    return this.buildFacetAvailabilityAsync(normalizeLibraryQuery(query));
   }
 
   queueRefresh(cacheKey, query = {}) {
@@ -616,18 +447,26 @@ function resolveStatuses(statusFilter) {
     : DEFAULT_STATUSES;
 }
 
-function omitFacetField(query, fieldName) {
-  const next = { ...query };
-  if (fieldName === "status") {
-    next.status = "all";
-    return next;
-  }
-  if (fieldName === "qr" || fieldName === "shortLink") {
-    next[fieldName] = "all";
-    return next;
-  }
-  next[fieldName] = fieldName === "client" || fieldName === "channel" ? "" : "";
-  return next;
+function facetFilters(query) {
+  return { ...query, statuses: resolveStatuses(query.status), archived: query.view === "archived" };
+}
+
+function formatFacets(rows) {
+  const values = (name) => uniqueValues(rows.filter((row) => row.group_name === name).map((row) => row.group_value));
+  const toggles = (name, order) => {
+    const available = values(name);
+    return ["all", ...order.filter((value) => available.includes(value))];
+  };
+  return {
+    clients: values("clients"),
+    channels: values("channels"),
+    sources: values("sources"),
+    mediums: values("mediums"),
+    statuses: toggles("statuses", DEFAULT_STATUSES),
+    qrStates: toggles("qrStates", ["with_qr", "without_qr"]),
+    shortLinkStates: toggles("shortLinkStates", ["with_short_link", "without_short_link"]),
+    sorts: SORT_OPTIONS
+  };
 }
 
 function positiveInteger(value, fallback) {
