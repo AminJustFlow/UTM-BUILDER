@@ -58,7 +58,8 @@ export class UtmLibraryEditorService {
     if (!existing || existing.archived_at) return { ok: false, statusCode: 404, code: "request_not_found", message: "That active library link was not found." };
     await this.utmIntelligenceService?.refreshDataAsync?.();
     const parsed = ParsedLinkRequest.fromObject({
-      client: normalizeOptional(input.client), channel: normalizeOptional(input.channel), campaign_label: normalizeOptional(input.campaign_label),
+      client: normalizeOptional(input.client), channel: normalizeOptional(input.channel), asset_type: normalizeOptional(input.asset_type),
+      campaign_label: normalizeOptional(input.campaign_label),
       utm_source: normalizeNullable(input.utm_source), utm_medium: normalizeNullable(input.utm_medium), utm_campaign: normalizeNullable(input.utm_campaign),
       utm_term: normalizeNullable(input.utm_term), utm_content: normalizeNullable(input.utm_content), destination_url: normalizeOptional(input.destination_url),
       needs_qr: false, external_domain: Object.prototype.hasOwnProperty.call(input, "external_domain") ? Boolean(input.external_domain) : undefined,

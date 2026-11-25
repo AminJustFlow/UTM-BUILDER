@@ -175,7 +175,7 @@ export class RequestNormalizer {
   }
 
   isGuidedBuilderSource(source) {
-    return ["utm_builder", "utm_builder_preview", "utm_library_editor"].includes(String(source ?? "").trim().toLowerCase());
+    return ["utm_builder", "utm_builder_preview", "utm_library_editor", "utm_library_admin_editor"].includes(String(source ?? "").trim().toLowerCase());
   }
 
   buildClarificationMessage(missingFields, confidence) {

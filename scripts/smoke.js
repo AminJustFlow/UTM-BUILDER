@@ -1301,9 +1301,9 @@ try {
   const editResponse = await af("/utms/edit", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
       original_request_id: regularAttempt.body.result?.request_id,
-      client: "gas", destination_url: "https://example.com/regular-overlay", channel: "facebook", asset_type: "social",
-      utm_source: "Facebook", utm_medium: "Social", utm_campaign: "RegularHistoryCampaign",
-      utm_term: "", utm_content: "Edited", external_domain: false,
+      client: "gas", destination_url: "https://example.com/regular-overlay", channel: "custom", asset_type: "social",
+      utm_source: "Facebook", utm_medium: "Social", utm_campaign: "Inspiration",
+      utm_term: "Houseplants", utm_content: "Read", external_domain: false,
       bitly_action: "repoint", qr_action: "remove"
     })
   });
@@ -1751,9 +1751,13 @@ try {
     || regularLogin.status !== 302
     || regularAttempt.response.status !== 200
     || editResponse.status !== 200
-    || edited.result?.utm_content !== "Edited"
+    || edited.result?.utm_content !== "Read"
+    || edited.result?.utm_source !== "Facebook"
+    || edited.result?.utm_medium !== "Social"
+    || edited.result?.utm_campaign !== "Inspiration"
+    || edited.result?.utm_term !== "Houseplants"
     || edited.result?.request_id === regularAttempt.body.result?.request_id
-    || !editedLibrary.items?.some((item) => item.requestId === edited.result?.request_id && item.utmContent === "Edited")
+    || !editedLibrary.items?.some((item) => item.requestId === edited.result?.request_id && item.utmContent === "Read")
     || regularSuggestions.items?.length
     || !regularHistory.items?.some((item) => item.campaign === "regularhistorycampaign")
     || passwordChange.status !== 302
